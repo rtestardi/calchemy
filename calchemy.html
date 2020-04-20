@@ -795,6 +795,10 @@ var database_tests = `
     1|= 1
     1|= 1
 `;
+
+var database_teststhatmaythrow = `
+TEST database_throw | unknown test database_throw
+`;
 </script>
 
 <script>
@@ -2930,8 +2934,6 @@ var teststhatmaythrow = `
     1/sqrt(23 mi:li) | bad token :
     q=1?xyz | bad unit filter
 
-    # database tests that may throw
-
     # multi-line examples
     area,power=
     area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) ? Area
@@ -2953,7 +2955,7 @@ function Test()
 function TestReal()
 {
     try {
-        var lines = (tests+database_tests+testedexamples+teststhatmaythrow).split(/[\r\n]+/);
+        var lines = (tests+database_tests+testedexamples+teststhatmaythrow+database_teststhatmaythrow).split(/[\r\n]+/);
         testing = true;
         offset_warn = false;
         offset_warned = false;

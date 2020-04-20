@@ -673,3 +673,7 @@ var database_tests = `
     1|= 1
     1|= 1
 `;
+
+var database_teststhatmaythrow = `
+TEST database_throw | unknown test database_throw
+`;
