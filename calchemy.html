@@ -2353,7 +2353,7 @@ function Enter()
             }
         }
 
-        if (success) {
+        if (success && ! testing) {
             var url = window.location.href.replace(/[?#].*/, "") + '?' + window.escape(line);
             window.history.pushState(line, line, url);
         }
