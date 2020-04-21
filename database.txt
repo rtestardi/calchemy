@@ -13,6 +13,7 @@ CATEGORY Water
 CATEGORY Ice
 CATEGORY Air
 CATEGORY Batteries
+CATEGORY Speed_sound
 
 BASE MASS
 BASE LENGTH
@@ -61,26 +62,26 @@ Common,SI:deltaK,deltak=TEMP #interval (T-T0) Kelvin
 *Common,Angle:rad,radian*=1
 *Common:bit*,b = STORAGE
 Common:$,dollar*=MONEY
-*Common,SI:A,amp*,a,ampere*=CURRENT
+*Common,SI:A,amp*,ampere*=CURRENT
 *Advanced,SI:mol,mole*=SUBSTANCE
 
 #Secondary
-*Common,SI:L,liter*,l=1 cubic dm #was 1.000028 before 1964
-*Common,SI:N,newton*,n=1 kgm m/s^2
-*Common,SI,Energy:J,joule*,j=1 N m
-*Common,SI:W,watt*,w =1 J/s
-*Common,SI:Pa,pascal,pa=1 N/square m
-*Common,SI:coulomb*=A s
-*Common,SI:V,volt*,v =1 J/coulomb
+*Common,SI:L,liter*,litre*,l=1 cubic dm #was 1.000028 before 1964
+*Common,SI:N,newton*=1 kgm m/s^2
+*Common,SI,Energy:J,joule*=1 N m
+*Common,SI:W,watt*=1 J/s
+*Common,SI:Pa,pascal=1 N/square m
+*Common,SI:C,coulomb*=A s
+*Common,SI:V,volt*=1 J/C
 *Common,SI:ohm*=1 V/A
-*Common,SI:F,farad*,f=1 coulomb/V
-*Common,SI:H,henry*,h=1 s^2/F
-*Common,SI:Wb,weber*,wb=1 V s
-*Common,SI:T,tesla*,t=1 Wb/m^2
-*Common,SI:gamma*=1E-09 Wb/m^2
+*Common,SI:F,farad*=1 C/V
+*Common,SI:H,henry*=1 s^2/F
+*Common,SI:Wb,weber*=1 V s
+*Common,SI:T,tesla*=1 Wb/m^2
+*Common:gamma*=1E-09 Wb/m^2
 Common:mho*=1 A/V
 Common:maxwell*=1E-08 Wb #CGS
-Common:gauss=0.0001 Wb/m^2 #CGS
+*Common:gauss=0.0001 Wb/m^2 #CGS
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -128,7 +129,7 @@ AMBIGUOUS Heat_combustion_m=J/kgm
 AMBIGUOUS Heat_combustion_v=J/L
 DERIVED Fuel_efficiency=km/liter
 
-Physical_constant:speed_of_light,c=2.99792E+08 m/s #speed of light in vacuum
+Physical_constant:speed_of_light,c=2.99792458E+08 m/s #speed of light in vacuum
 Physical_constant:grav=9.80665 m/s^2 #standard acceleration of gravity
 
 Number:pi=3.14159265358979323
@@ -147,10 +148,10 @@ Number:trillion = 1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
 Number:quadrillion = 1E+15 #multiplier (1E+15) as used in the U.S.
 Number:quintillion = 1E+18 #multiplier (1E+18) as used in the U.S.
 Number:milliard = 1E+09 #multiplier (1 000 000 000) as used in the U.K.
-Number:billion_imp = 1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
-Number:trillion_imp = 1E+18 #multiplier (1E+18) as used in the U.K.
-Number:quadrillion_imp = 1E+24 #multiplier (1E+24) as used in the U.K.
-Number:quintillion_imp = 1E+30 #multiplier (1E+30) as used in the U.K.
+Number:billion_long = 1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
+Number:trillion_long = 1E+18 #multiplier (1E+18) as used in the U.K.
+Number:quadrillion_long = 1E+24 #multiplier (1E+24) as used in the U.K.
+Number:quintillion_long = 1E+30 #multiplier (1E+30) as used in the U.K.
 
 Common,Angle:deg,degree*=(1/180) pi rad
 Common,Angle:grad,grade=0.9 deg
@@ -171,11 +172,11 @@ Common:aeon*=1E+09 yr
 Common:fortnight*=14 day
 
 #Length
-*Common,SI:micron*=1 um
-Common,SI:angstrom*=1E-10 m
-Common,SI:fermi*=1E-15 m
-*Common,SI:parsec*=3.0857E+16 m
-Common,SI:au=1.49598E+11 m
+*Common:micron*=1 um
+Common:angstrom*=1E-10 m
+Common:fermi*=1E-15 m
+*Common:parsec*=3.0857E+16 m
+Common:au=1.49598E+11 m
 Common:mile_nautical=1852 m
 Common:in,inch*=2.54 cm
 Common:mil* =(1/1000)in
@@ -194,15 +195,15 @@ Common:lightsecond*=1 speed_of_light*s
 #Mass
 Common:lbm,poundm,lb*,pound*=453.592 gm
 Common:ozm,ouncem,oz*,ounce*=(1/16) lbm
-Common:tonm,ton*=2000 lbm
 Common:slug*=14593.9 gm
 Common:grain*=(1/7000)lbm
 Common:dwt,pennyweight=24 grain #troy
 Common:cwt,hundredweight=100 lbm #avoirdupois
-Common:ton_long=2240 lbm #imperial (U.K.)
-*Common,SI:tonne*,ton_metric=1E+06 gm
-*Common,SI:ct,carat*=200 mgm #mass of gems
+Common:ct,carat*=200 mgm #mass of gems
 *Common,Physical_constant:amu,dalton*=1.66054E-24 gm #unified atomic mass unit
+Common:tonm,ton*=2000 lbm
+Common:tonm_long,ton_long=2240 lbm #imperial (U.K.)
+*Common,SI:tonnem,tonm_metric,tonne*,ton_metric=1E+06 gm # metric ton
 
 #Force
 Common:pdl,poundal*=1 ft lbm/s^2
@@ -213,14 +214,17 @@ Common:pond*=1 gm*grav
 Common:lbf,poundf,lb*,pound*=1 lbm*grav
 Common:ozf,ouncef,oz*,ounce*=1 ozm*grav
 Common:tonf,ton*=1 tonm*grav
+Common:tonf_long,ton_long=2240 lbm*grav #imperial (U.K.)
+*Common,SI:tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gm*grav # metric ton
 
 #Area
-*Common,SI:are=100 square m
-*Common,SI:ha,hectare*=10000 square m
+Common:ha,hectare*=10000 square m
 Common:sqin=1 square in
 Common:sqft=1 square ft
 Common:sqyd=1 square yd
 Common:sqmi=1 square mi
+Common:sqcm=0.01 m * 0.01 m
+Common:sqmm=0.001 m * 0.001 m
 Common:section*=1 sqmi #land measure
 Common:ac,acre*=10 square chain #land measure
 
@@ -229,7 +233,7 @@ Common:cc*=1 cubic cm
 Common:cuin=1 cubic in
 Common:cuft=1 cubic ft
 Common:cuyd=1 cubic yd
-*Common,SI:stere=1 cubic m #(wood)
+Common:stere=1 cubic m #volume of wood
 Common:gal*,gallon*=231 cubic in
 Common:qt*,quart*=(1/4)gal
 Common:pt*,pint*=(1/8) gal
@@ -253,20 +257,23 @@ Common:mph=1 mi/hr
 Common:kph=1 km/hr
 
 #Acceleration
-*Common,SI:galileo*=0.01 m/s^2
+Common:galileo*=0.01 m/s^2
 
 #Pressure
-*Common,SI:torr=(101325/760)Pa
-*Common,SI:bar=100000 Pa
+*Common:torr=(101325/760)Pa
+*Common:bar=100000 Pa
+Common:mb=mbar #pressure in millibar
 Common:atm,atmosphere*=101325 Pa #standard atmospheric pressure
 Common:psi=1 lbf/square in
 Common:ksi=1000 lbf/square in
-Common:mmhg=mm*13.5951 gf/cc #mm mercury
-Common:inwc=in*1 gf/cc #inches water column
-Common:mb=mbar
+Common:mmhg,mmHg=133.3224 Pa #pressure (barometric)
+Common:inhg,inHg=mmhg * in/mm
+Common:Hg=mmhg/mm #density of mercury for pressure calculations
+Common:inwc,inWc,inH2O=248.84 Pa #inches water column at 60 degF
+Common:H2O=inwc/in #density of water for pressure calculations
 
 #Energy
-*Common,SI,Energy:ev,electronvolt*=1.60218E-19 J
+*Common,SI,Energy:eV,electronvolt*=1.60218E-19 J
 *Common,Energy:cal,calorie*=4.184 J
 *Common,Energy:Wh,wh=3600 J #watt hour
 Common,Energy:cal_food,foodcal,Cal,Calorie*=1 kcal #food package label energy
@@ -282,7 +289,7 @@ Common,Torque:ftlb*=1 ft lbf
 
 #Power
 Common:va,VA =1 W
-Common:hp,horsepower=550 ft lbf/s
+Common:hp,HP,horsepower=550 ft lbf/s
 Common:ton_refrig=200 Btu/min #cooling equipment capacity
 
 #Flow
@@ -305,7 +312,7 @@ Common:absC,absc=1 deltaC #absolute Celsius, without caution
 Common:absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Frequency
-*Common,SI,Frequency,Angular_velocity:Hz,hertz,hz=cycle/s
+*Common,SI,Frequency,Angular_velocity:Hz,hertz=cycle/s
 Common,Frequency,Angular_velocity:rpm*=rev/min
 Common,Frequency,Angular_velocity:cps,rps=cycle/s
 
@@ -320,12 +327,12 @@ Common:rvalue=1(sqft deltaF)/(Btu/hr) #thermal insulation
 Common:uvalue=1(Btu/hr)/(sqft deltaF) #inverse of Rvalue
 *Common:baud,bps=1 bit/s #DataComm
 
-Physical_constant:G,grav_const=6.67259E-11 N m^2/(kgm)^2
+Physical_constant:G,grav_const=6.67259E-11 N m^2/(kgm)^2 #gravitational constant
 Physical_constant:rm_e,mass_electron=9.10939E-31 kgm #rest mass electron
 Physical_constant:rm_p,mass_proton=1.67262E-27 kgm #rest mass proton
 Physical_constant:rm_n,mass_neutron=1.67493E-27 kgm #rest mass neutron
 
-Physical_constant:qe,electron_charge*=1.60218E-19 A s
+Physical_constant:qe,electron_charge*=1.602176634E-19 A s
 Physical_constant:mu0,permeability_vac=4 pi*1E-07 H/m
 Physical_constant:e0,permittivity_vac=8.85419E-12 F/m
 
@@ -387,7 +394,7 @@ Advanced,Pressure:pieze,pz=10000 dyne/square cm
 Advanced,Energy:therm_eec=1.05506E+08 J #European Economic Community
 Advanced,Energy:chu*=1.8 Btu #centigrade heat unit
 Advanced,Energy:thermie*=1E+06 cal #U.K.
-Advanced,Energy:rydberg*=13.6054 ev
+Advanced,Energy:rydberg*=13.6054 eV
 
 Advanced:frigorie*=50 Btu/min #cooling equipment (Europe)
 
@@ -414,20 +421,22 @@ Advanced:rhe*=10/(Pa s) #inverse dynamic viscosity
 Advanced:diopter*,dioptre*=1/m
 Advanced:kayser*=100/m
 
-Advanced,Physical_constant:plancks_const=6.62608E-34 J s
-Advanced,Physical_constant:avogadros_num=6.02214E+23/mol
-Advanced,Physical_constant:boltzmann_const=1.38066E-23 J/deltaK
+Advanced,Physical_constant:plancks_const=6.626070E-34 J s
+Advanced,Physical_constant:avogadros_num=6.02214076E+23/mol
+Advanced,Physical_constant:boltzmann_const=1.380649E-23 J/deltaK
 Advanced,Physical_constant:stef_boltz_const=5.67051E-08 W/(m^2 deltaK^4)
 Advanced,Physical_constant:rydberg_const=1.09737E+07/m
 Advanced,Physical_constant:V0,vol_gas_const=22.4141 L/mol
 Advanced,Physical_constant:R,mol_gas_const,r=8.31451 J/(mol deltaK)
+Advanced,Physical_constant:dVcs=9192631770 Hz #transition freq of caesium 133
+# Advanced,Physical_constant:Kcd=683 lm/W #luminous efficacy of light at freq = 540E12 Hz
 
 Advanced:year_sidereal=3.15582E+07 s
 Advanced:day_sidereal=8.61641E+04 s
 Advanced:hr_sidereal=(1/24)day_sidereal
 Advanced:min_sidereal=(1/60)hr_sidereal
 Advanced:sec_sidereal=(1/60)min_sidereal
-Advanced:lunour*=3543.67 s
+Advanced:lunour*=3543.67 s # 1/30 of the time between new moons (30 lunour = 1 synodic month)
 Advanced:lune*=24 lunour
 Advanced:blink*=0.864 s
 
@@ -504,25 +513,25 @@ Water:d_sea_water=1.025 gm/cc
 Water:d_water=1 gm/cc #@ 4 degC
 Water,Thermal_conductivity:tc_water=0.6 W/(m deltaK) #@ 20 degC
 Water,Viscosity:visc_water=0.001 Pa s #dynamic @ 20 degC
-Water:ss_water=1497 m/s #@ 20 degC
-Water,Specific_heat_m:shm_water=1 cal/(gm deltaK) #mean
-Water,Specific_heat_v:shv_water=shm_water*d_water
-Water,Heat_fusion_m:hfm_water=144 Btu/lbm
-Water,Heat_fusion_v:hfv_water=hfm_water*d_water
-Water,Heat_vaporization_m:hvm_water=956 Btu/lbm
-Water,Heat_vaporization_v:hvv_water=hvm_water*d_water
+Water,Speed_sound:ss_water=1497 m/s #@ 20 degC
+Water,Specific_heat_m:shm_water,sh_water=1 cal/(gm deltaK) #mean
+Water,Specific_heat_v:shv_water,sh_water=shm_water*d_water
+Water,Heat_fusion_m:hfm_water,hf_water=144 Btu/lbm
+Water,Heat_fusion_v:hfv_water,hf_water=hfm_water*d_water
+Water,Heat_vaporization_m:hvm_water,hv_water=956 Btu/lbm
+Water,Heat_vaporization_v:hvv_water,hv_water=hvm_water*d_water
 
 Ice:d_ice=0.92 gm/cc
-Ice,Specific_heat_m:shm_ice=0.47 Btu/(lbm deltaF)
-Ice,Specific_heat_v:shv_ice=shm_ice*d_ice #by volume
+Ice,Specific_heat_m:shm_ice,sh_ice=0.47 Btu/(lbm deltaF)
+Ice,Specific_heat_v:shv_ice,sh_ice=shm_ice*d_ice #by volume
 Ice,Thermal_conductivity:tc_ice=2.18 W/(m deltaC)
 
 Air:d_air=0.0012928 gm/cc #@ 1 atm, 0degC
 Air,Thermal_conductivity:tc_air=0.0242 W/(m deltaK) #@ 0 degC
 Air,Viscosity:visc_air=1.78E-05 Pa s #dynamic @ 20 degC
 Air:ss_air=1128.86 ft/s #@ 20 degC, 50% RH
-Air,Specific_heat_m:shm_air=0.24 cal/(gm deltaK) #@ 0 degC
-Air,Specific_heat_v:shv_air=shm_air*d_air #@ 1 atm, 0 degC
+Air,Specific_heat_m:shm_air,sh_air=0.24 cal/(gm deltaK) #@ 0 degC
+Air,Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
 
 Physical_property:d_aluminum=2.702 gm/cc
 Physical_property:d_copper=8.92 gm/cc
@@ -554,10 +563,10 @@ Physical_property,Specific_heat_m:shm_wood=0.65 Btu/(lbm deltaF)
 Physical_property,Specific_heat_m:shm_gasoline=0.53 Btu/(lbm deltaF)
 Physical_property,Specific_heat_m:shm_kerosene=0.48 Btu/(lbm deltaF)
 
-Physical_property,Heat_vaporization_m:hvm_gasoline=116 Btu/lbm
-Physical_property,Heat_vaporization_m:hvm_kerosene=86 Btu/lbm
-Physical_property,Heat_vaporization_m:hvm_ethanol=367 Btu/lbm
-Physical_property,Heat_vaporization_m:hvm_methanol=482 Btu/lbm
+Physical_property,Heat_vaporization_m:hvm_gasoline,hv_gasoline=116 Btu/lbm
+Physical_property,Heat_vaporization_m:hvm_kerosene,hv_kerosene=86 Btu/lbm
+Physical_property,Heat_vaporization_m:hvm_ethanol,hv_ethanol=367 Btu/lbm
+Physical_property,Heat_vaporization_m:hvm_methanol,hv_methanol=482 Btu/lbm
 
 Physical_property,Heat_fusion_m:hfm_aluminum=171 Btu/lbm
 Physical_property,Heat_fusion_m:hfm_copper=88.2 Btu/lbm
@@ -587,15 +596,15 @@ Physical_property,Thermal_conductivity:tc_diamond=554 W/(m deltaC)
 Physical_property:sun_power=3.92E+26 W #total
 Physical_property:solar_const=1340 W/m^2 #at Earths surface
 
-Physical_property,Density:d_gasoline=0.67 gm/cc #liquid
-Physical_property,Density:d_kerosene=0.819 gm/cc #liquid
-Physical_property,Density:d_propane_gas=0.00183 gm/cc #gas
-Physical_property,Density:d_propane_liq=0.5 gm/cc #liquid
-Physical_property,Density:d_oil=0.875 gm/cc #liquid
-Physical_property,Density:d_coal=0.7 gm/cc #bulk
-Physical_property,Density:d_methanol=0.810 gm/cc #liquid
-Physical_property,Density:d_ethanol=0.791 gm/cc #liquid
-Physical_property,Density:d_wood=0.55 gm/cc #solid (pine)
+Physical_property:d_gasoline=0.67 gm/cc #liquid
+Physical_property:d_kerosene=0.819 gm/cc #liquid
+Physical_property:d_propane_gas=0.00183 gm/cc #gas
+Physical_property:d_propane_liq=0.5 gm/cc #liquid
+Physical_property:d_oil=0.875 gm/cc #liquid
+Physical_property:d_coal=0.7 gm/cc #bulk
+Physical_property:d_methanol=0.810 gm/cc #liquid
+Physical_property:d_ethanol=0.791 gm/cc #liquid
+Physical_property:d_wood=0.55 gm/cc #solid (pine)
 
 Physical_property,Heat_combustion_m:hcm_gasoline=20750 Btu/lbm
 Physical_property,Heat_combustion_v:hcv_gasoline=d_gasoline*hcm_gasoline
@@ -637,25 +646,24 @@ Physical_property,Batteries:e_nicd_c=5184 J
 Physical_property,Batteries:e_nicd_d=17280 J
 Physical_property,Batteries:e_nicd_n=648 J
 Physical_property,Batteries:e_nicd_9v=2419 J
+
+# a = 1 A
+# n = 1 N
+# j = 1 J
+# w = 1 W
+# pa = 1 Pa
+# v = 1 V
+# f = 1 F
+# h = 1 H
+# wb = 1 Wb
+
+# hz = 1 Hz
+# va = 1 VA
+# ev = 1 eV
+
 `;
 
 var database_tests = `
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
     1|= 1
     1|= 1
     1|= 1
