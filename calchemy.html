@@ -99,7 +99,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.08h</p>
+v1.08i</p>
 </td>
 </tr>
 </table>
@@ -108,14 +108,14 @@ v1.08h</p>
 // Coverage test:
 //   reload, <Delete All>, <Test>
 //   1, <Clear>, 11, <Enter>, 2, <Enter>
-//   <Find Units>, Water, abc, visc_water, <Enter>
-//   f, <Find Units>, furlong, <Enter>
+//   <Find Units>, Water, abc, <Unit Details>, visc_water, <Enter>
+//   f, <Find Units>, furlong, <Unit Details>, <Enter>
 //   <Delete> -- all but numbers
 //   <Up-arrow>, <Up-arrow>, <Up-arrow>, <Up-arrow>, <Enter>
 //   <Down-arrow>, <Enter>
 //   <Copy>, <Paste>
 //   <Example>, <Enter>
-//   <Help>, <Delete>
+//   <Help>, 3 meter ? inch, <Enter>, <Delete>, <Delete>
 // 97.6%
 
 // XXX -- for IE, replace template strings with concatenation, replace .includes with .indexOf != -1, class likely has to be removed, too
@@ -2105,7 +2105,7 @@ function Delete(tag)
     }
 
     // reset url
-    window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
 
     cursor = 0;
     Scroll(true);
@@ -2209,7 +2209,7 @@ function Body()
             }
 
             // reset url
-            window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+            window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
         }
 
         document.getElementById("status").innerHTML = "database loaded";
@@ -2353,8 +2353,8 @@ function Enter()
             }
         }
 
-        if (success) {
-            var url = window.location.href.replace(/[?].*/, "") + '?' + window.escape(line);
+        if (success && ! testing) {
+            var url = window.location.href.replace(/[?#].*/, "") + '?' + window.escape(line);
             window.history.pushState(line, line, url);
         }
     } catch (error) {
@@ -2403,7 +2403,7 @@ function UpDown(up)
 function Clear()
 {
     // reset url
-    window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
 
     document.getElementById("equation").value = "";
     Scroll();
@@ -3030,8 +3030,7 @@ function TestReal()
 }
 
 var help =`
-<div id='tocdiv'>
-<h1><a href=#toc>Calchemy&trade; -- Math Magic</a></h1>
+<h1 id='toc'>Calchemy&trade; -- Math Magic</h1>
 <ul>
 <li><a href=#overview>Overview</a>
 <ul>
@@ -3042,6 +3041,7 @@ var help =`
 <li><a href=#overload>Overloaded Units</a>
 <li><a href=#free>Free Units</a>
 <li><a href=#plural>Pluralized Units</a>
+</ul>
 </ul>
 <li><a href=#syntax>Equation Syntax</a></li>
 <li><a href=#definition>Definition Syntax</a></li>
@@ -3058,15 +3058,14 @@ var help =`
 <li><a href=#cautions>Cautions</a></li>
 <li><a href=#info>For More Information</a></li>
 </ul>
-</div>
 
-<a name=overview><h1>Overview</h1></a>
+<h1 id='overview'>Overview</h1>
 <p>Calchemy&trade; is an exciting new tool which allows you to perform dimensional arithmetic, analysis, and conversions using any standard units.
 Calchemy "understands" the relationships between these units and performs conversions for you automatically as needed.
 It also checks your equations to ensure that they are always dimensionally correct.
 <p>Always double-check your answers!
 <p>The following examples provide a brief introduction to some of Calchemy's features.
-<a name=basic><h2>Basic Features</h2></a>
+<h2 id='basic'>Basic Features</h2>
 <p>To perform a simple unit conversion, such as 3 meters converted to inches, you could enter the equation (or click/tap on the link):
 <p><a href="javascript:Hyperlink('3 meter ? inch')">3 meter ? inch</a>
 <p>Calchemy would respond:
@@ -3086,7 +3085,7 @@ Calchemy would respond:
 <p><a href="javascript:Hyperlink('2+3*5')">2+3*5</a>
 <p>Calchemy would respond with the algebraically correct answer:
 <p>= 17
-<a name=advanced><h2>Advanced Features</h2></a>
+<h2 id='advanced'>Advanced Features</h2>
 <p>You could also enter the original equation in the following less explicit form:
 <p><a href="javascript:Hyperlink('2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower')">2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower</a>
 <p>Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct,
@@ -3094,24 +3093,24 @@ and then express the final result in horsepower.
 Calchemy would again respond:
 <p>= 7.27273 horsepower
 <p>This example illustrates the following features:
-<a name=solve><h3>Solve By Dimensional Analysis</h3></a>
+<h3 id='solve'>Solve By Dimensional Analysis</h3>
 <p>The "<b>;</b>" operator tells Calchemy to use dimensional analysis to determine whether its operands should be in the numerator or the denominator of the equation.
 In this example, Calchemy placed the first three operands in the numerator and the last operand in the denominator.
 This allows you to be less involved with the actual mechanics of the equations.
-<a name=overload><h3>Overloaded Units</h3></a>
+<h3 id='overload'>Overloaded Units</h3>
 <p>The "lb" unit is an overloaded unit, meaning that it has more than one common definition.
 It is primarily defined as "lbm" (pounds mass) and secondarily defined as "lbf" (pounds force).
 Calchemy automatically uses the appropriate definition, again based on dimensional analysis.
 In this example, Calchemy used "lbf".  This allows you to naturally use units with multiple common definitions.
-<a name=free><h3>Free Units</h3></a>
+<h3 id='free'>Free Units</h3>
 <p>The "stories" and "story" units are called free units.
 Free units are units which are not actually understood by Calchemy, except in that they are new and unique dimensions which must "cancel out" in the end.
 This allows you to enter equations in a more natural format.
-<a name=plural><h3>Pluralized Units</h3></a>
+<h3 id='plural'>Pluralized Units</h3>
 <p>The "stories" and "story" units also illustrate that Calchemy understands basic pluralization rules for units.
 This, again, allows you to enter equations in a more natural format.
 
-<a name=syntax><h1>Equation Syntax</h1></a>
+<h1 id='syntax'>Equation Syntax</h1>
 <p>Basic Calchemy equations are of the form:
 <p><b>expression ? unit</b>
 <p>Where <b>expression</b> is the arithmetic expression you want evaluated, and <b>unit</b> is the unit you want the result expressed in.
@@ -3154,7 +3153,7 @@ The following table illustrates these rules:
 <p>You can enter a comment into your result history by preceding it with a pound sign, like:
 <p><b># comment...</b>
 
-<a name=definition><h1>Definition Syntax</h1></a>
+<h1 id='definition'>Definition Syntax</h1>
 <p>Basic Calchemy definitions are of the form:
 <p><b>name = expression</b>
 <p>Where <b>name</b> is the name of the unit whose definition is to be added and <b>expression</b> is the arithmetic expression you want evaluated.
@@ -3179,8 +3178,8 @@ The following table illustrates these rules:
 <p>If you want to be able to refer to your newly defined unit in the plural form, define its singular as:
 <p><b>name* = expression</b>
 
-<a name=ui><h1>User Interface</h1></a>
-<a name=history><h2>History List</h2></a>
+<h1 id='ui'>User Interface</h1>
+<h2 id='history'>History List</h2>
 <p>The History List is at the top of the user interface and grows to include all your calculated equations and results;
 initially, the history list contains only the words, "database loaded".
 <p>Equations and results in the history list are hyperlinks which you can click/tap to re-enter the equation or result into the Equation Line, as a form of history recall.
@@ -3188,13 +3187,13 @@ initially, the history list contains only the words, "database loaded".
 <p>Each entry in the history list can be deleted by clicking/tapping its &lt;Delete&gt; button;
 all entries in the history list can be deleted by clicking/tapping the &lt;Delete All&gt; button at the top of the history list.
 <p>N.B. The history list is cleared when you clear your browser cookies and other site data.
-<a name=line><h2>Equation Line</h2></a>
+<h2 id='line'>Equation Line</h2>
 <p>The Equation Line is below the history list and above the buttons, and is where you enter unit equations and unit definitions;
 initially, the equation line contains the words, "enter expression ? unit".
 <p>When you are done entering a unit equation or unit definition, press the &lt;Enter&gt; key or click/tap the &lt;Enter&gt; button to evaluate the equation or definition,
 and transfer it and its results to the History List.
 <p>You can use the &lt;Up Arrow&gt; and &lt;Down Arrow&gt; keys to recall previous equations and results from the history list.
-<a name=buttons><h2>Buttons</h2></a>
+<h2 id='buttons'>Buttons</h2>
 The following Buttons are at the bottom of the user interface:
 <dl>
 <dt>&lt;Enter&gt;</dt><dd>Evaluate the equation or definition in the equation line.</dd>
@@ -3211,7 +3210,7 @@ click/tap a unit name to enter its name into the equation line at the cursor.</d
 <dt>&lt;Help&gt;</dt><dd>Display this internal online help.</dd>
 </dl>
 
-<a name=examples><h1>Examples</h1></a>
+<h1 id='examples'>Examples</h1>
 <p>What is the braking power required to decelerate a 2000 lbm car at 1G at 60 mph?
 <p><a href="javascript:Hyperlink('2000 lbm * grav * 60 mph ? hp')">2000 lbm * grav * 60 mph ? hp</a>
 <br>= 320 hp
@@ -3225,14 +3224,14 @@ click/tap a unit name to enter its name into the equation line at the cursor.</d
 <p><a href="javascript:Hyperlink('40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour')">40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour</a>
 <br>= 0.792813 hour
 <p>What prop pitch is required for a boat to do 40 knots at 2500 rpm, assuming 10% slip?
-<p><a href="javascript:Hyperlink('40 knot / (2500 rpm * 90%) ? inch/rev')">40 knot / (2500 rpm * 90%) ? inch/rev</a>
+<p><a href="javascript:Hyperlink('40 knot / (2500 rpm * 90%25) ? inch/rev')">40 knot / (2500 rpm * 90%) ? inch/rev</a>
 <br>= 21.604 inch/rev
 <p>What is the frequency of an LC oscillator?
 <p><a href="javascript:Hyperlink('1/sqrt(23mH; 10uF)?Hz')">1/sqrt(23mH; 10uF)?Hz</a>
 <br>= 331.861 Hz
 <p>How large of a solar collector do you need to heat a house with 20,000 Btu/hr assuming 80% efficiency?
 (Solar insolation for Denver in February is 14 megajoules/day/square meter.)
-<p><a href="javascript:Hyperlink('20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2')">20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2</a>
+<p><a href="javascript:Hyperlink('20000 btu/hour; 80%25 * 14 megajoules/day/square meter ? ft^2')">20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2</a>
 <br>= 486.708 ft^2
 <p>How many watts is a microwave oven putting out if it can bring 3/4 cup of water from 52 degrees F to a boil in 2 minutes and 4 seconds?
 <p><a href="javascript:Hyperlink('(3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt')">(3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt</a>
@@ -3241,7 +3240,7 @@ click/tap a unit name to enter its name into the equation line at the cursor.</d
 <p><a href="javascript:Hyperlink('asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees')">asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees</a>
 <br>= 10.4095 degrees
 
-<a name=database><h1>Database Notes</h1></a>
+<h1 id='database'>Database Notes</h1>
 <p>Units in the Calchemy database are case sensitive, and must be used with their proper case in equations.
 <p>The &lt;Find Units&gt; button allows you to also find units that differ by case, since some units have proper definitions whose case may be surprising (like Hz and Btu).
 <p>The Calchemy database contains a number of physical properties grouped by a short prefix, as follows:
@@ -3266,7 +3265,7 @@ click/tap a unit name to enter its name into the equation line at the cursor.</d
 <tr><td>..._v</td><td>... by volume</td></tr>
 </table>
 
-<a name=cautions><h1>Cautions</h1></a>
+<h1 id='cautions'>Cautions</h1>
 <p>Calchemy makes problem solving so easy that it is tempting to assume that any answer it gives you is correct.
 However, as with all calculators, the answer it gives you is only as good as the data you give it.
 <p>Calchemy ensures that the data you give it is dimensionally consistent. 
@@ -3305,7 +3304,7 @@ Similarly, dimensions such as Pressure and Latent Heat by Volume are surprisingl
 <p>* Note that database physical properties are also limited by the fact that they are typically an average over a range of assumptions.
 <p>Again, always double-check your answers!
 
-<a name=info><h1>For More Information</h1></a>
+<h1 id='info'>For More Information</h1>
 <p>Visit us on the web at: <a href=http://www.calchemy.com target=_blank>http://www.calchemy.com</a>
 `;
 
@@ -3315,7 +3314,7 @@ function Help()
     // append a deletable chunk to the results list with the help, replacing any existing chunk so TOC hyperlinks work
     Delete("help");
     document.getElementById("results").innerHTML += Chunk(help, "help");
-    document.getElementById('tocdiv').scrollIntoView();
+    document.getElementById('toc').scrollIntoView();
     Scroll(true);
 }
 
