@@ -332,16 +332,16 @@ Common:lightsecond*=1 speed_of_light*s
 #Mass
 Common:lbm,poundm,lb*,pound*=453.592 gm
 Common:ozm,ouncem,oz*,ounce*=(1/16) lbm
-Common:tonm,ton*=2000 lbm
 Common:slug*=14593.9 gm
 Common:grain*=(1/7000)lbm
 Common:dwt,pennyweight=24 grain #troy
 Common:cwt,hundredweight=100 lbm #avoirdupois
-Common:ton_long=2240 lbm #imperial (U.K.)
-*Common,SI:tonne*,ton_metric=1E+06 gm
-*Common,SI:ct,carat*=200 mgm #mass of gems
+Common:ct,carat*=200 mgm #mass of gems
 *Common,Physical_constant:amu,dalton*=1.66054E-24 gm #unified atomic mass unit
-
+Common:tonm,ton*=2000 lbm
+Common:tonm_long,ton_long=2240 lbm #imperial (U.K.)
+*Common,SI:tonnem,tonm_metric,tonne*,ton_metric=1E+06 gm # metric ton
+ 
 #Force
 Common:pdl,poundal*=1 ft lbm/s^2
 Common:kip*=1000 lbm*grav
@@ -351,6 +351,8 @@ Common:pond*=1 gm*grav
 Common:lbf,poundf,lb*,pound*=1 lbm*grav
 Common:ozf,ouncef,oz*,ounce*=1 ozm*grav
 Common:tonf,ton*=1 tonm*grav
+Common:tonf_long,ton_long=2240 lbm*grav #imperial (U.K.)
+*Common,SI:tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gm*grav # metric ton
 
 #Area
 *Common,SI:are=100 square m
@@ -2902,7 +2904,7 @@ var tests =`
     TEST details ft | === unit details ft ===,Common:ft,foot,feet=12 in [Length]
     TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix:k,kilo=1E+03*Common:byte*,Byte*,B,char*=8 bit #computer storage [Storage]
     TEST byname lb | === units by name lb ===,lb,lbf,lbm
-    TEST byname ft | === units by name ft ===,ft, fT, ftesla, ftlb, fton_metric, ftonne, ftorr
+    TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
     TEST byname W | === units by name W ===,W,watt,Wb,weber,week,wh,Wh,wk
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb
