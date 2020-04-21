@@ -99,7 +99,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.08f</p>
+v1.08g</p>
 </td>
 </tr>
 </table>
@@ -1281,11 +1281,11 @@ function Value(token)
 
 // operator precedences
 var prec = {
-    '~':   2,  // left-to-right associativity (prefixes)
-    '>':   1,  // right-to-left associativity (unary +)
-    '<':   1,  // right-to-left associativity (unary -)
+    '~':   2,  // left-to-right associativity  (prefix multiplication)
+    '>':   1,  // right-to-left associativity  (unary +)
+    '<':   1,  // right-to-left associativity  (unary -)
     '^':   0,  // right-to-left associativity
-    ' ':  -1,  // left-to-right associativity (implied)
+    ' ':  -1,  // left-to-right associativity  (implied multiplication)
     '*':  -2,  // left-to-right associativity
     '/':  -2,  // left-to-right associativity
     '+':  -3,  // left-to-right associativity
@@ -2103,6 +2103,10 @@ function Delete(tag)
             document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
         }
     }
+
+    // reset url
+    window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+
     cursor = 0;
     Scroll(true);
 }
@@ -2395,6 +2399,9 @@ function UpDown(up)
 // the user clicked the Clear button; clear the user equation
 function Clear()
 {
+    // reset url
+    window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+
     document.getElementById("equation").value = "";
     Scroll();
 }
