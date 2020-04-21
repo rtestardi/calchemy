@@ -656,7 +656,6 @@ Physical_property,Batteries:e_nicd_9v=2419 J
 # f = 1 F
 # h = 1 H
 # wb = 1 Wb
-
 # hz = 1 Hz
 # va = 1 VA
 # ev = 1 eV
