@@ -2105,7 +2105,7 @@ function Delete(tag)
     }
 
     // reset url
-    window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
 
     cursor = 0;
     Scroll(true);
@@ -2209,7 +2209,7 @@ function Body()
             }
 
             // reset url
-            window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+            window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
         }
 
         document.getElementById("status").innerHTML = "database loaded";
@@ -2354,7 +2354,7 @@ function Enter()
         }
 
         if (success) {
-            var url = window.location.href.replace(/[?].*/, "") + '?' + window.escape(line);
+            var url = window.location.href.replace(/[?#].*/, "") + '?' + window.escape(line);
             window.history.pushState(line, line, url);
         }
     } catch (error) {
@@ -2403,7 +2403,7 @@ function UpDown(up)
 function Clear()
 {
     // reset url
-    window.history.pushState("", "", window.location.href.replace(/[?].*/, ""));
+    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
 
     document.getElementById("equation").value = "";
     Scroll();
