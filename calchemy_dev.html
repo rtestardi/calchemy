@@ -1,0 +1,3349 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Calchemy (tm); Math Magic; http://www.calchemy.com -->
+<!-- Copyright (c) 1988-2020 Ken Burgess and Rich Testardi. -->
+<!-- top, right, bottom, left; max line length 180 -->
+
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<title>Calchemy&trade; -- Math Magic</title>
+<style>
+a { text-decoration: none; }
+#results { line-height: 1.4; }
+#equation { width: 96%; font-size:120%; }
+#copyright { font-size:75%; padding: 0px; }
+html,button,input { font: 36px Arial, Helvetica, sans-serif; padding: 15px; margin: 15px 0px 15px 0px; }
+@media(min-width:80em){ html,button,input { font: 24px Arial, Helvetica, sans-serif; padding: 10px; margin: 10px 0px 10px 0px; } }
+@supports(-webkit-touch-callout:none) { button,input { -webkit-appearance: none; border-radius: 2px; } }
+img { padding: 0px; margin: 10px 10px 0px 0px; }
+table,tr,td { margin: 0px; padding: 0px; }
+table.table1,table.table2 { width: 100%; }
+hr { height: 2px; }
+body,html { margin: 0px; }
+</style>
+</head>
+
+<body onload='Body()'>
+
+<h1>Calchemy&trade; -- Math Magic</h1>
+<table class='table1'><tr>
+<td><p id='status'>loading database ...</p></td>
+<td style='text-align: right'><button id='all' type='button' style='margin: 0px;' onclick="Delete('all')">Delete All</button></td>
+</tr></table>
+<p id='results'></p>
+<input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false'/>
+<br>
+<button id='enter' type='button' onclick="Enter()">Enter</button>
+<button type='button' onclick="Clear()">Clear</button>
+<button type='button' onclick="Units()">Find Units</button>
+<button type='button' onclick="Details()">Unit Details</button>
+<button type='button' onclick="Copy()">Copy</button>
+<button type='button' onclick="Paste()">Paste</button>
+<button type='button' onclick="Example()">Example</button>
+<button type='button' onclick="Test()">Test</button>
+<button type='button' onclick="Help()">Help</button>
+<br>
+<table class='table2' id='bottom'>
+<tr>
+<td>
+<a href='http://www.calchemy.com' target='_blank'><img alt='Calchemy icon' src='data:image/jpeg;base64,
+R0lGODlhGwFFAPcBAAAAAAAA//8AAP8A/wD/AAD/////AP////////Ly8ubm5tnZ2czMzL+/v7Ozs6amppmZmYyMjICAgHNzc2ZmZllZWU1NTUBAQDMzMyYmJhoaGg0NDQAAAEAA/00A/1kA/2YA/3MA/4AA/4AA
+8oAA5oAA2YAAzIAAv4AAs4AApoAAmYAAjIAAgIAAc4AAZoAAWYAATYAAQIAA/5kA/7MA/8wA/+YA//8A//8A5v8AzP8As/8Amf8AgP8AZv8ATf8AM/8AGv8AAP8AAOYAAMwAALMAAJkAAAAAgAAAmQAAswAAzAAA
+5gAA/wAa/wAz/wBN/wBm/wCA/wCZ/wCz/wDM/wDm/wD//xr//zP//03//2b//4D//wBAAACAAAC/AAD/AAD/GgD/MwD/TQD/ZgD/gBr/gDP/gE3/gGb/gID/gID/ZoD/TYD/M4D/GoD/AED/AP//5v//zP//s///
+mf//gP//Zv//Tf//M///Gv//AOb/AMz/ALP/AJn/AID/AGb/AE3/ADP/ABr/AP+AAP+AGv+AM/+ATf+AZv+AgP+Amf+As/+AzP+A5v+A/+aA/8yA/7OA/5mA/4CA/2aA/02A/zOA/xqA/wCA/wAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAEALAAAAAAbAUUAQAj/AAMIHEiwoMGDCBMqXMiwocOHECNKnEixosWLGDMWfMCxYwYMDBos
+EElypMmSKE+eZHCho8sHGmPKnEmzpk2FFhg8WKBAwc4FDIIuqBBBjtGjSI9OmMCgAoSeUKNK7ZlAQVUECRBodbqAgoSkRx1oHYtVa1asChhAaGCUwQKyZeMiSAvBgdGRcM+exbqA49EGcMnqXeAgwgKjDvaaXax1
+JAQGRhsoCMy4aoO6dxlQlpuA8IOwgRXP7VsUbNIHOReoVs3AgYK+DSZotAB0te2RTSm4hMCR9wPfFiY0cEp1suiyVatOVcCVQoWOvnsnYPDawuTAETZs0A0hwuu3CCBk/6hQQcMDrQ3+bWjZ/a1YBAsygB+7QMOG
+DBDyM0gglgKEzRRsoEF+vCFAHXwXUBffeeEJKMFv3r2mFQW6uTZWA9qxZ1haWk3wAAVNPVCBVhfcR2AD/JElAQbXaZWBgNG91JsECdrm1o2qyRYAAKb16CNYFqy1mn8/HiXBBENBkIByyynH2FhZMQdBVxD0OGMF
+F7yo3ZbaqVelHA38JgEFWdq3pXpbTnAXbxNQYEEGZp65gXoXJCCHT925iUGcXGqXgQJyJMBbBBNYcAGf6iWqAWRgPhCBBFjCyWWi2lFwF0cR6MmnnHXemV+mFuzZJ5d/HgUAQqkBxVJCPBbp6lFdIf/JmmpOvXpk
+kqJltWRxy0XV3JevBivssMQWa+yxyA576kGprgbBBTXRZqNbqolE1KtLLRBkr9z26hQDXiXbYwUTRJCgHNTK8Sxq0iZ12G1AybEaUg9g8Fltd6kmrwUSRFCBvvkehpRtAcvxwAUOUGBXvvIyCqu+boFJwWoOq/ZA
+BmyJCxZqQbklkser6YjRcy/xZrKIwP54ZGv/dutyTwcHFa7GNNds8804G+tAkPn95jOBqN30UAQRtHYZTwo4IOPSTMsoElTnoRib0FRXbfXVWEMUgWsjOYB0Wg2ELfbYZJc99tevieWxyFm37fbbcFvQdEct2Spc
+U16/zO0CkMr//FXOgAcu+ODFast0BJiybVEFJbEmgWYhXevqUsM91aRV17WIHObN/Q1WYjxh5SYEZIInogWloajaWApkUOeFFQQXmXuNyQfXUBZU0JZm7zmAwQQ0RnBWBBbQJq9YoS9wgXH2aiXiBRlLJiECEzi1
+FuwXWIouT5ohwK9ZF1jQ4QW6N4zAe8M1VoGuzl0gsI8cT1nVTje6pWOrNKP206y1ukpoA7oRDFaY1KSrLAkBv+qRWCRDn7DtJTsb+NJ+Vhc61k3GAXNSk7wueCGxgYcBGviHBez0mgQAxiwh6d6E7gMoDh2IM2OB
+wD8WFZnvNCZsQbmQerSnGg7Bhy9ARECJ/zpVwhNqZXpmwQALTYUqarFGaRkwCP5s5p/aUMluSYLKruQCpQEuJ4GmacCbNjWqf8jHKMwR1aj6RMNAUUCNcqKUej5jFBppaY1zmtP6EFOmNcpxeXcJFRnRtKUzGmUC
+h/JjHr10FHORcVIZRMqyDJKqkEDLJtJyYm2EQi4HNMCTnvxkKMNGoaGcZ0kE1JuvpkQhUH7yla6MJSxnKcta0vKWtswlLnepy17y8pe+DCYwd/nKsD3LY0Kh1o0kMJtZPSAxrQnJUEpTJMoRR5XdChK4PFezBTxG
+AW+yjgH0V5TcyQGRFcAAeRiAgQUYwAAXiMCiKqCbB0ggY5kaSgMMoP88CiHFKZmS1wUggAGTfckBF3hnAy4gAQu80wBhSxD0IPCm/AzUUXQ8krwsxZKDhUt5/lIoxnKGmgYI5QH8ScBORKK4ty2tkvACiklBJhKZ
+CgUlJJMR3HbK05769KdADapQh3oT7xgNm0hdziepw0yiOvWpUGWIYbz2tGchzmxYzWqYzPWAnhzNNS2NqljHWhPymPWsaAWAWtfK1rVSgCm4cUB3ICAButq1rni9K12fuUkKtfWvgA2sYAdL2MIa9rCITaxiF8vY
+4jn2sZBtZigfoEmRUICaP7JmhJKKueQEqSvcBItWxeawv4w2bGAhzGnfl5nViva0pW0LbMESEtf/DmyUWWUt/Jq1mt/oZAFhnUhqHOAAZaawKZj1kTUt163kaA4u2rysAtHzXPr8RjeRyUoFA4MnCfxNJPCZT17k
+qlHzlXAzasnn8fhynMbkhwLRm8x24aKA/ACvLW95YWjIq0GgjKa9JqTrxIrEMVVRTJTAnQ3IessTykqumsK5ZlQMeJxdYa4nzUnuXwzUk+WR5Tri0UDqOjMf/3j3QnDSHnjfEx/xIkgDF9jd+RBwYihdZwIaOCNh
+4CPfloQpAwwSz0jB1BPwTOA/cGlAivHrQzJppqEjQiCMMzNj5xnGOmaxQI51u7GcmFQBn6SYW5rK2LYayj9OrF9XskehNru5/83ZM5yu8uLF5kppzW9u8wQ6MxlzYe6tWoEgmylgQ+WBZ6EXnBMGKPSvKsdHhVoB
+oRnpybgUKQBhWREjeAKkgTb/50DaYl6QtUNPChV5QgwiC4bu02YUdW8CCqBABjwZ5RJ1upVV1ooDopxEAbl5kgWpkRVX4wBEDmSKNMuWTK/oPyQ9xyzKSWVxopSXKhLJNFTtKgw7cwFGgslib5mzrsCpnf66RX5d
+jNIE6ERCkTwAReIe4APskwE7mXAkKI23VZQ8Q0YFJUzGQQ5alPgPHrqFsgLXVQLWvR4SBuWZAZ9zfekNKKMAmyAwVTJCkE2zXc/q2kW6lX8KGPBtOxeMYP8hFJnuqMgvNWBMfZRTnzTIgDGlc1NybPid2oSlR56p
+VAo4UqTKuMg2xmbliMrjlnjIczhCkt13srnTy1gqizeRNQdjFc4OVlO3gFxlSPKPAUNTZ2ljmJUpA4vZpdKjlxnFTkhZuxZN8zK4J0XuUGm7y/TeXLq7zO5MZFaaIZAQDZSZrRZo5axY05SPXODxGLgABgwl+cdn
+AElyS7dzsdkc11Ue8o//vOgjD/rSjz70pD+96VPPetS7fvWvV73sWw/72s8+9rS/ve0PhRBhWzEoEKheTGhTU3hZS8OmudVzOPtFVobWZlwmnPSnH7idzdQk1PpYcCUiLYvNj7JueXD/Zie2LeZL5Vszu9mzGHcw
+B3+KAcUTD3D/FSR61jwDEhAxRcNUNzn4S1v3RFHy5DXyUgH9ggFhYgELVTSlhC7xBC72MlDbdDAIRTyEgR/2smt/Yy4vB2TPglBOBgGM81kUoAEZczMF9jH29BjV0lQjM2wqcXzYEmHMZX49EV3PpzEHIzsNFU+O
+IQcfxX45ASaPRVGqASn9oy5foS3Foxbc5CGOYhQgcjogchTskjveRB4SoBogAiLAZSl9UTzaoy5FwTfoojBeUSVDEYa5M4RblxM3JVfFJRQuODJodYcVcFjZcnDe1Yd9CDyAeCR/KIj35DFvdXiImIiKuIiM2IiF
+/wVZkOhYPuUdYtMTzlF8MUVTw4ZMNzIcsPYavOE1dUhWpFiKO2UYHmSD2EQYSpNgpviKsIg19TQ3tFiLtGgBsZiLulgThkEdraGKqiQZ3uSKu1iMxkgRD6Jt0nM6odeMzviM0Jg90pM0KAJm23eM2JiNBMERKQQU
+AxVT4BiOt1FgOqWN5niOA6EB6riOnSaO7iiOJciO64iO9EhUOdU05DGDqpEwzhE7/tiG/xiQuUNPcAVa1HeQCJmQySI3tEgBzQQUc7hJtIJ8YJEtIqiKS7IAGOA10qWQHvmRIEkvCiiRQeFJOaJg5/Fw3ciFFJkU
+2SJh2IRKZIF+OXg8nXWTyv/xg5eyAM7Vk5ijFu9TXNOGk3ThMMQ1lD7ZFwtjk0TpXH2xE1bIEz65ea0YlU15YZdxgkI5lRemE0vpIzvzb0JBXCjybtcIEf/ybn0hFLbRkRCWRXojk6FhbRSJUnPRGq4kSg8XAS53
+HUZTTGT5SUQzO40RSoZJXK3RHujSPWBGXIEZmHT1LifUmKIUNoHpKPGFFXj5mK8kJvhVmI5pmcVlTIaxmEdUmY7pSYn5OEUSlrXxMaP5GGf5EP9CMTL1TMXllpkVdjU4FXJJdlWBfhQJOuBRX/2iQqQTJDUEZmRR
+F6pWPd81GQxSX8/1hQO2OmKRad5ll1iRKf8iL4DBQF3/cUSMoxXBxziIYUPn04fvcT7OoT1ugQAntBNjwRFzMSYDlkPZaVL1ORlB5xyx9Tle9m6PgSMnmRG1WS1A0VVh8yEtiRQv2ZtUcUBXoXlRAk7OZyXTYRWm
+hhWkkxUENSCIQWL1GXlGtFAZoGLSiR4ZAGnwEU75MmPwd0JD8WqSJ5kc9qJR0jzhkSUZ4xrTE0BJliUqxpPdgyUXpAFRVgEZYAEy9h4JkBPUM51MChKtqYCPESYsqEyz6RD/kn2qwo1d8aBK4WzMtUUV5kWphINW
+wmPK017y9A+lwTXgYWj1ch0OYB8qigAMwgAtChd+uh5UhiJBAiD3gaOglgGKah+j/2aCy2lk5DMxY5GnBYdf06EVYyIBCcBQFIAVFiCo4Cmf9EEeqXZpZhSgSWF9T0lVvzeKFQEAIKOJXDgn/4Amttol5YYrJSdA
+qNQtzUEpi7QB4kMdzGFEYJYVEhCsGECiUVoBSpN46MFGb8EgSuaiINQnYiEWItIiLxQghPQfyTNCc8Gj2UFIfzI9HhIYGERIGmCkmKotXpEwnoqtucannco6GJAotVqrvdcxJOmNDrkjGpMWbTIlOOJ1adcjhGJK
+uVJnvbJFCPQYuokUgHEgQRc+4XMWyfoPEkSidEUWCiOf5Rajfeo65IFk9SGsaEQ78hk7oZJqAVJvgQI58nWvxf8aaAIiMMRqZOPxbLpWKflyqTQmKO0EQPMaY3fCO6p2r0eUr1UnBxc3EAlyU10jawXBccmCGqxK
+KwlrGgubeciBd8nBRcKpQNPhYnCRrBHUFq9hRJSBQduRLz6xGY1hH06atHNLt1FqRoCSIgxEtxOQs2ybQ3QLAUArLzzRnpShAEqEtByiuNzltBUHtb13fV4XRVKEMyzhNazxdT5CKCHik76JSu3lPRI7nIJZPYaC
+Aaz7EXfkcsRFKPQEeq5DcHGLLp4UfG6yupHHultytz6xVRRCu2WiHkBHWY7SJsVTu49nJu3aFsR1npQXebW7dHeRuzZHvGrkuJ70AMobKqz/W3khJCCTG7UCAYc3ckkHgbXiAjzY57kKyxROwWe+2RMDRGeedbpW
+cp6JlHPfihiPgnTAGqw8FMCSh6uE9LtrIrtw4r95JLOCwr/2McBb8rxg8iiRMr4JnEfwKWChgsBKlyFoRDTO0cDBSilPa74BgL59ob6ZizNHUlMA1LUpR4NSgabAuab6axoiWLwnHMILA0AHHKw//DddcXNEPCra
+owDVsycObK5wB3MmTMHaYcG7liUgHEcbYMSa8sN9Uj4LJ0hPvCWdYnWCd1IufLU4c2n0AxTw67U2jDlctBgWthzRRZGCkiWKusd8rKjoaYVv0seC3BJ2B1wYIMh9PFCT/8s3iCzIA3YUFNXIfFwBpYUakrzH/RcZ
+snbJriM8RxFrnOw6EjC5lHvG6at10PdZMvzGNTwcp5TDvNIrdxyStFzLOaPCLAwUuLi+cGdvgfLLvhzMwBwouyYc2MeFSjLMwpwAoOuzgpEceBcVbLrMylzN1HzN1pzN2LzN2tzN3PzN3hzO4IzNKjy1uOEYhjIT
+APBMsTps8SiP8igg/yC/r7x5SRVd8JzP+rzP/NzP/vzPAB3QAj3QBF3QAqKOApIgxadMC5rGFdF9VOtEE9sjKzO/wIihBmnLGr3RN4NQmsR4IfOQKVF8E20aSwEuEsp8nZMz8DdQPDxX+UOmayFX4v+yAIZRmsZi
+0z7CAEiSM64JjvbTTCZlUpgi0TXpkmZ60RidfjazfF5DUL+DonuSY2AIGd0hRuoUTx9RGJFXGsqjpC09Ua7DFvI0HhoQeZ+xM+TjMKhBPmkZefB1KJI3M6hzMHFmFOLxeIiEME0xAZ5nF/VSJidoMz9tmwbWpQ0B
+hxDZQ5yb0SGX1BdNgkedLLGxaBXwTiLyG3KAhS2RTgiFUO4ETxLQom8SO/iB14RGye+UeOVjFNYDhkHSpFjiPnKwawrFUBWgAO80EgliATvzIfGkAcVDPkZBKBulGgiTPUvIqbrdAAjo0yMJkWBGGNTiqhSRGh7D
+EY3t2LsJl8D/uNI3A1IItS47UxdVko8OgH8lWCXBERv4Jx/18kkKiNpACCLEMyb/9F77IkZMMTMgJcQLJZv35D4KyE4tqjxroZz+pybAJVAgWIbQE08A5Kg489OtQRh94TgK9poxxdTKhSRLcdHKsxMeDn2wUjgo
+TizRp1vRZxotHiwvrjGFbdhAYd0TcY9M44YQ5hb+kmc+/uOM9hMlztFEXuTCwpBzs8s8JcgaAFcf869ADY85Jsj1WOXGiCQd0cLghxsdw5bw4uWGvVD7YzE2buVmPlaI45+cm07DbSiUF4mOFT6RGGc94UleVeZn
+nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
+</td>
+<td>
+<p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
+v1.08i</p>
+</td>
+</tr>
+</table>
+
+<script>
+// Coverage test:
+//   reload, <Delete All>, <Test>
+//   1, <Clear>, 11, <Enter>, 2, <Enter>
+//   <Find Units>, Water, abc, <Unit Details>, visc_water, <Enter>
+//   f, <Find Units>, furlong, <Unit Details>, <Enter>
+//   <Delete> -- all but numbers
+//   <Up-arrow>, <Up-arrow>, <Up-arrow>, <Up-arrow>, <Enter>
+//   <Down-arrow>, <Enter>
+//   <Copy>, <Paste>
+//   <Example>, <Enter>
+//   <Help>, 3 meter ? inch, <Enter>, <Delete>, <Delete>
+// 97.6%
+
+// XXX -- for IE, replace template strings with concatenation, replace .includes with .indexOf != -1, class likely has to be removed, too
+
+// database format:
+//
+//   ... # <comment>  -- optional comment (will be shown in unit definition details)
+//   CATEGORY <name>  -- define category name (categories must be defined before use)
+//   BASE <name>  -- define base unit name (cannot be undefined)
+//   DERIVED <names> = <expression>  -- define coefficient and exponents for a derived dimension name (cannot be undefined)
+//   AMBIGUOUS <names> = <expression>  -- like derived, but called out for extra testing (cannot be undefined)
+//   PREFIX <names> = <expression>  -- define coefficient for a prefix name (cannot be undefined)
+//   [*]<names> = <expression> [? <dimension>]  -- define a unit (* = unit is prefixable)
+//   <names> = [? <expression>]  -- undefine a unit
+//
+//   <names> format:
+//     [<category|dimension>[, ...]:]<name>[*][, ...]  -- unit names (* = name is pluralizable)
+</script>
+
+<script></script>
+var database =`
+CATEGORY SI
+CATEGORY Prefix
+CATEGORY Physical_constant
+CATEGORY Common
+CATEGORY Number
+CATEGORY Angle
+CATEGORY Energy
+CATEGORY Torque
+CATEGORY Advanced
+CATEGORY Physical_property
+CATEGORY Water
+CATEGORY Ice
+CATEGORY Air
+CATEGORY Batteries
+CATEGORY Speed_sound
+
+BASE MASS
+BASE LENGTH
+BASE TIME
+BASE TEMP
+BASE STORAGE
+BASE MONEY
+BASE CURRENT
+BASE SUBSTANCE
+
+PREFIX Prefix:Y,yotta=1E+24
+PREFIX Prefix:Z,zetta=1E+21
+PREFIX Prefix:E,exa=1E+18
+PREFIX Prefix:P,peta=1E+15
+PREFIX Prefix:T,tera=1E+12
+PREFIX Prefix:G,giga=1E+09
+PREFIX Prefix:M,mega=1E+06
+PREFIX Prefix:k,kilo=1E+03
+PREFIX Prefix:h,hecto=1E+02
+PREFIX Prefix:da,deka=1E+01
+PREFIX Prefix:d,deci=1E-01
+PREFIX Prefix:c,centi=1E-02
+PREFIX Prefix:m,milli=1E-03
+PREFIX Prefix:u,micro=1E-06
+PREFIX Prefix:n,nano=1E-09
+PREFIX Prefix:p,pico=1E-12
+PREFIX Prefix:f,femto=1E-15
+PREFIX Prefix:a,atto=1E-18
+PREFIX Prefix:z,zepto=1E-21
+PREFIX Prefix:y,yocto=1E-24
+
+PREFIX Prefix:Ki,kibi=1024 #storage
+PREFIX Prefix:Mi,mebi=1024^2 #storage
+PREFIX Prefix:Gi,gibi=1024^3 #storage
+PREFIX Prefix:Ti,tebi=1024^4 #storage
+PREFIX Prefix:Pi,pebi=1024^5 #storage
+PREFIX Prefix:Ei,exbi=1024^6 #storage
+PREFIX Prefix:Zi,zebi=1024^7 #storage
+PREFIX Prefix:Yi,yobi=1024^8 #storage
+
+#Primary
+*Common,SI:m,meter*,metre*=LENGTH
+*Common,SI:gm,gramm,g,gram*=MASS
+*Common,SI:s,second*,sec*=TIME
+Common,SI:deltaK,deltak=TEMP #interval (T-T0) Kelvin
+*Common,Angle:rad,radian*=1
+*Common:bit*,b = STORAGE
+Common:$,dollar*=MONEY
+*Common,SI:A,amp*,ampere*=CURRENT
+*Advanced,SI:mol,mole*=SUBSTANCE
+
+#Secondary
+*Common,SI:L,liter*,litre*,l=1 cubic dm #was 1.000028 before 1964
+*Common,SI:N,newton*=1 kgm m/s^2
+*Common,SI,Energy:J,joule*=1 N m
+*Common,SI:W,watt* =1 J/s
+*Common,SI:Pa,pascal=1 N/square m
+*Common,SI:C,coulomb*=A s
+*Common,SI:V,volt* =1 J/C
+*Common,SI:ohm*=1 V/A
+*Common,SI:F,farad*=1 C/V
+*Common,SI:H,henry*=1 s^2/F
+*Common,SI:Wb,weber*=1 V s
+*Common,SI:T,tesla*=1 Wb/m^2
+
+*Common:gamma*=1E-09 Wb/m^2
+Common:mho*=1 A/V
+Common:maxwell*=1E-08 Wb #CGS
+*Common:gauss=0.0001 Wb/m^2 #CGS
+
+DERIVED Mass=kilogramm
+DERIVED Length=meter
+DERIVED Time=second
+DERIVED Temp=deltaK
+DERIVED Storage=bit
+DERIVED Area=meter^2
+DERIVED Volume=liter
+DERIVED Speed=meter/second
+DERIVED Acceleration=meter/second^2
+DERIVED Force=newton
+DERIVED Energy=joule
+AMBIGUOUS Torque=newton meter
+DERIVED Power=watt
+DERIVED Pressure=pascal
+DERIVED Frequency=1/second
+AMBIGUOUS Angular_velocity=1/second
+DERIVED Density=kilogramm/liter
+DERIVED Flow=liter/second
+DERIVED Heat_latent_m=joule/kilogramm
+AMBIGUOUS Heat_latent_v=joule/liter
+DERIVED Specific_heat_m=joule/(kilogramm*deltaK)
+DERIVED Specific_heat_v=joule/(liter*deltaK)
+AMBIGUOUS Heat_vaporization_m=joule/kilogramm
+AMBIGUOUS Heat_vaporization_v=joule/liter
+AMBIGUOUS Heat_fusion_m=joule/kilogramm
+AMBIGUOUS Heat_fusion_v=joule/liter
+DERIVED Thermal_conductivity=watt/(meter*deltaK)
+DERIVED Viscosity=pascal*second #(dynamic)
+DERIVED Current=ampere
+DERIVED Charge=C
+DERIVED Voltage=volt
+DERIVED Resistance=ohm
+DERIVED Capacitance=farad
+DERIVED Inductance=henry
+DERIVED Magnetic_flux=weber
+DERIVED Magnetic_flux_density=tesla
+DERIVED Substance=mole
+DERIVED Energy_flux=joule/meter^2
+DERIVED Molar_heat=joule/mole
+DERIVED Molar_heat_capacity=joule/(mole*deltaK)
+DERIVED Line_density=kilogramm/meter
+DERIVED Kinematic_viscosity=meter^2/second
+AMBIGUOUS Heat_combustion_m=J/kgm
+AMBIGUOUS Heat_combustion_v=J/L
+DERIVED Fuel_efficiency=km/liter
+
+Physical_constant:speed_of_light,c=2.99792458E+08 m/s #speed of light in vacuum
+Physical_constant:grav=9.80665 m/s^2 #standard acceleration of gravity
+
+Number:pi=3.14159265358979323
+Number:e=2.71828182845904523
+Angle:rev*,revolution*=2pi
+Angle:cycle*=2pi
+Number:percent*,%=1/100
+Number:dozen*=12
+Number:gross=144
+Number:karat*=1/24 #purity of gold (24 karat is pure)
+Number:ppm*=1E-06 #parts per million
+Number:e=2.7182818
+Number:million = 1E+06 #multiplier (1 000 000) as used in the U.S.
+Number:billion = 1E+09 #multiplier (1 000 000 000) as used in the U.S.
+Number:trillion = 1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
+Number:quadrillion = 1E+15 #multiplier (1E+15) as used in the U.S.
+Number:quintillion = 1E+18 #multiplier (1E+18) as used in the U.S.
+Number:milliard = 1E+09 #multiplier (1 000 000 000) as used in the U.K.
+Number:billion_long = 1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
+Number:trillion_long = 1E+18 #multiplier (1E+18) as used in the U.K.
+Number:quadrillion_long = 1E+24 #multiplier (1E+24) as used in the U.K.
+Number:quintillion_long = 1E+30 #multiplier (1E+30) as used in the U.K.
+
+Common,Angle:deg,degree*=(1/180) pi rad
+Common,Angle:grad,grade=0.9 deg
+Common,Angle:arcmin=(1/60)deg
+Common,Angle:arcsec=(1/60)arcmin
+
+#Time
+Common,SI:min*,minute*=60 s
+Common,SI:hr*,hour*=60 min
+Common,SI:day*=24 hr
+Common:yr*,year*=365 day
+Common:mo*,month*=(1/12)yr
+Common:wk*,week*=7 day
+Common:decade*=10 yr
+Common:century*=100 yr
+Common:millennium*=1000 yr
+Common:aeon*=1E+09 yr
+Common:fortnight*=14 day
+
+#Length
+*Common:micron*=1 um
+Common:angstrom*=1E-10 m
+Common:fermi*=1E-15 m
+*Common:parsec*=3.0857E+16 m
+Common:au=1.49598E+11 m
+Common:mile_nautical=1852 m
+Common:in,inch*=2.54 cm
+Common:mil* =(1/1000)in
+Common:ft,foot,feet=12 in
+Common:yd*,yard*=3 ft
+Common:mi,mile*=5280 ft #(U.S. statute)
+Common:link*=7.92 in #Surveor's
+Common:chain*=100 link #Surveyor's
+Common:pole*,perch*,rod*=5.5 yd
+Common:fathom*=6 ft
+Common:league*=3 mi
+Common:furlong*=220 yd
+Common:lyr*,lightyear*=1 speed_of_light*365.25 day
+Common:lightsecond*=1 speed_of_light*s
+
+#Mass
+Common:lbm,poundm,lb*,pound*=453.592 gm
+Common:ozm,ouncem,oz*,ounce*=(1/16) lbm
+Common:slug*=14593.9 gm
+Common:grain*=(1/7000)lbm
+Common:dwt,pennyweight=24 grain #troy
+Common:cwt,hundredweight=100 lbm #avoirdupois
+Common:ct,carat*=200 mgm #mass of gems
+*Common,Physical_constant:amu,dalton*=1.66054E-24 gm #unified atomic mass unit
+Common:tonm,ton*=2000 lbm
+Common:tonm_long,ton_long=2240 lbm #imperial (U.K.)
+*Common,SI:tonnem,tonm_metric,tonne*,ton_metric=1E+06 gm # metric ton
+
+#Force
+Common:pdl,poundal*=1 ft lbm/s^2
+Common:kip*=1000 lbm*grav
+Common:dyne*=1E-05 N
+Common:pond*=1 gm*grav
+*Common:gf,gramf,g,gram*=1 gm*grav
+Common:lbf,poundf,lb*,pound*=1 lbm*grav
+Common:ozf,ouncef,oz*,ounce*=1 ozm*grav
+Common:tonf,ton*=1 tonm*grav
+Common:tonf_long,ton_long=2240 lbm*grav #imperial (U.K.)
+*Common,SI:tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gm*grav # metric ton
+
+#Area
+Common:ha,hectare*=10000 square m
+Common:sqin=1 square in
+Common:sqft=1 square ft
+Common:sqyd=1 square yd
+Common:sqmi=1 square mi
+Common:sqcm=0.01 m * 0.01m
+Common:sqmm=0.001 m * 0.001 m
+Common:section*=1 sqmi #land measure
+Common:ac,acre*=10 square chain #land measure
+
+#Volume
+Common:cc*=1 cubic cm
+Common:cuin=1 cubic in
+Common:cuft=1 cubic ft
+Common:cuyd=1 cubic yd
+Common:stere=1 cubic m #volume of wood
+Common:gal*,gallon*=231 cubic in
+Common:qt*,quart*=(1/4)gal
+Common:pt*,pint*=(1/8) gal
+Common:floz,ouncefl,oz*,ounce*=(1/128)gal
+Common:bu,bushel*=2150.42 cuin
+Common:peck*=(1/4)bu
+Common:cord*=128 cuft #volume of wood
+Common:bdft,bd_foot,bd_feet=144 cuin #wood
+Common:bbl,barrel_oil=42 gal #crude oil
+Common:cup*=(1/4)qt
+Common:tbsp,tablespoon*=(1/2)floz
+Common:tsp,teaspoon*=(1/6)floz
+
+#Speed
+Common:kt,knot*=1 mile_nautical/hr
+Common:ips=1 in/s
+Common:ipm=1 in/min
+Common:fps=1 ft/s
+Common:fpm=1 ft/min
+Common:mph=1 mi/hr
+Common:kph=1 km/hr
+
+#Acceleration
+Common:galileo*=0.01 m/s^2
+
+#Pressure
+*Common:torr=(101325/760)Pa
+*Common:bar=100000 Pa
+Common:mb=mbar #pressure in millibar
+Common:atm,atmosphere*=101325 Pa #standard atmospheric pressure
+Common:psi=1 lbf/square in
+Common:ksi=1000 lbf/square in
+Common:mmhg,mmHg=133.3224 Pa #pressure (barrometric)
+Common:inhg,inHg=mmhg * mm/in
+Common:Hg=mmhg/mm #density of mercury for pressure calculations
+Common:inwc,inWc,inH2O=248.84 Pa #inches water column at 60 degF
+Common:H2O=inwc/in #density of water for pressure calculations
+
+#Energy
+*Common,SI,Energy:eV,electronvolt*=1.60218E-19 J
+*Common,Energy:cal,calorie*=4.184 J
+*Common,Energy:Wh,wh=3600 J #watt hour
+Common,Energy:cal_food,foodcal,Cal,Calorie*=1 kcal #food package label energy
+Common,Energy:Btu*,btu*=1055.06 J #international table
+Common,Energy:therm*=1.05480E+08 J #CNG industry
+Common,Energy:quad*=1.055E+18 J
+Common,Energy:ton_explosive=4.184E+09 J #of TNT
+Common,Energy:erg*=1E-07 J #CGS
+
+#Torque
+Common,Torque:inlb*=1 in lbf
+Common,Torque:ftlb*=1 ft lbf
+
+#Power
+Common:VA =1 W
+Common:hp,HP,horsepower=550 ft lbf/s
+Common:ton_refrig=200 Btu/min #cooling equipment capacity
+
+#Flow
+Common:cfs=1 cuft/s
+Common:cfm=1 cuft/min
+Common:cfh=1 cuft/hr
+Common:gps=1 gal/s
+Common:gpm=1 gal/min
+Common:gph=1 gal/hr
+
+#Temp
+Common:deltaR,deltar=(1/1.8)deltaK #interval (T-T0) Rankine
+Common:deltaC,deltac=1 deltaK #interval (T-T0) Celsius
+Common:deltaF,deltaf=(1/1.8)deltaK #interval (T-T0) Fahrenheit
+Common:degK,degk=1 deltaK #absolute Kelvin
+Common:degR,degr=1 deltaR #absolute Rankine
+Common:degC,degc=1 deltaC #absolute Celsius, with caution
+Common:degF,degf=1 deltaF #absolute Fahrenheit, with caution
+Common:absC,absc=1 deltaC #absolute Celsius, without caution
+Common:absF,absf=1 deltaF #absolute Fahrenheit, without caution
+
+#Frequency
+*Common,SI,Frequency,Angular_velocity:Hz,hertz=cycle/s
+Common,Frequency,Angular_velocity:rpm*=rev/min
+Common,Frequency,Angular_velocity:cps,rps=cycle/s
+
+#Storage
+*Common:byte*,Byte*,B,char*=8 bit #computer storage
+
+#Money
+Common:cent*=0.01 $ #U.S.
+
+Common:mpg=1 mi/gal
+Common:rvalue=1(sqft deltaF)/(Btu/hr) #thermal insulation
+Common:uvalue=1(Btu/hr)/(sqft deltaF) #inverse of Rvalue
+*Common:baud,bps=1 bit/s #DataComm
+
+Physical_constant:G,grav_const=6.67259E-11 N m^2/(kgm)^2 #gravitational constant
+Physical_constant:rm_e,mass_electron=9.10939E-31 kgm #rest mass electron
+Physical_constant:rm_p,mass_proton=1.67262E-27 kgm #rest mass proton
+Physical_constant:rm_n,mass_neutron=1.67493E-27 kgm #rest mass neutron
+
+Physical_constant:qe,electron_charge*=1.602176634E-19 A s
+Physical_constant:mu0,permeability_vac=4 pi*1E-07 H/m
+Physical_constant:e0,permittivity_vac=8.85419E-12 F/m
+
+# ADVANCED.UNI
+
+Advanced,Number:bakers_dozen=13
+Advanced,Number:ream*=500 #paper
+Advanced,Number:proof=1/200 #alcoholic content
+
+Advanced:shake*=1E-08 s
+Advanced:year_solar=3.15569E+07 s #mean solar
+Advanced:cron*=3.156E+13 s
+
+Advanced:mile_int=1609.34 m
+Advanced:rowland*=angstrom
+Advanced:point*=3.5146E-04 m #as used in printing
+Advanced:pica*=12 point #as used in printing
+Advanced:caliber=0.01 in #gun bore diameter
+Advanced:bolt*=40 yd #cloth measure
+
+Advanced:dram*,drachm*=27.3438 grain #avoirdupois
+Advanced:ounce_troy=480 grain
+Advanced:pound_troy=5760 grain
+Advanced:cwt_long=112 lbm #imperial
+Advanced:stone*=14 lbm
+Advanced:ton_assay=29.1667 gm #refined from ore
+
+Advanced:sthen*=1E+08 dyne
+
+Advanced:circ_inch*=(pi/4)sqin #area 1 inch diam
+Advanced:circ_mil*=pi*2.5E-07 sqin #area 1 mil diam
+Advanced,SI:barn*=1E-28 m^2
+Advanced:shed*=1E-24 barn
+
+Advanced:ton_ship=40 cuft #sea freight
+Advanced:ton_reg=100 cuft #capacity of ships
+Advanced:ton_disp=35 cuft #size of ships
+Advanced:gill*=(1/32)gal
+Advanced:fluid_dram*,fldr=(1/1024)gal
+Advanced:minim*=(1/60)fluid_dram
+Advanced:quart_dry=(1/32)bu
+Advanced:pint_dry=(1/64)bu
+Advanced:barrel_dry=7056 cuin #U.S. fruit, veggies etc.
+Advanced:gal_imp=277.42 cuin #U.K.
+Advanced:quart_imp=(1/4)gal_imp #U.K.
+Advanced:pint_imp=(1/8)gal_imp #U.K.
+Advanced:floz_imp=(1/160)gal_imp #U.K.
+Advanced:gill_imp=5 floz_imp # U.K.
+Advanced:bushel_imp=2219.36 cuin #U.K.
+Advanced:peck_imp=(1/4)bushel_imp #U.K.
+
+Advanced:benz=1 m/s
+Advanced:leo*=10 m/s^2
+
+Advanced,Pressure:barye*,barie*=0.1 Pa
+Advanced,Pressure:baryl=1 dyne/square cm
+Advanced,Pressure:pieze,pz=10000 dyne/square cm
+
+Advanced,Energy:therm_eec=1.05506E+08 J #European Economic Community
+Advanced,Energy:chu*=1.8 Btu #centigrade heat unit
+Advanced,Energy:thermie*=1E+06 cal #U.K.
+Advanced,Energy:rydberg*=13.6054 eV
+
+Advanced:frigorie*=50 Btu/min #cooling equipment (Europe)
+
+Advanced:poise=0.1 Pa s #CGS
+Advanced:reyn*=1 (lbf/sqin)s
+Advanced:stokes=0.0001 m^2/s
+
+*Advanced,Frequency:Ci,curie*,ci=3.7E+10/s #of radioactivity
+Advanced,Frequency:Bq,becquerel*,bq=1/s #of radioactivity
+
+Advanced:denier=1 gm/(9000 m) #textiles
+Advanced:drex=1E-04 gm/m #textiles
+Advanced:tex=1E-03 gm/m #textiles
+Advanced:poumar=1 lbm/(1E+06 yd) #textiles
+
+Advanced:langley*=41840 J/m^2
+
+Advanced:gib*=1 cal/mol
+
+Advanced:clausius=1 J/(mol deltaK)
+Advanced:entropy_unit=1 cal/(mol deltaK)
+
+Advanced:rhe*=10/(Pa s) #inverse dynamic viscosity
+Advanced:diopter*,dioptre*=1/m
+Advanced:kayser*=100/m
+
+Advanced,Physical_constant:plancks_const=6.626070E-34 J s
+Advanced,Physical_constant:avogadros_num=6.02214076E+23/mol
+Advanced,Physical_constant:boltzmann_const=1.380649E-23 J/deltaK
+Advanced,Physical_constant:stef_boltz_const=5.67051E-08 W/(m^2 deltaK^4)
+Advanced,Physical_constant:rydberg_const=1.09737E+07/m
+Advanced,Physical_constant:V0,vol_gas_const=22.4141 L/mol
+Advanced,Physical_constant:R,mol_gas_const,r=8.31451 J/(mol deltaK)
+Advanced,Physical_constant:dVcs=9192631770 Hz #transition freq of caesium 133
+# Advanced,Physical_constant:Kcd=683 lm/W #luminous efficacy of light at freq = 540E12 Hz
+
+Advanced:year_sidereal=3.15582E+07 s
+Advanced:day_sidereal=8.61641E+04 s
+Advanced:hr_sidereal=(1/24)day_sidereal
+Advanced:min_sidereal=(1/60)hr_sidereal
+Advanced:sec_sidereal=(1/60)min_sidereal
+Advanced:lunour*=3543.67 s # 1/30 of the time between new moons (30 lunor = 1 synodic month)
+Advanced:lune*=24 lunour
+Advanced:blink*=0.864 s
+
+Advanced:league_naut=3 mile_nautical
+Advanced:chain_naut=4.572 m
+Advanced:cable_length=120 fathom
+Advanced:link_eng=12 in #Ramden's
+Advanced:chain_eng=100 link_eng #Ramden's
+Advanced:hank =840 yd #cloth
+Advanced:finger=(7/8) in
+Advanced:hand=4 in
+Advanced:pace=0.762 m #military
+Advanced:span=9 in
+Advanced:barleycorn=(1/3)in
+Advanced:cubit=21.8 in #biblical, range 17 to 22 inch
+
+Advanced:cental*=100 lbm #U.K.
+Advanced:quintal_imp=45.3592 kgm #U.K.
+Advanced:quintal*=100 kgm
+Advanced:dram_apoth=60 grain
+Advanced:ounce_apoth=480 grain
+Advanced:pound_apoth=5760 grain
+Advanced:scruple*=20 grain
+Advanced:brieze=1 gm
+Advanced:hyl=9.80665 gm
+
+Advanced:township*=36 section
+Advanced:rood*=40 pole^2 #U.K.
+Advanced:hide*=4.04686E+05 m^2
+
+Advanced:hogshead*=63 gal
+Advanced:butt_beer=0.490978 m^3
+Advanced:butt_wine=0.954412 m^3
+Advanced:bucket*=0.0181844 m^3
+Advanced:bodge*=2.27305E-03 m^3
+Advanced:chaldron*=1.26861 m^3
+Advanced:coomb*,comb*=4 bu
+Advanced:perche*=0.700841 m^3 #masonry
+Advanced:puncheon*=0.327319 m^3
+Advanced:raummeter*,festmeter*=1 m^3
+Advanced:trug*=0.024246 m^3
+Advanced:sack*=3 bu #many other defs
+Advanced:amagat*=0.022414 m^3
+Advanced:anker*=0.0378735 m^3
+Advanced:aum*=0.136383 m^3
+Advanced:jar*=0.113652 m^3
+Advanced:kanne*=1E-03 m^3
+Advanced:noggin*=1.42065E-04 m^3
+Advanced:pipe*=0.477206 m^3
+Advanced:pottle*=2.27304E-03 m^3
+
+Advanced,Energy:cal_mean=4.19002 J
+Advanced,Energy:cal_thermochem=4.184 J
+Advanced,Energy:btu_mean=1055.87 J
+Advanced,Energy:btu_thermochem=1054.35 J
+Advanced,Energy:duty*=1.35582 J
+
+Advanced:hp_metric=75 kgf m/s
+Advanced:hp_boiler=9809.50 W #bigger that hp
+Advanced:hp_electric=746.0 W
+Advanced:hp_water=746.043 W
+Advanced:manpower=(1/10)hp
+
+Advanced:admiralty_knot*=6080 ft/hr
+Advanced:kine*=0.01 m/s
+
+Advanced:celo*=0.3048 m/s^2
+
+Advanced:pli*=17.8580 kgm/m
+
+# PHYSPROP.UNI
+
+Water,Density:d_sea_water=1.025 gm/cc
+Water,Density:d_water,d_H2O=1 gm/cc #@ 4 degC
+Water,Thermal_conductivity:tc_water=0.6 W/(m deltaK) #@ 20 degC
+Water,Viscosity:visc_water=0.001 Pa s #dynamic @ 20 degC
+Water,Speed_sound:ss_water=1497 m/s #@ 20 degC
+Water,Specific_heat_m:shm_water,shm_H2O,sh_water,sh_H20=1 cal/(gm deltaK) #mean
+Water,Specific_heat_v:shv_water,shv_H2O,sh_water,sh_H20=shm_water*d_water
+Water,Heat_fusion_m:hfm_water,hfm_H2O,hf_water,hf_H2O=144 Btu/lbm
+Water,Heat_fusion_v:hfv_water,hfv_H2O,hf_water,hf_H2O=hfm_water*d_water
+Water,Heat_vaporization_m:hvm_water,hvm_H2O,hv_water,hv_H2O=956 Btu/lbm
+Water,Heat_vaporization_v:hvv_water,hvv_H2O,hv_water,hv_H2O=hvm_water*d_water
+
+Ice:d_ice=0.92 gm/cc
+Ice,Specific_heat_m:shm_ice,sh_ice=0.47 Btu/(lbm deltaF)
+Ice,Specific_heat_v:shv_ice,sh_ice=shm_ice*d_ice #by volume
+Ice,Thermal_conductivity:tc_ice=2.18 W/(m deltaC)
+
+Air:d_air=0.0012928 gm/cc #@ 1 atm, 0degC
+Air,Thermal_conductivity:tc_air=0.0242 W/(m deltaK) #@ 0 degC
+Air,Viscosity:visc_air=1.78E-05 Pa s #dynamic @ 20 degC
+Air:ss_air=1128.86 ft/s #@ 20 degC, 50% RH
+Air,Specific_heat_m:shm_air,sh_air=0.24 cal/(gm deltaK) #@ 0 degC
+Air,Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
+
+Physical_property:d_aluminum=2.702 gm/cc
+Physical_property:d_copper=8.92 gm/cc
+Physical_property:d_gold=19.3 gm/cc
+Physical_property:d_iron=7.86 gm/cc
+Physical_property:d_lead=11.34 gm/cc
+Physical_property:d_silver=10.5 gm/cc
+Physical_property:d_brick=2.0 gm/cc #hard
+Physical_property:d_concrete=2.3 gm/cc #with stone, sand
+Physical_property:d_clay=1.8 gm/cc #damp, plastic
+Physical_property:d_glass=2.6 gm/cc
+Physical_property:d_sand=100 lbm/ft^3
+Physical_property:d_granite=175 lbm/ft^3
+Physical_property:d_diamond=3.3 gm/cc
+Physical_property:d_mercury=13.5951 gm/cc
+
+Physical_property,Specific_heat_m:shm_aluminum=0.215 cal/(gm deltaC)
+Physical_property,Specific_heat_m:shm_copper=0.092 cal/(gm deltaC)
+Physical_property,Specific_heat_m:shm_gold=0.03 cal/(gm deltaC)
+Physical_property,Specific_heat_m:shm_iron=0.108 cal/(gm deltaC)
+Physical_property,Specific_heat_m:shm_lead=0.03 cal/(gm deltaC)
+Physical_property,Specific_heat_m:shm_mercury=0.140 J/(gm deltaC)
+Physical_property,Specific_heat_m:shm_silver=0.235 J/(gm deltaC)
+Physical_property,Specific_heat_m:shm_brick=0.22 Btu/(lbm deltaF)
+Physical_property,Specific_heat_m:shm_concrete=0.156 Btu/(lbm deltaF)
+Physical_property,Specific_heat_m:shm_glass=0.199 Btu/(lbm deltaF)
+Physical_property,Specific_heat_m:shm_sand=0.195 Btu/(lbm deltaF)
+Physical_property,Specific_heat_m:shm_wood=0.65 Btu/(lbm deltaF)
+Physical_property,Specific_heat_m:shm_gasoline=0.53 Btu/(lbm deltaF)
+Physical_property,Specific_heat_m:shm_kerosene=0.48 Btu/(lbm deltaF)
+
+Physical_property,Heat_vaporization_m:hvm_gasoline,hv_gasoline=116 Btu/lbm
+Physical_property,Heat_vaporization_m:hvm_kerosene,hv_kerosene=86 Btu/lbm
+Physical_property,Heat_vaporization_m:hvm_ethanol,hv_ethanol=367 Btu/lbm
+Physical_property,Heat_vaporization_m:hvm_methanol,hv_methanol=482 Btu/lbm
+
+Physical_property,Heat_fusion_m:hfm_aluminum=171 Btu/lbm
+Physical_property,Heat_fusion_m:hfm_copper=88.2 Btu/lbm
+Physical_property,Heat_fusion_m:hfm_gold=28.7 Btu/lbm
+Physical_property,Heat_fusion_m:hfm_iron=117 Btu/lbm
+Physical_property,Heat_fusion_m:hfm_lead=10 Btu/lbm
+Physical_property,Heat_fusion_m:hfm_mercury=5.0 Btu/lbm
+
+Physical_property,Thermal_conductivity:tc_aluminum=238 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_copper=397 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_gold=318 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_iron=79.5 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_lead=34.7 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_mercury=8.34 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_silver=428 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_brick=0.58 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_concrete=1 W/(m deltaC) #stone, sand
+Physical_property,Thermal_conductivity:tc_glass=0.72 W/(m deltaC) #plate
+Physical_property,Thermal_conductivity:tc_wood=0.11 W/(m deltaC) #across grain (pine)
+Physical_property,Thermal_conductivity:tc_glasswool=0.042 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_styrofoam=0.036 W/(m deltaC)
+Physical_property,Thermal_conductivity:tc_earth=1 W/ (m deltaC) #40% water
+Physical_property,Thermal_conductivity:tc_sand=0.33 W/(m deltaC) #dry
+Physical_property,Thermal_conductivity:tc_gravel=0.38 W/(m deltaC) #dry
+Physical_property,Thermal_conductivity:tc_diamond=554 W/(m deltaC)
+
+Physical_property:sun_power=3.92E+26 W #total
+Physical_property:solar_const=1340 W/m^2 #at Earths surface
+
+Physical_property,Density:d_gasoline=0.67 gm/cc #liquid
+Physical_property,Density:d_kerosene=0.819 gm/cc #liquid
+Physical_property,Density:d_propane_gas=0.00183 gm/cc #gas
+Physical_property,Density:d_propane_liq=0.5 gm/cc #liquid
+Physical_property,Density:d_oil=0.875 gm/cc #liquid
+Physical_property,Density:d_coal=0.7 gm/cc #bulk
+Physical_property,Density:d_methanol=0.810 gm/cc #liquid
+Physical_property,Density:d_ethanol=0.791 gm/cc #liquid
+Physical_property,Density:d_wood=0.55 gm/cc #solid (pine)
+
+Physical_property,Heat_combustion_m:hcm_gasoline=20750 Btu/lbm
+Physical_property,Heat_combustion_v:hcv_gasoline=d_gasoline*hcm_gasoline
+Physical_property,Heat_combustion_m:hcm_kerosene=19810 Btu/lbm
+Physical_property,Heat_combustion_v:hcv_kerosene=d_kerosene*hcm_kerosene
+Physical_property,Heat_combustion_m:hcm_propane_liq=21249 Btu/lbm
+Physical_property,Heat_combustion_v:hcv_propane_liq=d_propane_liq*hcm_propane_liq
+Physical_property,Heat_combustion_v:hcv_propane_gas=d_propane_gas*hcm_propane_liq
+Physical_property,Heat_combustion_v:hcv_natural_gas=1000 Btu/cubic ft
+Physical_property,Heat_combustion_m:hcm_oil=18500 Btu/lbm #crude oil
+Physical_property,Heat_combustion_v:hcv_oil=d_oil*hcm_oil #crude oil
+Physical_property,Heat_combustion_m:hcm_coal=13000 Btu/lbm
+Physical_property,Heat_combustion_v:hcv_coal=d_coal*hcm_coal
+Physical_property,Heat_combustion_m:hcm_methanol=9600 Btu/lbm
+Physical_property,Heat_combustion_v:hcv_methanol=d_methanol*hcm_methanol
+Physical_property,Heat_combustion_m:hcm_ethanol=12800 Btu/lbm
+Physical_property,Heat_combustion_v:hcv_ethanol=d_ethanol*hcm_ethanol
+Physical_property,Heat_combustion_m:hcm_wood=8750 Btu/lbm #most kinds (dry)
+Physical_property,Heat_combustion_v:hcv_wood=d_wood*hcm_wood #pine
+
+# CAPACITY OF BATTERIES
+Physical_property,Batteries:e_carb_aaa=2268 J
+Physical_property,Batteries:e_carb_aa=5832 J
+Physical_property,Batteries:e_carb_c=15120 J
+Physical_property,Batteries:e_carb_d=38880 J
+Physical_property,Batteries:e_carb_n=2376 J
+Physical_property,Batteries:e_carb_9v=14580 J
+Physical_property,Batteries:e_alk_aaa=5062 J
+Physical_property,Batteries:e_alk_aa=11556 J
+Physical_property,Batteries:e_alk_c=32400 J
+Physical_property,Batteries:e_alk_d=72900 J
+Physical_property,Batteries:e_alk_g=477900 J
+Physical_property,Batteries:e_alk_n=4374 J
+Physical_property,Batteries:e_alk_9v=19245 J
+Physical_property,Batteries:e_nicd_aaa=777 J
+Physical_property,Batteries:e_nicd_aa=2160 J
+Physical_property,Batteries:e_nicd_subc=5184 J
+Physical_property,Batteries:e_nicd_c=5184 J
+Physical_property,Batteries:e_nicd_d=17280 J
+Physical_property,Batteries:e_nicd_n=648 J
+Physical_property,Batteries:e_nicd_9v=2419 J
+
+# a = 1 A
+# n = 1 N
+# j = 1 J
+# w = 1 W
+# pa = 1 Pa
+# v = 1 V
+# f = 1 F
+# h = 1 H
+# wb = 1 Wb
+
+# hz = 1 Hz
+# va = 1 VA
+# ev = 1 eV
+
+`;
+
+var database_tests = `
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+    1|= 1
+`;
+
+var database_teststhatmaythrow = `
+TEST database_throw | unknown test database_throw
+`;</script>
+
+<script>
+'use strict';
+
+// regular expressions for string identification
+// XXX -- use typeof for value; anything for operator?
+const value_regexp_ch =     /[0-9.]/;
+const value_regexp =        /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_head =  /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_tail =   /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+const unit_regexp_ch =      /[_A-Za-z$%]/;
+const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const operator_regexp_ch =  /[-+*/^;?(),:=~]/;
+const semicolon_alternates = "@&#!";  // prefix alternate = ~
+const functions = { "square":true, "cubic":true, "sqrt":true, "sin":true, "cos":true, "tan":true, "asn":true, "acs":true, "atn":true, "ln":true, "log":true, "exp":true };
+
+// this is our units database
+var nextbaseunit = 0;
+var freebaseunit = 0;
+var units = [];  // Unit
+var bases = [];  // Unit
+var all_categories = [];  // string
+var loading = false;  // while loading the units database, all ambiguities are turned off and primary names must be used
+var deriving = false;  // while deriving units, secondary names may also be used
+var evaluating = false;  // while evaluating units, free units may be used
+var testing = false;  // while testing, don't put equation line into results
+var defines = false;
+var undefines = false;
+var si = false;  // request to display mismatch result in SI format
+var massbase;  // may be undefined
+var storagebase;  // may be undefined
+
+var offset_warn = false;  // degC, absC, degF, absF
+var offset_warned = false;
+var cycle_warn = false;  // cycle_names
+var cycle_warned = false;
+var cycle_names = { "cps":true, "cycle":true, "Hz":true, "rev":true, "rpm":true };
+
+// these are the results from an expression evaluation
+var results;  // Unit
+var mismatches;  // string
+var errors;  // string
+
+function assert(bool)
+{
+    if (! bool) {
+        throw "assertion failed";
+    }
+}
+
+// *** unit functions *****************************************************************************
+
+class Unit {
+    // return an empty or initialized unit
+    constructor(names, pluralizables, coefficient, exponents, type, prefixable, categories, definition)
+    {
+        this.names = (names == undefined) ? [] : names.slice(0);  // array of unit names
+        this.pluralizables = (pluralizables == undefined) ? [] : pluralizables.slice(0);  // array of booleans
+        this.coefficient = (coefficient == undefined) ? NaN : coefficient;  // floating point
+        this.exponents = (exponents == undefined) ? [] : exponents;  // array of integers
+        this.type = (type == undefined) ? null : type;  // null || "BASE" || "DERIVED" || "PREFIX"
+        this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
+        this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
+        this.definition = (definition == undefined) ? "" : definition;  // string
+    }
+
+    // test if scalar zero
+    Zero()
+    {
+        if (this.coefficient) {
+            return false;
+        }
+        for (var i = 0; i < this.exponents.length; i++) {
+            if (this.exponents[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // test if dimensions are compatible
+    Compatible(unit, invert)
+    {
+        if (! unit) {
+            return true;
+        }
+        // dynamically expand exponents arrays as needed
+        var maxbaseunits = Math.max(this.exponents.length, unit.exponents.length);
+        for (var i = this.exponents.length; i < maxbaseunits; i++) {
+            this.exponents[i] = 0;
+        }
+        for (i = unit.exponents.length; i < maxbaseunits; i++) {
+            unit.exponents[i] = 0;
+        }
+
+        // for all exponents...
+        for (i = 0; i < this.exponents.length; i++) {
+            // if the exponent does not match...
+            if (this.exponents[i] != (invert?-1:1)*unit.exponents[i]) {
+                // units are incompatible
+                return false;
+            }
+        }
+
+        // units are compatible
+        return true;
+    }
+
+    // perform an operation on a unit and return the resulting result
+    Operate(op, rhs)
+    {
+        var unit = new Unit();
+
+        // dynamically expand exponents arrays as needed
+        var maxbaseunits = Math.max(this.exponents.length, rhs.exponents.length);
+        for (var i = this.exponents.length; i < maxbaseunits; i++) {
+            this.exponents[i] = 0;
+        }
+        for (i = rhs.exponents.length; i < maxbaseunits; i++) {
+            rhs.exponents[i] = 0;
+        }
+
+        switch (op) {
+            case '^':
+                // raise coefficient to dimensionless power; multiple exponents by power
+                unit.coefficient = Math.pow(this.coefficient, rhs.coefficient);
+                for (i = 0; i < maxbaseunits; i++) {
+                    if (rhs.exponents[i]) {
+                        throw "non-dimensionless exponent";
+                    }
+                    unit.exponents[i] = (this.exponents[i] * rhs.coefficient).toPrecision(4) * 1;  // N.B. * 1 returns to float
+                    if (unit.exponents[i] != Math.round(unit.exponents[i])) {
+                        throw "non-integral exponent";
+                    }
+                }
+                break;
+
+            case '~':  // prefix
+            case ' ':  // implicit
+            case '*':
+            case '@':  // solve by dimensional analysis: l*r
+                // multiply coefficients; add exponents
+                // if this is an offset temperature being entered, instantly convert from offset temperature to absolute temperature
+                var offset = 0;
+                if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
+                    offset = 273.15;
+                    offset_warn = true;
+                } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
+                    offset = 459.67;
+                    offset_warn = true;
+                }
+                unit.coefficient = (this.coefficient+offset) * rhs.coefficient;
+                for (i = 0; i < maxbaseunits; i++) {
+                    unit.exponents[i] = this.exponents[i] + rhs.exponents[i];
+                }
+                break;
+
+            case '/':
+            case '&':  // solve by dimensional analysis: l/r
+            case '?':
+                // divide coefficients; subtract exponents
+                unit.coefficient = this.coefficient / rhs.coefficient;
+                // if this is an offset temperature being computed, instantly convert from absolute temperature back to offset temperature
+                if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
+                    unit.coefficient -= 273.15;
+                    offset_warn = true;
+                } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
+                    unit.coefficient -= 459.67;
+                    offset_warn = true;
+                }
+                for (i = 0; i < maxbaseunits; i++) {
+                    unit.exponents[i] = this.exponents[i] - rhs.exponents[i];
+                }
+                break;
+
+            case '#':  // solve by dimensional analysis: r/l
+                // divide coefficients; subtract exponents
+                unit.coefficient = rhs.coefficient / this.coefficient;
+                for (i = 0; i < maxbaseunits; i++) {
+                    unit.exponents[i] = rhs.exponents[i] - this.exponents[i];
+                }
+                break;
+
+            case '!':  // solve by dimensional analysis: 1/(lr)
+                // divide coefficients; subtract exponents
+                unit.coefficient = 1 / (this.coefficient * rhs.coefficient);
+                for (i = 0; i < maxbaseunits; i++) {
+                    unit.exponents[i] = - this.exponents[i] - rhs.exponents[i];
+                }
+                break;
+
+            case '>':  // unary
+            case '+':
+                // add coefficients for compatible exponents
+                if (! this.Zero() && ! this.Compatible(rhs, false)) {
+                    throw "addition of dissimilar units";
+                }
+                unit.coefficient = this.coefficient + rhs.coefficient;
+                unit.exponents = rhs.exponents;
+                break;
+
+            case '<':  // unary
+            case '-':
+                // subtract coefficients for compatible exponents
+                if (! this.Zero() && ! this.Compatible(rhs, false)) {
+                    throw "subtraction of dissimilar units";
+                }
+                unit.coefficient = this.coefficient - rhs.coefficient;
+                unit.exponents = rhs.exponents;
+                break;
+
+            default:
+                throw "unknown operator " + op;
+                //break;
+        }
+
+        return unit;
+    }
+
+    // look for an ambiguous/compatible unit (so we don't define one ambiguously unintentionally)
+    Ambiguous()
+    {
+        for (var i = 0; i < units.length; i++) {
+            if (units[i].type == "DERIVED") {
+                if (this.Compatible(units[i], false)) {
+                    return units[i];
+                }
+            }
+        }
+        return null;
+    }
+
+    // format a unit as a dimension string
+    Dimension(question)
+    {
+        // look for single dimension matches, possibly inverted
+        var i;
+        var cont = false;
+        var string = "[";
+        // for uninverted and then inverted...
+        for (var invert = 0; invert < 2; invert++) {
+            // report ^-1 if the number of inversions is odd
+            var xor = Boolean(question)!=Boolean(invert);
+            // for all units...
+            for (i = 0; i < units.length; i++) {
+                // if this unit is a dimension...
+                if (units[i].type == "DERIVED") {
+                    // if this unit is a compatible dimension...
+                    if (this.Compatible(units[i], invert)) {
+                        // format its name
+                        if (cont) {
+                            // "or" if more than one
+                            string += " or ";
+                        }
+                        string += units[i].names[0] + (xor?"^-1":"");
+                        cont = true;
+                    }
+                }
+            }
+        }
+
+        // if we found a single dimension match...
+        if (cont) {
+            // return it
+            string += "]";
+            return string;
+        }
+
+        // otherwise, we have to match individual base dimensions and powers
+
+        // for each base unit...
+        for (i = 0; i < nextbaseunit; i++) {
+            // if the exponent is non-0...
+            var remaining = this.exponents[i]*(question?-1:1);
+            if (remaining) {
+                // format its name
+                if (cont) {
+                    // multiply if more than one
+                    string += "*";
+                }
+                string += bases[i].names[0] + (remaining!=1?"^"+remaining:"");
+                cont = true;
+            }
+        }
+
+        // return the individual base dimensions and powers
+        string += "]";
+        return string;
+    }
+
+    // format a unit as an SI result string
+    SI()
+    {
+        // look for a single dimension match, possibly inverted
+        var i;
+        var strings = [];
+
+        // for uninverted and then inverted...
+        for (var invert = 0; invert < 2; invert++) {
+            // for all units...
+            for (i = 0; i < units.length; i++) {
+                // if this unit is a dimension...
+                if (units[i].type == "DERIVED") {
+                    // if this unit is a compatible dimension...
+                    if (this.Compatible(units[i], invert)) {
+                        // format the SI result
+                        var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
+                        string += (invert?"(":"") + units[i].definition.replace(/.*= */, "") + (invert?")^-1":"");
+                        strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
+                    }
+                }
+            }
+            // if we found a result...
+            if (strings.length) {
+                // N.B. if we match an uninverted dimension, skip the inverted ones
+                // return it
+                return strings;
+            }
+        }
+
+        // otherwise, we have to match individual base dimensions and powers
+
+        var coefficient = this.coefficient;
+        var string2 =  "";
+        var cont = false;
+        var name;
+        // for each exponent...
+        for (i = 0; i < this.exponents.length; i++) {
+            // if the exponent is non-0...
+            if (this.exponents[i]) {
+                // find the derived unit for the exponent
+                var exponent = this.exponents[i];
+                for (var ii = 0; ii < units.length; ii++) {
+                    if (units[ii].type == "DERIVED" && bases[i].Compatible(units[ii], false)) {
+                        // and divide the overall coefficient for the derived unit
+                        coefficient /= Math.pow(units[ii].coefficient, exponent);
+                        name = units[ii].definition.replace(/.*= */, "");
+                        break;
+                    }
+                }
+                // if we did not find a derived unit...
+                if (ii == units.length) {
+                    // just use the base unit; for MASS base unit, divide by 1000 and prefix with kilo
+                    if (i == massbase) {
+                        coefficient /= Math.pow(1000, exponent);
+                        name = "kilo" + bases[i].names[0];
+                    } else {
+                        name = bases[i].names[0];
+                    }
+                }
+                if (cont) {
+                    // multiply if more than one
+                    string2 += "*";
+                }
+                // format the derived unit name
+                string2 += name + (exponent!=1?"^"+exponent:"");
+                cont = true;
+            }
+        }
+
+        // return the overall coefficient and individual base dimensions and powers
+        var string1 = ((coefficient).toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision()
+        return ["= " + string1 + " " + string2];  // XXX -- seems weird these are passed up as mismatch string with "= "...
+    }
+}
+
+// define a new base unit in the units database
+function DefineBaseUnit(name, pluralizable)
+{
+    // pick a new exponent
+    var unit = new Unit([name], [pluralizable], 1, [], "BASE", false, [], "");
+    for (var i = 0; i < nextbaseunit; i++) {
+        unit.exponents[i] = 0;
+    }
+    // set just this exponent to 1
+    unit.exponents[nextbaseunit] = 1;
+    bases[nextbaseunit] = unit;
+    nextbaseunit++;
+    // make the unit (mostly) immutable
+    Object.freeze(unit);
+    units.push(unit);
+    // return the unit
+    return unit;
+}
+
+// return a primary unit from the units database
+// N.B. caller must throw!
+function LookupUnit(name)
+{
+    // if this is a precomputed unit to make loading faster
+    if (name[0] == 'i' && name.match(/^index[0-9]/)) {
+        // no need to search, just return the unit
+        return units[name.replace(/^index/, "")];
+    }
+    // otherwise, for all units...
+    for (var i = 0; i < units.length; i++) {
+        var unit = units[i];
+        // for all appropriate unit names...
+        // N.B. we use index 1 for PREFIX solo
+        for (var j = (unit.type == "PREFIX" ? 1 : 0); j < unit.names.length; j++) {
+            // if the name matches...
+            if (name == unit.names[j]) {
+                // return the unit
+                return unit;
+            }
+            if (loading && ! deriving) {
+                // be quick
+                break;
+            }
+        }
+    }
+    // unit not found
+    return null;
+}
+
+// return a prefix and a primary unit from the units database
+function LookupPrefixedUnit(name)
+{
+    // for all unit names...
+    for (var ii = 0; ii < units.length; ii++) {
+        // if this is a prefix...
+        if (units[ii].type == "PREFIX") {
+            var storage = units[ii].names[1].slice(2) == "bi";  // storage prefix
+            // for all prefix names...
+            for (var jj = 0; jj < units[ii].names.length; jj++) {
+                var prefix = units[ii].names[jj];
+                // if the specified name matches the prefix...
+                if (name[0] == prefix[0] && name.indexOf(prefix) == 0 && name.length > prefix.length) {
+                    // prefix match
+                    var remain = name.slice(prefix.length);
+                    // for all unit names...
+                    for (var i = 0; i < units.length; i++) {
+                        // if this unit is prefixable...
+                        if (units[i].prefixable) {
+                            if (storage && (units[i].exponents.length < storagebase || units[i].exponents[storagebase] == 0)) {
+                                // not storage
+                                continue;
+                            }
+                            // for all unit names...
+                            for (var j = 0; j < units[i].names.length; j++) {
+                                // if the remainder of the specified name matches the unit...
+                                if (remain == units[i].names[j]) {
+                                    // return the prefix and unit
+                                    return [units[ii], units[i]];
+                                }
+                                if (loading && ! deriving) {
+                                    // be quick
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (loading && ! deriving) {
+                    // be quick
+                    break;
+                }
+            }
+        }
+    }
+    // prefix and unit not found
+    throw "undefined unit " + name;
+}
+
+// *** expression evaluation **********************************************************************
+
+// return a literal value as a unit
+function Value(token)
+{
+    var unit = new Unit();
+    unit.coefficient = Number(token);
+    if (isNaN(unit.coefficient)) {
+        throw "bad value " + token;
+    }
+    return unit;
+}
+
+// operator precedences
+var prec = {
+    '~':   2,  // left-to-right associativity  (prefix multiplication)
+    '>':   1,  // right-to-left associativity  (unary +)
+    '<':   1,  // right-to-left associativity  (unary -)
+    '^':   0,  // right-to-left associativity
+    ' ':  -1,  // left-to-right associativity  (implied multiplication)
+    '*':  -2,  // left-to-right associativity
+    '/':  -2,  // left-to-right associativity
+    '+':  -3,  // left-to-right associativity
+    '-':  -3,  // left-to-right associativity
+    '@':  -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
+    '&':  -4,  // left-to-right associativity  (solve by dimensional analysis: l/r)
+    '#':  -4,  // left-to-right associativity  (solve by dimensional analysis: r/l)
+    '!':  -4,  // left-to-right associativity  (solve by dimensional analysis: 1/(lr))
+    '?':  -5,  // left-to-right associativity
+    "zz": -7,
+};
+
+// operator associativities
+var right = "<>^";
+
+// return the index of the matching parenthesis in an array of tokens
+function MatchParen(tokens, i)
+{
+    var opens = 1;
+    assert(tokens[i] == '(');
+    for (var j = i+1; j < tokens.length; j++) {
+        if (tokens[j] == '(') {
+            opens++;
+        } else if (tokens[j] == ')') {
+            opens--;
+            if (! opens) {
+                assert(tokens[j] == ')');
+                return j;
+            }
+        }
+    }
+    throw "unmatched parenthesis";
+}
+
+// clean low precedence operators off the stack and push a new operator on the stack if needed and set the next result
+function CleanAndPush(stack, result, op, next)
+{
+    assert(prec.hasOwnProperty(op));
+
+    // handle stacked operator precedence and associativity; clean stack as needed
+    if (result != null) {
+        while (stack.length) {
+            // get the top operation on the stack
+            var stacked = stack[stack.length-1];
+            // if the operator has right-to-left associativity, pop if the operator precedence is greater-than the current precedence;
+            // otherwise, pop if the operator precedence is greater-than-or-equal-to the current precedence
+            var pop = (right.indexOf(stacked.op) != -1) ? (prec[stacked.op] > prec[op]) : (prec[stacked.op] >= prec[op]);
+            if (! pop) {
+                // we're done popping
+                break;
+            }
+            stacked = stack.pop();
+            result = stacked.result.Operate(stacked.op, result);
+        }
+    }
+
+    // if we are still evaluating (and not finalizing the stack)...
+    if (op != "zz") {
+        // if there is a previous result...
+        if (result != null) {
+            // push the previous result and a new operator on the stack
+            stack.push({ result: result, op: op });
+        }
+
+        // and set the current result
+        result = next;
+    }
+
+    // return the current result
+    return result;
+}
+
+// evaluate a single expression in an array of tokens and return a single result
+function EvaluateTokens(tokens)
+{
+    var j;
+    var subtokens;
+    var stack = [];
+    var result = null;
+
+    // for all tokens in the equation...
+    for (var i = 0; i < tokens.length; i++) {
+        var token = tokens[i];
+        // if the token is a function call...
+        if (functions.hasOwnProperty(token)) {
+            // power, trig, log, etc.
+            if (tokens.length == i+1) {
+                throw "missing argument " + tokens[i];
+            }
+            if (tokens[i+1] == '(') {
+                // power, trig, log, etc. followed by parenthetical expression
+                j = MatchParen(tokens, i+1);
+                subtokens = tokens.slice(i+2, j);
+                result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
+                i = j;
+            } else {
+                result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
+                i = i+1;
+            }
+            if (token == "square") {
+                result = CleanAndPush(stack, result, '^', Value("2"));
+            } else if (token == "cubic") {
+                result = CleanAndPush(stack, result, '^', Value("3"));
+            } else if (token == "sqrt") {
+                result = CleanAndPush(stack, result, '^', Value("0.5"));
+            } else {
+                for (j = 0; j < result.exponents.length; j++) {
+                    if (result.exponents[j]) {
+                        throw "non-dimensionless exponent";
+                    }
+                }
+                if (token == "sin") {
+                    result = Value(Math.sin(result.coefficient));
+                } else if (token == "cos") {
+                    result = Value(Math.cos(result.coefficient));
+                } else if (token == "tan") {
+                    result = Value(Math.tan(result.coefficient));
+                } else if (token == "asn") {
+                    // range -1..1
+                    result = Value(Math.asin(result.coefficient));
+                } else if (token == "acs") {
+                    // range -1..1
+                    result = Value(Math.acos(result.coefficient));
+                } else if (token == "atn") {
+                    result = Value(Math.atan(result.coefficient));
+                } else if (token == "ln") {
+                    result = Value(Math.log(result.coefficient));
+                } else if (token == "log") {
+                    result = Value(Math.log(result.coefficient)/Math.log(10));
+                } else if (token == "exp") {
+                    result = Value(Math.exp(result.coefficient));
+                } else {
+                    throw "bad function " + token;
+                }
+            }
+
+        // otherwise, if the token opens a parenthetical expression...
+        } else if (token == '(') {
+            // parenthetical expression
+            j = MatchParen(tokens, i);
+            subtokens = tokens.slice(i+1, j);
+            result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
+            i = j;
+
+        // otherwise, if the token is a numeric value...
+        } else if (token[0].match(value_regexp_ch)) {
+            // value
+            result = CleanAndPush(stack, result, ' ', Value(token));
+
+        // otherwise, if the token is a symbolic unit value...
+        } else if (token[0].match(unit_regexp_ch)) {
+            // look for an unprefixed unit
+            var next = LookupUnit(token);
+            var op = ' ';
+            // if not found...
+            if (! next) {
+                // look for a prefixed unit
+                var prefixunit = LookupPrefixedUnit(token);
+                next = prefixunit[0];
+                op = '~';
+                result = CleanAndPush(stack, result, op, next);
+                next = prefixunit[1];
+            }
+            if (cycle_names.hasOwnProperty(next.names[0])) {
+                cycle_warn = true;
+            }
+            result = CleanAndPush(stack, result, op, next);
+
+        // otherwise, if the token is an arithmetic operator...
+        } else if (prec.hasOwnProperty(token)) {
+            // operator
+            if (result == null) {
+                if (token == '+') {
+                    // unary +
+                    result = Value("0");
+                    token = '>';
+                } else if (token == '-') {
+                    // unary -
+                    result = Value("0");
+                    token = '<';
+                } else {
+                    throw "expected a value before " + token;
+                }
+            }
+            result = CleanAndPush(stack, result, token, null);
+
+        } else {
+            throw "bad token " + token;
+        }
+    }
+
+    if (result == null) {
+        throw "missing expression";
+    }
+
+    // finalize the stack, popping all remaining operations
+    result = CleanAndPush(stack, result, "zz", null);
+    assert(! stack.length);
+
+    return result;
+}
+
+// *** expression alternation *********************************************************************
+
+// convert a free unit name to singular form
+function Singular(name)
+{
+    if (name.match(/..s$/)) {
+        if (name.match(/.ies$/)) {
+            name = name.replace(/ies$/, "y");
+        } else if (name.match(/.(s|sh|ch|x|z)es$/)) {
+            name = name.replace(/es$/, "");
+        } else {
+            name = name.replace(/s$/, "");
+        }
+    }
+    return name;
+}
+
+// compare possible prefix of a unit to a singular unit name from the database
+function MatchSearch(name, i, j)
+{
+    return units[i].names[j].toLowerCase().match("^" + name.toLowerCase());
+}
+
+// compare a possibly plural unit to a singular unit name from the database
+function MatchPlural(name, i, j)
+{
+    var singular = units[i].names[j];
+    if (name == singular) {
+        return true;
+    }
+    if (units[i].pluralizables == null || ! units[i].pluralizables[j]) {
+        return false;
+    }
+    if (singular.match(/.y$/)) {
+        if (name.replace(/ies$/, "y") == singular) {
+            return true;
+        }
+    }
+    if (singular.match(/(s|sh|ch|x|z)$/)) {
+        if (name.replace(/es$/, "") == singular) {
+            return true;
+        }
+    }
+    if (name.replace(/s$/, "") == singular) {
+        return true;
+    }
+    return false;
+}
+
+// return all the primary and secondary units that match a name
+// XXX -- figure out how to factor this with the other Lookup functions!
+function LookupUnits(name, prefixable, search)
+{
+    var j;
+    var unit;
+    var more = [];
+
+    // if this is a precomputed unit to make loading faster
+    if (name[0] == 'i' && name.match(/^index[0-9]/)) {
+        // no need to search, just return the unit
+        more.push(name);
+    } else {
+        // check for a unit
+
+        // for all units...
+        for (var i = 0; i < units.length; i++) {
+            unit = units[i];
+            // if we are not looking only for prefixable units or the unit actually is prefixable...
+            if (! prefixable || unit.prefixable) {
+                // for all appropriate unit names...
+                // N.B. we use index 1 for PREFIX solo
+                for (j = (unit.type == "PREFIX" ? 1 : 0); j < unit.names.length; j++) {
+                    // if the unit name matches, by search or by plural...
+                    if (search ? MatchSearch(name, i, j) : name[0] == unit.names[j][0] && MatchPlural(name, i, j)) {
+                        // record a matching unit
+                        if (search) {
+                            more.push(unit.names[j]);
+                        } else {
+                            // use a precomputed unit to make subsequent searching faster
+                            more.push("index"+i);
+                        }
+                    }
+                }
+            }
+        }
+
+        // check for a prefix and a unit
+
+        // for all unit names...
+        for (var ii = 0; ii < units.length; ii++) {
+            unit = units[ii];
+            // if this is a prefix...
+            if (unit.type == "PREFIX") {
+                var storage = unit.names[1].slice(2) == "bi";  // storage prefix
+                // for all prefix names...
+                for (var jj = 0; jj < unit.names.length; jj++) {
+                    var prefix = unit.names[jj];
+                    // if the specified name matches the prefix...
+                    if (name[0] == prefix[0] && name.indexOf(prefix) == 0 && name.length > prefix.length) {
+                        // prefix match
+                        var remain = name.slice(prefix.length);
+                        // for all unit names...
+                        for (i = 0; i < units.length; i++) {
+                            var unit2 = units[i];
+                            // if this unit is prefixable...
+                            if (unit2.prefixable) {
+                                if (storage && (unit2.exponents.length < storagebase || unit2.exponents[storagebase] == 0)) {
+                                    // not storage
+                                    continue;
+                                }
+                                // for all unit names...
+                                for (j = 0; j < unit2.names.length; j++) {
+                                    // if the remainder of the specified name matches the unit, by search or by plural...
+                                    if (search ? MatchSearch(remain, i, j) : remain[0] == unit2.names[j][0] && MatchPlural(remain, i, j)) {
+                                        // record a matching prefix and unit
+                                        if (search) {
+                                            more.push(unit.names[jj]+unit2.names[j]);
+                                        } else {
+                                            // use a precomputed unit to make subsequent searching faster
+                                            more.push("index"+ii + '~' + "index"+i);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // if we found one or more interpretations of the unit...
+    if (more.length) {
+        return more;
+    }
+
+    if (! evaluating) {
+        throw "undefined unit " + name;
+    }
+
+    // define a free unit to use for the remainder of the expression
+    unit = DefineBaseUnit(Singular(name), true);
+    console.log("free " + name);
+    return [unit.names[0]];
+}
+
+// call EvaluateTokens() for each possible alternation of tokens at or beyond n
+function AlternateTokens(tokens, n)
+{
+    // for each token past where our callers have already alternated...
+    var j;
+    var subtokens;
+    for (var i = n; i < tokens.length; i++) {
+        // if we are alternating...
+        if (tokens[i] == ';') {
+            // solve by dimensional analysis alternation
+            subtokens = tokens.slice(0);
+            // for each alternate operator of ';'...
+            for (j = 0; j < semicolon_alternates.length; j++) {
+                subtokens[i] = semicolon_alternates[j];
+                // recurse for remaining tokens
+                AlternateTokens(subtokens, i+1);
+            }
+            return;
+        } else if (tokens[i][0].match(unit_regexp_ch) && ! functions.hasOwnProperty(tokens[i])) {
+            // ambiguous unit names alternation
+            var spliced = false;
+            subtokens = tokens.slice(0);
+            var prefixable = i && tokens[i-1] == '~';
+            // look up all interpretations of the unit
+            var ambiguous = LookupUnits(tokens[i], prefixable, false);
+            // for each interpretation of the unit...
+            for (j = 0; j < ambiguous.length; j++) {
+                // if this is a prefixed unit...
+                if (ambiguous[j].match('~')) {
+                    // split the unit into prefix and unit
+                    var prefixunit = ambiguous[j].split('~');
+                    if (! spliced) {
+                        // grow the subtokens array once as needed
+                        subtokens.splice(i, 0, prefixunit[0], '~');
+                        spliced = true;
+                    } else {
+                        subtokens[i] = prefixunit[0];
+                    }
+                    subtokens[i+2] = prefixunit[1];
+                } else {
+                    subtokens[i] = ambiguous[j];
+                }
+                // recurse for remaining tokens
+                AlternateTokens(subtokens, i+1);
+            }
+            return;
+        }
+    }
+
+    try {
+        // evaluate a single expression in an array of tokens and return a single result
+        var result = EvaluateTokens(tokens);
+
+        // check if the evaluation resulted in a dimensionless exponent
+        if (evaluating) {
+            for (j = result.exponents.length-1; j >= 0; j--) {
+                if (result.exponents[j]) {
+                    break;
+                }
+            }
+        } else {
+            j = -1;
+        }
+        // if the evaluation resulted in a dimensionless exponent...
+        if (j == -1) {
+            // dimensionless results are top priority
+            results.push(result);
+
+        // otherwise, if the evaluation resulted in a mismatch of non-free units...
+        } else if (j < freebaseunit) {
+            // second priority are mismatches or SI or dimension calculations
+            
+            // else if "?" was entered: coefficient dim [SI]
+            // else: dim
+            var strings;
+            var question = tokens.includes('?');
+
+            // if "expression ? unit" was entered...
+            if (question) {
+                // the user requested a unit and we mismatched; show what was missing as "1/dimension"
+                strings = ["Mismatch " + result.Dimension(question)];
+
+            // otherwise, if "expression ?" was entered...
+            } else if (si) {
+                // the user requested an SI result; show the SI result as "coefficient dimension"
+                strings = result.SI();
+
+            // "expression" was entered...
+            } else {
+                // the user requested a dimension; show what was evaluated as "dimension"
+                strings = [result.Dimension(question)];
+            }
+
+            // record the result as a mismatch
+            for (var k = 0; k < strings.length; k++) {
+                if (! mismatches.includes(strings[k])) {
+                    mismatches.push(strings[k]);
+                }
+            }
+
+        // third priority are errors
+        } else {
+            // the evaluation resulted in a mismatch of a free unit
+            if (! errors.includes("uncanceled free unit " + bases[j].names[0])) {
+                errors.push("uncanceled free unit " + bases[j].names[0]);
+            }
+        }
+    } catch (error) {
+        if (! errors.includes(error)) {
+            errors.push(error);
+        }
+    }
+}
+
+// *** command line *******************************************************************************
+
+// parse and run a command line
+function ParseTokens(tokens, line)
+{
+    var i;
+    var j;
+    if (tokens.length) {
+        // if we are defining a base unit...
+        if (tokens[0] == "BASE") {
+            if (tokens.length != 2) {
+                throw "missing unit";
+            }
+            DefineBaseUnit(tokens[1], false);
+
+        // otherwise, if we are defining a category...
+        } else if (tokens[0] == "CATEGORY") {
+            if (tokens.length != 2) {
+                throw "missing category";
+            }
+            if (all_categories.includes(tokens[1])) {
+                throw "duplicate category";
+            }
+            all_categories.push(tokens[1]);
+
+        // otherwise, if we are running test code...
+        } else if (tokens[0] == "TEST") {
+            if (tokens[1] == "categories") {
+                document.getElementById("equation").value = "";
+                Units();
+            } else if (tokens[1] == "byname") {
+                document.getElementById("equation").value = tokens[2];
+                Units();
+            } else if (tokens[1] == "bycategory") {
+                // XXX -- how to test this thru UI hyperlink?
+                ShowUnitsByCategory(tokens[2], false);
+            } else if (tokens[1] == "bydimension") {
+                // XXX -- how to test this thru UI hyperlink?
+                ShowUnitsByCategory(tokens[2], true);
+            } else if (tokens[1] == "details") {
+                document.getElementById("equation").value = tokens[2];
+                Details();
+            } else {
+                throw "unknown test " + tokens[1];
+            }
+
+        // otherwise, if we are defining or undefining a unit...
+        } else if (tokens.includes('=')) {
+            var i;
+            var filter = null;
+            if (! loading) {
+                // if a filtering dimension is specified...
+                i = tokens.indexOf('?');
+                if (i != -1) {
+                    // evaluate the dimension
+                    var dimtokens = tokens.slice(i+1);
+                    try {
+                        filter = EvaluateTokens(dimtokens);
+                    } catch (error) {
+                        throw "bad unit filter";
+                    }
+                    // remove the filtering dimension tokens from the command line
+                    tokens.splice(i, tokens.length-i);
+                }
+            }
+            var type = null;
+            var definition = line;
+            var unambiguous = false;
+            if (tokens[0] == "AMBIGUOUS") {
+                type = "DERIVED";
+                i = 1;
+            } else if (tokens[0] == "DERIVED") {
+                type = tokens[0];
+                i = 1;
+                unambiguous = true;
+            } else if (tokens[0] == "PREFIX") {
+                type = tokens[0];
+                i = 1;
+            } else {
+                i = 0;
+            }
+            var prefixable = tokens[i][0] == '*';
+            var names = [];
+            var pluralizables = [];
+            var categories = [];
+
+            // gather categories and names...
+            for (; i < tokens.length; i++) {
+                if (tokens[i] == '=') {
+                    // end of names
+                    break;
+                } else if (tokens[i] == ':') {
+                    // end of categories
+                    categories = names.slice(0);
+                    for (j = 0; j < categories.length; j++) {
+                        if (! all_categories.includes(categories[j]) && ! LookupUnit(categories[j])) {
+                            throw "undefined category " + categories[j];
+                        }
+                    }
+                    names = [];
+                    pluralizables = [];
+                    continue;
+                } else if (tokens[i] == ',') {
+                    // next name or category
+                    continue;
+                } else if (tokens[i] == '*') {
+                    // name is pluralizable
+                    if (names.length) {
+                        pluralizables[names.length-1] = true;
+                    }
+                } else if (tokens[i][0].match(unit_regexp_ch)) {
+                    // record the name
+                    names.push(tokens[i]);
+                    pluralizables.push(false);
+                } else {
+                    throw "unexpected " + tokens[i];
+                }
+            }
+            if (! i) {
+                throw "missing name";
+            }
+            var subtokens = tokens.slice(i+1);
+
+            // if we have an expression...
+            if (subtokens.length) {
+                // define unit names
+                // if we are loading the database...
+                if (loading) {
+                    deriving = (type == "DERIVED");
+                    try {
+                        // evaluate a single interpretation to be quick
+                        results.push(EvaluateTokens(subtokens));
+                        if (deriving) {
+                            // XXX -- how can we test this after load?
+                            var ambiguous = results[0].Ambiguous();
+                            if (unambiguous && ambiguous) {
+                                throw "ambiguous derived unit " + names[0] + " with " + ambiguous.names[0];
+                            } else if (! unambiguous && ! ambiguous) {
+                                throw "unambiguous ambiguous unit " + names[0];
+                            }
+                        }
+                    } finally {
+                        deriving = false;
+                    }
+                } else {
+                    // evaluate all interpretations to be thorough
+                    AlternateTokens(subtokens, 0);
+                }
+
+                // for all results...
+                for (j = 0; j < results.length; j++) {
+                    // if the result is compatible with the filter...
+                    if (results[j].Compatible(filter, false)) {
+                        // define a new unit!
+                        var unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
+                        Object.freeze(unit);
+                        units.push(unit);
+                        defines = true;
+                    }
+                }
+                if (defines) {
+                    results = [];
+                }
+            } else {
+                // undefine unit names
+                undefines = true;
+                // for all units...
+                // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
+                for (i = units.length-1; i >= 0; i--) {
+                    // if the unit is compatible with the filter and is not a base/derived/ambiguous/prefix unit...
+                    if (units[i].Compatible(filter, false) && units[i].type == null) {
+                        // for all unit names...
+                        for (j = units[i].names.length-1; j >= 0; j--) {
+                            // for all names being undefined...
+                            for (var k = 0; k < names.length; k++) {
+                                // if the unit name matches...
+                                if (units[i].names[j] == names[k]) {
+                                    // delete the unit name!
+                                    units[i].names.splice(j, 1);
+                                    units[i].pluralizables.splice(j, 1);
+                                }
+                            }
+                            // if we deleted all names from a unit...
+                            if (units[i].names.length == 0) {
+                                // delete the unit itself!
+                                units.splice(i, 1);
+                            }
+                        }
+                    }
+                }
+            }
+
+        } else {
+            // we are evaluating an expression with free units
+            evaluating = true;
+            freebaseunit = nextbaseunit;
+            var length = units.length;
+
+            try {
+                // evaluate all interpretations to be thorough
+                AlternateTokens(tokens, 0);
+            } finally {
+                // discard free units
+                nextbaseunit = freebaseunit;
+                while (units.length > length) {
+                    units.pop();
+                }
+                evaluating = false;
+            }
+        }
+    }
+}
+
+// tokenize a command line
+function TokenizeLine(input)
+{
+    // remove comments
+    input = input.replace(/[#|].*/, "").trim();
+
+    var token;
+    var tokens = [];
+    var colon = false;
+    var equal = false;
+    var question = false;
+    // for all letters in the command line...
+    for (var i = 0; i < input.length; i++) {
+        var ch = input[i];
+
+        // if the letter is the start of a numeric value...
+        if (ch.match(value_regexp_ch)) {
+            // value
+            token = input.slice(i).match(value_regexp_head)[0];
+            i += token.length-1;
+
+        // otherwise, if the letter is the start of a symbolic unit (or function call name)...
+        } else if (ch.match(unit_regexp_ch)) {
+            // unit
+            token = input.slice(i).match(unit_regexp_head)[0];
+            i += token.length-1;
+
+        // otherwise, if the letter is an arithmetic operator...
+        } else if (ch.match(operator_regexp_ch)) {
+            // operator
+            token = ch;
+            if (ch == ':') {
+                if (colon) {
+                    throw ": may only occur once";
+                }
+                colon = true;
+            }
+            if (ch == '=') {
+                if (equal) {
+                    throw "= may only occur once";
+                }
+                equal = true;
+            }
+            if (ch == '?') {
+                if (question) {
+                    throw "? may only occur once";
+                }
+                question = true;
+            }
+        } else if (ch == ' ') {
+            continue;
+        } else {
+            throw "token error " + ch;
+        }
+        tokens.push(token);
+    }
+
+    // remove trailing '?' for si or filter request
+    si = false;
+    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
+        si = true;
+        tokens.pop();
+    }
+
+    return tokens;
+}
+
+// *** html elements ******************************************************************************
+
+// persist new results, scroll the page to the equation line, and set equation focus
+function Scroll(noscroll)
+{
+    // store our results history
+    var save = document.getElementById("results").innerHTML.trim();  // XXX -- why space when empty?
+    localStorage["calchemy.results"] = save;
+
+    // enable the Delete All button if there are chunks to delete
+    document.getElementById("all").disabled = ! save.length;
+
+    // if we're scrolling...
+    if (noscroll != true) {
+        // scroll the equation line into view and set the focus
+        document.getElementById("bottom").scrollIntoView();
+        document.getElementById("equation").focus();
+        // if needed, scroll us all the way left
+        // N.B. some browsers hide our margin otherwise and it looks bad
+        var x = window.scrollX, y = window.scrollY;
+        if (x < 100) {
+            window.scrollTo(0, y);
+        }
+    }
+}
+
+var lasttag;
+
+// return a tagged html chunk to allow results to be deleted
+function Chunk(result, tag)
+{
+    // create a random tag if one was not specified explicitly
+    first = true;
+    cursor += (result.match(/javascript:Hyperlink/i) || []).length;
+    if (tag == undefined) {
+        tag = window.crypto.getRandomValues(new Uint32Array(4)).join('-');
+    }
+    lasttag = tag;
+    // create the chunk as a searchable comment preceded by a horizontal line and followed by a table with a delete button to the right
+    var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated below
+    var head = "<table><tr><td>";
+    var button = "</td><td style='width: 4%; vertical-align: bottom;'><button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
+    var tail = "</td></tr></table>";
+    return  hrtag + head + result + button + tail;
+}
+
+// the user clicked a Delete button; delete tagged html results
+function Delete(tag)
+{
+    if (tag == "all") {
+        // delete all chunks
+        document.getElementById("results").innerHTML = "";
+    } else {
+        // find the requested chunk in the results
+        var head;
+        var mid;
+        var tail;
+        var orig = document.getElementById("results").innerHTML;
+        var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated above
+        var index = orig.indexOf(hrtag);
+        if (index != -1) {
+            // delete everything up to the next chunk
+            head = orig.slice(0, index);
+            mid = orig.slice(index + hrtag.length);
+            var nexthr = "<hr>";
+            index = mid.indexOf(nexthr);
+            if (index != -1) {
+                tail = mid.slice(index);
+            } else {
+                tail = "";
+            }
+            // update the results
+            document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
+        }
+    }
+
+    // reset url
+    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+
+    cursor = 0;
+    Scroll(true);
+}
+
+// snoop the test results and delete tagged html results
+function SnoopAndDelete(tag)
+{
+    // find the requested chunk in the results
+    var head;
+    var mid;
+    var tail;
+    var orig = document.getElementById("results").innerHTML;
+    var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated above
+    var index = orig.indexOf(hrtag);
+    if (index == -1) {
+        return [""];
+    }
+
+    // delete everything up to the next chunk
+    head = orig.slice(0, index);
+    mid = orig.slice(index + hrtag.length);
+    var nexthr = "<hr>";
+    index = mid.indexOf(nexthr);
+    if (index != -1) {
+        tail = mid.slice(index);
+        mid = mid.slice(0, index);
+    } else {
+        tail = "";
+    }
+
+    // update the results
+    document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
+
+    // return the snoop
+    var lines = mid.split("<br>");
+    var snoops = [];
+    for (var i = 0; i < lines.length; i++) {
+        var snoop = lines[i].replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ");
+        if (snoop.trim().length) {
+            snoops.push(snoop);
+        }
+    }
+    return snoops;
+}
+
+// the user loaded the webpage; initialize the units database
+function Body()
+{
+    try {
+        // split the database into lines
+        var lines = database.split(/[\r\n]+/);
+        loading = true;
+
+        // for each line of the database...
+        for (var i = 0; i < lines.length; i++) {
+            // evaluate the line
+            var line = lines[i];
+
+            results = [];
+            mismatches = [];
+            errors = [];
+            defines = false;
+            undefines = false;
+            ParseTokens(TokenizeLine(line), line);
+        }
+
+        loading = false;
+
+        // identify our "special" base units
+        for (i = 0; i < bases.length; i++) {
+            if (bases[i].names[0] == "MASS") {
+                // we display SI units in kilograms rather than grams
+                massbase = i;
+            } else if (bases[i].names[0] == "STORAGE") {
+                // we only allow binary prefixes on storage units
+                storagebase = i;
+            }
+        }
+
+        // recall our results history
+        var temp = localStorage["calchemy.results"];
+        document.getElementById("results").innerHTML = temp != undefined ? temp : "";
+
+        // if we have a query string...
+        var index = document.URL.indexOf('?');
+        if (index != -1) {
+            offset_warn = false;
+            cycle_warn = false;
+            
+            // split the query string by &'s
+            lines = window.unescape(document.URL.slice(index+1)).split('&');
+            for (i = 0; i < lines.length; i++) {
+                // pretend the user entered the query string thru the UI one line at a time
+                document.getElementById("equation").value = lines[i];
+                // if the evaluation failed...
+                if (! Enter()) {
+                    // don't evaluate any more equation lines
+                    break;
+                }
+            }
+
+            // reset url
+            window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+        }
+
+        document.getElementById("status").innerHTML = "database loaded";
+    } catch (error) {
+        document.getElementById("results").innerHTML = error;
+    } finally {
+        offset_warn = false;
+        cycle_warn = false;
+    }
+
+    // handle key presses in the user equation
+    document.getElementById("equation").addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            // enter -- run the command line
+            event.preventDefault();
+            document.getElementById("enter").click();
+        }
+        if (event.keyCode === 40) {
+            // down arrow -- recall a newer command line
+            event.preventDefault();
+            UpDown(false);
+        }
+        if (event.keyCode === 38) {
+            // up arrow -- recall an older command line
+            event.preventDefault();
+            UpDown(true);
+        }
+    });
+
+    Scroll();
+}
+
+// the user clicked the Enter button; run the user command line
+function Enter()
+{
+    var success = false;
+
+    try {
+        // get the user command line
+        var line = document.getElementById("equation").value;
+
+        // parse the requested dimension from the command line
+        var question = line.indexOf('?');
+        var dimension;
+        if (question == -1) {
+            dimension = "";
+        } else {
+            dimension = " " + line.slice(question+1).trim();
+        }
+
+        // tokenize, parse, and run the command line
+        results = [];
+        mismatches = [];
+        errors = [];
+        defines = false;
+        undefines = false;
+        try {
+            ParseTokens(TokenizeLine(line), line);
+        } catch (error) {
+            if (! errors.includes(error)) {
+                errors.push(error);
+            }
+        }
+
+        var output;
+
+        // if we got one or more valid (dimensionally consistent) results...
+        if (results.length) {
+            // format the results we will output, appending the requested dimension we parsed from the command line
+            output = [];
+            for (var j = 0; j < results.length; j++) {
+                var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
+                if (! output.includes(string)) {
+                    output.push(string);
+                }
+            }
+            Clear();
+            success = true;
+
+        // otherwise, if we defined units...
+        } else if (defines) {
+            output = ["defined"];
+            Clear();
+            success = true;
+
+        // otherwise, if we undefined units...
+        } else if (undefines) {
+            output = ["undefined"];
+            Clear();
+            success = true;
+
+        // otherwise, if we got one or more dimensional mismatches (or SI results)...
+        } else if (mismatches.length) {
+            // use the mismatches (or SI results) as the results we will output
+            output = mismatches;
+            Clear();
+            success = true;
+
+        // otherwise, if we caught one or more exceptions as errors...
+        } else if (errors.length) {
+            // use the errors as the results we will output
+            output = errors;
+
+        } else {
+            output = [];
+            Clear();
+            success = true;
+        }
+
+        // transform the output into hyperlinked html
+        var html = "";
+        for (var i = 0; i < output.length; i++) {
+            if (output[i].match("^= ")) {
+                html += "<br>" + "<a href=\"javascript:Hyperlink('" + output[i].replace(/^= /, "") + "')\">" + output[i] + "</a>";
+            } else {
+                html += "<br>" + output[i];
+            }
+        }
+
+        // if we accessed offset temperature units...
+        if (offset_warn && ! offset_warned) {
+            html += "<br> Caution: Calculation involves offset temperature units; see Calchemy Help.";
+            offset_warned = true;
+        }
+
+        // if we accessed units of cycle or revolution...
+        if (cycle_warn && ! cycle_warned) {
+            html += "<br> Caution: Calculation involves units of cycle or revolution; see Calchemy Help.";
+            cycle_warned = true;
+        }
+
+        // append a deletable chunk to the results list with the results
+        if (line.trim().length) {
+            if (testing) {
+                if (html.length) {
+                    // N.B. if there is no new output we leave output from before TEST available
+                    document.getElementById("results").innerHTML += Chunk(html);
+                }
+            } else {
+                document.getElementById("results").innerHTML += Chunk("<a href=\"javascript:Hyperlink('" + line + "')\">" + line + "</a>" + html);
+            }
+        }
+
+        if (success && ! testing) {
+            var url = window.location.href.replace(/[?#].*/, "") + '?' + window.escape(line);
+            window.history.pushState(line, line, url);
+        }
+    } catch (error) {
+        document.getElementById("results").innerHTML += Chunk(error);
+    }
+    Scroll();
+
+    return success;
+}
+
+var first = true;
+var cursor = 0;
+
+// the user typed up-arrow or down-arrow to recall an older or newer command line
+function UpDown(up)
+{
+    // get the list of lines and hyperlinks from the results history
+    var html = document.getElementById("results").innerHTML;
+    var lines = html.split(/[<>]+/);
+    var links = [];
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].match(/javascript:Hyperlink/i)) {
+            links.push(lines[i].replace(/.*javascript[:]Hyperlink[(][']/i, "").replace(/['][)].*/, ""));
+        }
+    }
+    if (first && up) {
+        // an initial up-arrow recalls the last hyperlink from the results history
+        cursor = 0;
+    }
+    if (links.length) {
+        // recall the requested hyperlink from the results history to the equation line
+        if (up) {
+            // older
+            cursor = (cursor+links.length-1)%links.length;
+        } else {
+            // newer
+            cursor = (cursor+1)%links.length;
+        }
+        document.getElementById("equation").value = links[cursor];
+        first = false;
+    }
+    Scroll();
+}
+
+// the user clicked the Clear button; clear the user equation
+function Clear()
+{
+    // reset url
+    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+
+    document.getElementById("equation").value = "";
+    Scroll();
+}
+
+// the user clicked a hyperlink; enter text into the user equation replacing the word at the cursor
+function Hyperlink(string)
+{
+    var equation = document.getElementById("equation");
+    // find the start and end of the word at the cursor
+    var start = equation.selectionStart;
+    var match = equation.value.slice(0, start).match(unit_regexp_tail);
+    if (match) {
+        start -= match[0].length;
+    }
+    var end = equation.selectionEnd;
+    match = equation.value.slice(end).match(unit_regexp_head);
+    if (match) {
+        end += match[0].length;
+    }
+    // replace the word at the cursor with the hyperlinked string, and update the selection
+    equation.value = equation.value.slice(0, start) + string + equation.value.slice(end);
+    equation.selectionStart = equation.selectionEnd = start + string.length;
+    Scroll();
+}
+
+// show details for a unit in the user equation
+function ShowUnitsDetails(name)
+{
+    // find all interpretations of the unit
+    var more = LookupUnits(name, false, false);
+
+    // for each interpretation of the unit...
+    var html = "";
+    for (var i = 0; i < more.length; i++) {
+        // if the unit is prefixed...
+        if (more[i].match('~')) {
+            // format the prefix definition and the unit definition side-by-side
+            // N.B. the unit definition begins with a '*', which we use to represent the multiplication!
+            var prefixunit = more[i].split('~');
+            html += "<br>" + LookupUnit(prefixunit[0]).definition + LookupUnit(prefixunit[1]).definition;
+        } else {
+            // format the unit definition alone
+            html += "<br>" + LookupUnit(more[i]).definition;
+        }
+
+        // append the dimension of the unit to the unit details
+        var tokens = TokenizeLine(more[i]);
+        var filter = EvaluateTokens(tokens);
+        html += " " + filter.Dimension(false);
+    }
+
+    // append a deletable chunk to the results list with the unit details
+    document.getElementById("results").innerHTML += Chunk("=== unit details " + name + " ===" + html);
+    Scroll();
+}
+
+// sort, stably folding upper/lower case
+function Sort(array)
+{
+    array.sort(function(a, b) {
+        var compare = a.toLowerCase().localeCompare(b.toLowerCase());
+        return compare ? compare : a.localeCompare(b);
+    });
+}
+
+// show units in a database category or dimension
+function ShowUnitsByCategory(category, bydimension)
+{
+    var i, j;
+    var names = [];
+    if (bydimension != true) {
+        // first look for category matches
+        for (i = 0; i < units.length; i++) {
+            if (! units[i].type) {
+                if (units[i].categories.includes(category)) {
+                    for (j = 0; j < units[i].names.length; j++) {
+                        if (! names.includes(units[i].names[j])) {
+                            names.push(units[i].names[j]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (! names.length) {
+        // then look for dimension matches
+        var filter = LookupUnit(category);
+        if (filter || category == "All Units") {
+            for (i = 0; i < units.length; i++) {
+                if (! units[i].type) {
+                    if (units[i].Compatible(filter, false)) {
+                        for (j = 0; j < units[i].names.length; j++) {
+                            if (! names.includes(units[i].names[j])) {
+                                names.push(units[i].names[j]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // compute the list of hyperlinked units
+    Sort(names);
+    var html = "";
+    for (i = 0; i < names.length; i++) {
+        html += "<br>";
+        html += "<a href=\"javascript:Hyperlink('" + names[i] + "')\">" + names[i] + "</a>";
+    }
+
+    // append a deletable chunk to the results list with the units list
+    document.getElementById("results").innerHTML += Chunk("=== units in category " + category + " ===" + html);
+    Scroll();
+}
+
+// show units that can match the unit in the user equation
+function ShowUnitsByName(name)
+{
+    // find all units that match the name
+    var i;
+    var names = LookupUnits(name, false, true);
+    var namesets = [];
+    for (i = 0; i < names.length; i++) {
+        if (! namesets.includes(names[i])) {
+            namesets.push(names[i]);
+        }
+    }
+
+    // compute the list of hyperlinked units
+    Sort(namesets);
+    var html = "";
+    for (i = 0; i < namesets.length; i++) {
+        html += "<br>" + "<a href=\"javascript:Hyperlink('" + namesets[i] + "')\">" + namesets[i] + "</a>";
+    }
+
+    // append a deletable chunk to the results list with the units list
+    document.getElementById("results").innerHTML += Chunk("=== units by name " + name + " ===" + html);
+    Scroll();
+}
+
+// show database categories and dimensions
+function ShowCategories()
+{
+    // compute the list of categories and dimensions
+    var categories = [];
+    for (var i = 0; i < units.length; i++) {
+        for (var j = 0; j < units[i].categories.length; j++) {
+            if (! categories.includes(units[i].categories[j])) {
+                categories.push(units[i].categories[j]);
+            }
+        }
+        if (units[i].type == "DERIVED") {
+            if (! categories.includes(units[i].names[0])) {
+                categories.push(units[i].names[0]);
+            }
+        }
+    }
+
+    // compute the list of hyperlinked categories and dimensions
+    Sort(categories);
+    var html = "<br><a href=\"javascript:ShowUnitsByCategory('All Units')\">All Units</a>";
+    for (i = 0; i < categories.length; i++) {
+        html += "<br>" + "<a href=\"javascript:ShowUnitsByCategory('" + categories[i] + "')\">" + categories[i] + "</a>";
+    }
+
+    // append a deletable chunk to the results list with the categories list
+    document.getElementById("results").innerHTML += Chunk("=== unit categories ===" + html);
+    Scroll();
+}
+
+// return the word at the cursor
+function Word()
+{
+    var line = document.getElementById("equation").value;
+    var start = document.getElementById("equation").selectionStart;
+    var match = line.slice(start).match(unit_regexp_head);
+    if (match) {
+        start += match[0].length;
+    }
+    line = line.slice(0, start);
+    var word = line.match(unit_regexp_tail);
+    return word;
+}
+
+
+// the user clicked the Find Units button; find units requested by the user
+function Units()
+{
+    try {
+        // if there is a word at the cursor...
+        var word = Word();
+        if (word) {
+            // do a unit search
+            ShowUnitsByName(word[0]);
+        } else {
+            // do a category search
+            ShowCategories();
+        }
+    } catch (error) {
+        document.getElementById("results").innerHTML += Chunk(error);
+    }
+    Scroll();
+}
+
+// the user clicked the Unit Details button; show unit details requested by the user
+function Details()
+{
+    try {
+        // if there is a word at the cursor...
+        var word = Word();
+        if (word) {
+            // show unit details
+            ShowUnitsDetails(word[0]);
+        }
+    } catch (error) {
+        document.getElementById("results").innerHTML += Chunk(error);
+    }
+    Scroll();
+}
+
+// the user clicked the Copy button; copy the history and equation to the clipboard
+function Copy()
+{
+    var text = document.getElementById("results").innerText.replace(/[ \t][ \t]*/g, " ").replace(/ Delete$/gm, "") + "\n\n" + document.getElementById("equation").value;
+    navigator.clipboard.writeText(text);
+    Scroll();
+}
+
+// the user clicked the Paste button; paste the clipboard into the equation line up to the first error
+function Paste()
+{
+    navigator.clipboard.readText().then((text) =>
+    {
+        // for each equation line in the clipboard...
+        var lines = text.split(/[\r\n]+/);
+        for (var i = 0; i < lines.length; i++) {
+            if (! lines[i].match(/^[[=]/) && ! lines[i].match(/^(un)?defined/) && ! lines[i].match(/^Caution/) && ! lines[i].match(/^Delete/) && ! lines[i].match(/^Mismatch/)) {
+                // evaluate the equation line
+                document.getElementById("equation").value = lines[i];
+                // if the evaluation failed...
+                if (! Enter()) {
+                    // don't evaluate any more equation lines
+                    break;
+                }
+            }
+        }
+    });
+    Scroll();
+}
+
+var untestedexamples = `
+`;
+
+var testedexamples =`
+    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | = 486.71 ft^2
+    1 pack; 30 rolls/pack; 425 sheets/roll; 40 sheets/poop; 1 poops/person/day; 3 persons ? days | = 106.25 days
+    pi * (0.25 inch)^2 ; 160 ft ; 5 gal/min ? sec | = 19.584 sec
+    40 gal ; 120 degF - 45 degF ; 1 cal/cc deltaC ; 40000 btu/hr ? min | = 37.5291 min
+    2000 lbm * grav * 60 mph ? hp | = 320 hp
+    10 mph * 30 feet * 10 gal/acre ? gal/min | = 6.06061 gal/min
+    43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec | = 8.77198 sec
+    40 knot / (2500 rpm * 90%) ? inch/rev | = 21.604 inch/rev, Caution: Calculation involves units of cycle or revolution; see Calchemy Help.
+    (3/4) cup * 1 cal/(cc deltaK) * (212 - 52) deltaF / (2 min + 4 sec) ? watt | = 532.196 watt
+    10 km/l ? mpg | = 23.5215 mpg
+    35 ft * 20 meters ? acres | = 0.0527224 acres
+    ( 3 / (4 pi) * 1 gal )^(1/3)  ? inches | = 3.80634 inches
+    (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week | = 2.33766 hours/week
+    40 knot / (2500 rpm * 90%) ? inch/rev | = 21.604 inch/rev
+    40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour | = 0.79228 hour
+    (1/2) (2000 lbm * ((60 mph)^2 - (55 mph)^2)) / (10 sec) ? hp | = 6.98976 hp
+    3.4 mega byte / 1200 baud ? hour | = 6.2963 hour
+    6.98976 hp; 3500 rpm ? ft lb | = 10.4889 ft lb
+    1/sqrt(23 millihenry * 10 microfarad) ? Hz | = 331.861 Hz
+`;
+
+var example = 0;
+
+// the user clicked the Example button; copy an example equation to the equation line
+function Example()
+{
+    try {
+        // get all the example lines, including blanks
+        var lines = (untestedexamples+testedexamples).split(/[\r\n]+/);
+        var line;
+        // recall the next non-blank example line, without comments
+        do {
+            line = lines[example%lines.length].replace(/#.*$/g, "").replace(/[|].*/, "").trim();
+            example++;
+        } while (! line);
+        document.getElementById("equation").value = line;
+    } catch (error) {
+        document.getElementById("results").innerHTML += Chunk(error);
+    }
+    Scroll();
+}
+
+var tests =`
+    # values and units
+    |
+    .3 | = 0.3
+    0.3 | = 0.3
+    3e-1 | = 0.3
+    3e-1 | = 0.3
+    300 | = 300
+    3e2 | = 300
+    $ ? $ | = 1 $
+    % | = 0.01
+    .444444444444 | = 0.444444
+    .555555555555 | = 0.555556
+    meter?metre | = 1 metre
+    speed_of_light ? c | = 1 c
+    metre?meter | = 1 meter
+    c ? speed_of_light | = 1 speed_of_light
+    12345678901234567890123456789012345678901234567890123456789012345678901234567890 | = 1.23457e+79
+
+    # prefixes
+    kilo | = 1000
+    #k | = 1000  -- XXX we'd like this to work, at least alone!
+    kibimeter | uncanceled free unit kibimeter
+    Kimeter | uncanceled free unit Kimeter
+    kibibyte | [Storage]
+    KiByte | [Storage]
+
+    # precedence and associativity
+    2*(3+4) | = 14
+    (2*3)+4 | = 10
+    2+3*4 | = 14
+    2*3+4 | = 10
+    (4^2)^3 | = 4096
+    4^(2^3) | = 65536
+    4^2^3 | = 65536
+    1/2?4 | = 0.125 4
+    1?2/4 | = 2 2/4
+    1 2/4 | = 0.5
+    1/2 4 | = 0.125
+    ((2))((4)) | = 8
+    (1+(2+3)*(1+2)) | = 16
+    -3 | = -3
+    --3 | = 3
+    ---3 | = -3
+    (-2)(+2) | = -4
+    (-2)(-2) | = 4
+    -foot-foot ? inch | = -24 inch
+    (-foot)(-foot) ? sqft | = 1 sqft
+    -foot^2 ? sqft | = 1 sqft
+    -foot*2 ? foot | = -2 foot
+    0+foot | [Length]
+    0-foot | [Length]
+
+    # functions
+    3 3 | = 9
+    square 2 | = 4
+    square(3 3) | = 81
+    square 3 3 | = 27
+    cubic 2 | = 8
+    cubic(2 2) | = 64
+    cubic 2 2 | = 16
+    sqrt 64 | = 8
+    sqrt(4 4) | = 4
+    sqrt 4 4 | = 8
+    sin(pi/2) | = 1
+    cos(pi/4) | = 0.707107
+    tan(pi/4) | = 1
+    asn(1) | = 1.5708
+    acs(1/sqrt(2)) | = 0.785398
+    atn(1) | = 0.785398
+    ln(e) | = 1
+    log(10) | = 1
+    exp(1) | = 2.71828
+
+    # alternation
+    1;1;1 | = 1
+
+    # smoke test
+    57*84|=4788
+    60mph ? fps | = 88 fps
+    speed_of_light ? meter/second | = 299792000 meter/second
+    speed_of_light ? mph | = 670617000 mph
+    2;3 | = 6, = 0.666667, = 1.5, = 0.166667
+    lb | [Mass], [Force]
+    ft | [Length]
+    21 inches * 0.25 acre ? gallons | = 142560 gallons
+    gal^.33333333 | [Length]
+
+    # free units and plurals
+    2 dogs * 1 cat/dog ? cats | = 2 cats
+    2 ponies * 1 box/pony ? boxes | = 2 boxes
+    meter ? meters | = 1 meters
+    metres ? meter | = 1 meter
+    miles ? inches | = 63360 inches
+    anches ? anch | = 1 anch
+    anch ? anches | = 1 anches
+    andies ? andy | = 1 andy
+    andy ? andies | = 1 andies
+
+    # variables
+    foo=
+    foo=2;3
+    foo | = 6, = 0.666667, = 1.5, = 0.166667
+    foo=
+    foo | uncanceled free unit foo
+    boo=
+    boo=ft lb
+    boo | [MASS*LENGTH], [Energy or Torque]
+    boo=
+    boo | uncanceled free unit boo
+    boo = ft lb ? Torque
+    boo | [Energy or Torque]
+    boo=
+    boo | uncanceled free unit boo
+    goo=
+    goo = 1
+    goo | = 1
+    goo =
+    goo | uncanceled free unit goo
+    Mass =
+    Mass | [Mass]
+    Mass = Length
+    Mass | [Mass], [Length]
+    Mass =
+    Mass | [Mass]
+    abc=
+    abc=1
+    abc = 2
+    abc | = 1, = 2
+    abc=2lb
+    abc=?Force
+    abc | = 1, = 2
+    abc= ?1
+    abc | [Mass]
+    abc=
+    person; person; person | uncanceled free unit person
+
+    # multi-line examples
+    volume=
+    volume = 8 feet * 7 feet * 8 inch ? gal
+    volume; (1 cal/cc deltac) (90 - 50) deltaf / 400 watt ? day | = 2.84411 day
+    volume=
+    seed=
+    seed=2cc
+    1 seed/square foot; 200 acre ? bushels | = 494.451 bushels
+    seed=
+    flow,power=
+    flow = 1 acre * 2 inches / 1 day ? cfm
+    power = (flow * 1 gram/cc) * (9.81 m/s^2) * (100 feet) ? hp
+    power / 110 volts ? amps | = 6.46784 amps
+    1 acre; 2 inches; 1 day; d_water; grav; 100 feet; 110 volts ? amps | = 6.46563 amps
+    flow,power=
+    scalecm=
+    scalecm=2000 ft
+    3.2 scalecm * 4.8 scalecm ? acres | = 1410.47 acres
+    scalecm=
+
+    # temperatures
+    25 degC ? degF | = 77 degF , Caution: Calculation involves offset temperature units; see Calchemy Help.
+    77 degF ? degC | = 25 degC
+
+    # si  -- XXX seems weird these are passed up as mismatch string with "= "...
+    lb? | = 0.453592 kilogramm,= 4.44822 newton
+    1? | = 1
+    3 foot/2 second | [Speed]
+    3 foot/2 second ? | = 0.4572 meter/second
+    3 lbf * 3 foot ? | = 12.2024 joule, = 12.2024 newton meter
+    joule*meter | [MASS*LENGTH^3*TIME^-2]
+    joule*meter?|= 1 kilogramm*meter^3*second^-2
+    shm_water?|= 4184 joule/(kilogramm*deltaK)
+    $?|= 1 MONEY
+    1kgm^4 | [MASS^4]
+    1kgm^4? | = 1 kilogramm^4
+    1m^4 | [LENGTH^4]
+    1m^4? | = 1 meter^4
+    1/grav? | = 0.101972 (meter/second^2)^-1
+
+    # dimensions
+    Length | [Length]
+    Length ? 1 | Mismatch [Length^-1]
+    cup^(1/3) | [Length]
+    acre^(1/2) | [Length]
+    s?1 | Mismatch [Time^-1 or Frequency or Angular_velocity]
+    s | [Time or Frequency^-1 or Angular_velocity^-1]
+    s?1 | Mismatch [Time^-1 or Frequency or Angular_velocity]
+    s? | = 1 second
+    kgm | [Mass]
+    kgm? | = 1 kilogramm
+    1 kgm?1 | Mismatch [Mass^-1]
+    kgm? | = 1 kilogramm
+    kg | [Mass], [Force]
+    kg? | = 1 kilogramm, = 9.80665 newton
+    kg?1 | Mismatch [Mass^-1], Mismatch [Force^-1]
+    kg? | = 1 kilogramm, = 9.80665 newton
+
+    # unit help
+    TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
+    TEST details ft | === unit details ft ===,Common:ft,foot,feet=12 in [Length]
+    TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix:k,kilo=1E+03*Common:byte*,Byte*,B,char*=8 bit #computer storage [Storage]
+    TEST byname lb | === units by name lb ===,lb,lbf,lbm
+    TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
+    TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
+    TEST byname W | === units by name W ===,W,watt,Wb,weber,week,wh,Wh,wk
+    TEST bycategory Torque | === units in category Torque ===, ftlb, inlb
+    TEST bycategory Angle | === units in category Angle ===, arcmin, arcsec, cycle, deg, degree, grad, grade, rad, radian, rev, revolution
+    TEST bycategory abc | === units in category abc ===
+    TEST bycategory Angular_velocity | === units in category Angular_velocity ===, cps, hertz, Hz, rpm, rps
+    TEST bydimension Fuel_efficiency | === units in category Fuel_efficiency ===, mpg
+`;
+
+var teststhatmaythrow = `
+    # errors that may throw
+    TEST throw | unknown test throw
+    TEST details abc | undefined unit abc
+    TEST byname abc | undefined unit abc
+    3/0 | = Infinity
+    3**2 | expected a value before *
+    tricycles | uncanceled free unit tricycle
+    gal^.33 | non-integral exponent
+    sqrt(meter) | non-integral exponent
+    1^meter | non-dimensionless exponent
+    foot+second | addition of dissimilar units
+    foot-second | subtraction of dissimilar units
+    boo = abc | undefined unit abc
+    ( | unmatched parenthesis
+    sin | missing argument sin
+    sin(1 meter) | non-dimensionless exponent
+    *2 | expected a value before *
+    BASE | missing unit
+    ^=0 | unexpected ^
+    =0 | missing name
+    () | missing expression
+    ((0) | unmatched parenthesis
+    ?? | ? may only occur once
+    :: | : may only occur once
+    == | = may only occur once
+    ww:q=1 | undefined category ww
+    asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
+    1/sqrt(23 mi:li) | bad token :
+    q=1?xyz | bad unit filter
+    foot+0 | addition of dissimilar units
+    foot-0 | subtraction of dissimilar units
+
+    # multi-line examples
+    area,power=
+    area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) ? Area
+    power=area * (30 deltaf) / 11 rvalue ? Power
+    (20 lb * 37e6 btu/ton) / power ? day | = 7.93929 day
+    area,power=
+`;
+
+// the user clicked the Test button; run the unit test
+function Test()
+{
+    // append a temporary deletable chunk to the results list with the test in progress
+    document.getElementById("results").innerHTML += Chunk("tests started ...");
+    Scroll();
+    setTimeout(TestReal, 100);  // XXX -- why does 0 not work?
+}
+
+// run the unit test for real, after the display renders that tests have started
+function TestReal()
+{
+    try {
+        var lines = (tests+testedexamples+database_tests+teststhatmaythrow+database_teststhatmaythrow).split(/[\r\n]+/);
+        testing = true;
+        offset_warn = false;
+        offset_warned = false;
+        cycle_warn = false;
+        cycle_warned = false;
+
+        var tested = 0;
+        var passed = 0;
+        var firsttag = lasttag;
+
+        // for all tests...
+        for (var i = 0; i < lines.length; i++) {
+            tested++;
+
+            // get the test equation line and expected results on either side of the '|'
+            var line = lines[i].replace(/^ *[#].*/, "").trim();  // # for comment only at beginning of line
+            console.log("Test " + line);
+            var sides = line.split('|');
+            if (sides.length >= 3) {
+                throw "failed: " + line + " -- | may only occur once";
+            }
+
+            // run the test
+            document.getElementById("equation").value = sides[0];
+            Enter();
+            var output = SnoopAndDelete(lasttag);
+            
+            // if we have expected output...
+            if (sides.length == 2) {
+                // verify that the expected output matches
+                var expected = sides[1].split(',');
+                if (output.length == 0 && (expected.length == 0 || (expected.length == 1 && expected[0] == ""))) {
+                    // ignore split weirdness with no input
+                } else {
+                    // if the actual output did not match the expected output...
+                    if (output.join().replace(/  */g, "") != expected.join().replace(/  */g, "")) {
+                        // the test failed!
+                        throw "failed: " + line + " -- expected: " + expected.toString() + " output: " + output.toString();
+                    }
+                }
+                passed++;
+            } else {
+                // no expected output
+                passed++;
+            }
+        }
+
+        // replace the temporary deletable chunk in the results list with the actual test results
+        Delete(firsttag);
+        document.getElementById("results").innerHTML += Chunk("tests started ... tests complete " + passed + " of " + tested + " tests passed");
+    } catch (error) {
+        document.getElementById("results").innerHTML += Chunk(error);
+    } finally {
+        offset_warn = false;
+        offset_warned = false;
+        cycle_warn = false;
+        cycle_warned = false;
+        testing = false;
+    }
+    Scroll();
+}
+
+var help =`
+<h1 id='toc'>Calchemy&trade; -- Math Magic</h1>
+<ul>
+<li><a href=#overview>Overview</a>
+<ul>
+<li><a href=#basic>Basic Features</a></li>
+<li><a href=#advanced>Advanced Features</a>
+<ul>
+<li><a href=#solve>Solve By Dimensional Analysis</a>
+<li><a href=#overload>Overloaded Units</a>
+<li><a href=#free>Free Units</a>
+<li><a href=#plural>Pluralized Units</a>
+</ul>
+</ul>
+<li><a href=#syntax>Equation Syntax</a></li>
+<li><a href=#definition>Definition Syntax</a></li>
+<li>
+<a href=#ui>User Interface</a>
+<ul>
+<li><a href=#history>History List</a></li>
+<li><a href=#line>Equation Line</a></li>
+<li><a href=#buttons>Buttons</a></li>
+</ul>
+</li>
+<li><a href=#examples>Examples</a></li>
+<li><a href=#database>Database Notes</a></li>
+<li><a href=#cautions>Cautions</a></li>
+<li><a href=#info>For More Information</a></li>
+</ul>
+
+<h1 id='overview'>Overview</h1>
+<p>Calchemy&trade; is an exciting new tool which allows you to perform dimensional arithmetic, analysis, and conversions using any standard units.
+Calchemy "understands" the relationships between these units and performs conversions for you automatically as needed.
+It also checks your equations to ensure that they are always dimensionally correct.
+<p>Always double-check your answers!
+<p>The following examples provide a brief introduction to some of Calchemy's features.
+<h2 id='basic'>Basic Features</h2>
+<p>To perform a simple unit conversion, such as 3 meters converted to inches, you could enter the equation (or click/tap on the link):
+<p><a href="javascript:Hyperlink('3 meter ? inch')">3 meter ? inch</a>
+<p>Calchemy would respond:
+<p>= 118.110 inch
+<p>To calculate the required horsepower for a motor which could raise a 2000 lbf elevator to the top of a 10 story building (assuming 12 feet per story) in 1 minute,
+you could enter the equation:
+<p><a href="javascript:Hyperlink('2000 lbf * (10 * 12 feet) / 1 minute ? horsepower')">2000 lbf * (10 * 12 feet) / 1 minute ? horsepower</a>
+<p>Indicating that you want to multiply 2000 pounds force by 10 times 12 feet, divide that by 1 minute, and then express the final result in horsepower.
+Calchemy would respond:
+<p>= 7.27273 horsepower
+<p>If, on the other hand, you had made a mistake in the original equation and left out the "/ 1 minute":
+<p><a href="javascript:Hyperlink('2000 lbf * (10 * 12 feet) ? horsepower')">2000 lbf * (10 * 12 feet) ? horsepower</a>
+<p>Calchemy would have responded with a Dimensional Mismatch indication containing:
+<p>Time^-1
+<p>Indicating that the left hand side of the equation was missing a factor of 1/Time -- the equation was not dimensionally correct, and therefore, could not be evaluated.
+<p>Calchemy can also be used as a simple dimensionless calculator by eliminating the "?" and result unit from the equation. For example, you could enter the equation:
+<p><a href="javascript:Hyperlink('2+3*5')">2+3*5</a>
+<p>Calchemy would respond with the algebraically correct answer:
+<p>= 17
+<h2 id='advanced'>Advanced Features</h2>
+<p>You could also enter the original equation in the following less explicit form:
+<p><a href="javascript:Hyperlink('2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower')">2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower</a>
+<p>Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct,
+and then express the final result in horsepower.
+Calchemy would again respond:
+<p>= 7.27273 horsepower
+<p>This example illustrates the following features:
+<h3 id='solve'>Solve By Dimensional Analysis</h3>
+<p>The "<b>;</b>" operator tells Calchemy to use dimensional analysis to determine whether its operands should be in the numerator or the denominator of the equation.
+In this example, Calchemy placed the first three operands in the numerator and the last operand in the denominator.
+This allows you to be less involved with the actual mechanics of the equations.
+<h3 id='overload'>Overloaded Units</h3>
+<p>The "lb" unit is an overloaded unit, meaning that it has more than one common definition.
+It is primarily defined as "lbm" (pounds mass) and secondarily defined as "lbf" (pounds force).
+Calchemy automatically uses the appropriate definition, again based on dimensional analysis.
+In this example, Calchemy used "lbf".  This allows you to naturally use units with multiple common definitions.
+<h3 id='free'>Free Units</h3>
+<p>The "stories" and "story" units are called free units.
+Free units are units which are not actually understood by Calchemy, except in that they are new and unique dimensions which must "cancel out" in the end.
+This allows you to enter equations in a more natural format.
+<h3 id='plural'>Pluralized Units</h3>
+<p>The "stories" and "story" units also illustrate that Calchemy understands basic pluralization rules for units.
+This, again, allows you to enter equations in a more natural format.
+
+<h1 id='syntax'>Equation Syntax</h1>
+<p>Basic Calchemy equations are of the form:
+<p><b>expression ? unit</b>
+<p>Where <b>expression</b> is the arithmetic expression you want evaluated, and <b>unit</b> is the unit you want the result expressed in.
+<p>To evaluate an expression with a dimensionless result, use the form:
+<p><b>expression</b>
+<p>To evaluate an expression with a dimensionally consistent (though possibly wrong, see <a href=#cautions>Cautions</a>) SI result unit chosen by Calchemy, use the form:
+<p><b>expression ?</b>
+<p>Equations may contain the following binary operators (listed in decreasing order of precedence):
+<table border=1>
+<tr><td>Operator...</td><td>Meaning...</td></tr>
+<tr><td>^</td><td>exponentiation</td></tr>
+<tr><td> </td><td>implied multiplication</td></tr>
+<tr><td>* /</td><td>multiplication, division</td></tr>
+<tr><td>+ -</td><td>addition, subtraction</td></tr>
+<tr><td>;</td><td>solve by dimensional analysis</td></tr>
+</table>  
+<p>All operators except "^" are left-associative; "^" is right-associative.
+<p>"+" and "-" can also be used as high-precedence right-associative unary operators.
+<p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
+The precedence of the implied multiplication is just higher than that of "*" and "/".
+<p>Calchemy evaluates higher precedence operators before lower precedence operators.
+Left-associative operators of the same precedence are evaluated from left to right; right-associative operators of the same precedence are evaluated from right to left.
+The following table illustrates these rules:
+<table border=1>
+<tr><td>This...</td><td>Is evaluated as...</td></tr>
+<tr><td>2*3^4</td><td>2*(3^4)</td></tr>
+<tr><td>2*3*4</td><td>(2*3)*4</td></tr>
+<tr><td>2^3^4</td><td>2^(3^4)</td></tr>
+<tr><td>3 meter / 2 seconds</td><td>(3 meter) / (2 seconds)</td></tr>
+<tr><td>1/2 foot</td><td>1 / (2 foot)</td></tr>
+<tr><td>1/2 foot pound</td><td>1 / (2 foot pound)</td></tr>
+<tr><td>1/2 foot*3 pound</td><td>(1 / (2 foot)) * (3 pound)</td></tr>
+<tr><td>3 meter^2</td><td>3 * (meter^2)</td></tr>
+<tr><td>3 lbm meter^2</td><td>3 * lbm * (meter^2)</td></tr>
+<tr><td>pi (3 foot)^2</td><td>pi * ((3 foot)^2)</td></tr>
+<tr><td>1 / (4 foot)(3 foot)</td><td>1/((4 foot) * (3 foot))</td></tr>
+</table>
+<p>Parentheses can be used to explicitly override the default precedences and associativities, and group operations.
+<p>When in doubt, it is always best to parenthesize!
+<p>You can enter a comment into your result history by preceding it with a pound sign, like:
+<p><b># comment...</b>
+
+<h1 id='definition'>Definition Syntax</h1>
+<p>Basic Calchemy definitions are of the form:
+<p><b>name = expression</b>
+<p>Where <b>name</b> is the name of the unit whose definition is to be added and <b>expression</b> is the arithmetic expression you want evaluated.
+<p>To limit definitions using a dimensional filter, use the form:
+<p><b>name = expression ? filter</b>
+<p>To undefine all definitions of a unit name, use the form:
+<p><b>name =</b>
+<p>To limit undefinitions using a dimensional filter, use the form:
+<p><b>name = ? filter</b>
+<p>Note when using unit definitions:
+<ul>
+<li>units may have multiple definitions,</li>
+<li>fundamental units cannot be undefined, and</li>
+<li>unit definitions and undefinitions are lost when Calchemy is reloaded!</li>
+</ul>
+<p>For example, if you enter:
+<p><a href="javascript:Hyperlink('speed = 60 mph')">speed = 60 mph</a>
+<p><a href="javascript:Hyperlink('force = 20 lb')">force = 20 lb</a>
+<p><a href="javascript:Hyperlink('speed*force ? hp')">speed*force ? hp</a>
+<p>Calchemy would respond:
+<p>= 3.2 hp
+<p>If you want to be able to refer to your newly defined unit in the plural form, define its singular as:
+<p><b>name* = expression</b>
+
+<h1 id='ui'>User Interface</h1>
+<h2 id='history'>History List</h2>
+<p>The History List is at the top of the user interface and grows to include all your calculated equations and results;
+initially, the history list contains only the words, "database loaded".
+<p>Equations and results in the history list are hyperlinks which you can click/tap to re-enter the equation or result into the Equation Line, as a form of history recall.
+<p>The history list also contains unit category names or unit names you have searched for (also as hyperlinks) as well as unit details and online help.
+<p>Each entry in the history list can be deleted by clicking/tapping its &lt;Delete&gt; button;
+all entries in the history list can be deleted by clicking/tapping the &lt;Delete All&gt; button at the top of the history list.
+<p>N.B. The history list is cleared when you clear your browser cookies and other site data.
+<h2 id='line'>Equation Line</h2>
+<p>The Equation Line is below the history list and above the buttons, and is where you enter unit equations and unit definitions;
+initially, the equation line contains the words, "enter expression ? unit".
+<p>When you are done entering a unit equation or unit definition, press the &lt;Enter&gt; key or click/tap the &lt;Enter&gt; button to evaluate the equation or definition,
+and transfer it and its results to the History List.
+<p>You can use the &lt;Up Arrow&gt; and &lt;Down Arrow&gt; keys to recall previous equations and results from the history list.
+<h2 id='buttons'>Buttons</h2>
+The following Buttons are at the bottom of the user interface:
+<dl>
+<dt>&lt;Enter&gt;</dt><dd>Evaluate the equation or definition in the equation line.</dd>
+<dt>&lt;Clear&gt;</dt><dd>Clear the equation line.</dd>
+<dt>&lt;Find Units&gt;</dt><dd>If a portion of a unit is at the the cursor of the equation line, display all possible unit names that match the portion;
+otherwise, display all unit category names;
+click/tap a unit category name to display all unit names in the category;
+click/tap a unit name to enter its name into the equation line at the cursor.</dd>
+<dt>&lt;Unit Details&gt;</dt><dd>Display the unit details (definition and dimension) for the unit at the cursor of the equation line.</dd>
+<dt>&lt;Copy&gt;</dt><dd>Copy the history list and equation line to the clipboard.</dd>
+<dt>&lt;Paste&gt;</dt><dd>Paste the contents of the clipboard into the equation line, evaluating one equation at a time, stopping if an error occurs.
+<br>N.B. to use this feature, the calchemy html file must be accessed either thru https or locally, and you must be running Chrome or New Edge.</dd>
+<dt>&lt;Test&gt;</dt><dd>Run the internal tests to confirm proper javascript operation.</dd>
+<dt>&lt;Help&gt;</dt><dd>Display this internal online help.</dd>
+</dl>
+
+<h1 id='examples'>Examples</h1>
+<p>What is the braking power required to decelerate a 2000 lbm car at 1G at 60 mph?
+<p><a href="javascript:Hyperlink('2000 lbm * grav * 60 mph ? hp')">2000 lbm * grav * 60 mph ? hp</a>
+<br>= 320 hp
+<p>What is the flow rate required if a farmer wants to apply 10 gal/acre of fertilizer using a tractor with a speed of 10 mph and a swath width of 30 feet?
+<p><a href="javascript:Hyperlink('10 mph * 30 feet * 10 gal/acre ? gal/min')">10 mph * 30 feet * 10 gal/acre ? gal/min</a>
+<br>= 6.06061 gal/min
+<p>What is the delay for hot water if the flow rate is 3 gal/min and the water heater is connected to the tap with 43 feet of 1/2 inch id tube?
+<p><a href="javascript:Hyperlink('43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec')">43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec</a>
+<br>= 8.77198 sec
+<p>How long will it take a 40,000 Btu/hr water heater to heat 40 gallons of water from 45 degrees F to 140 degrees F?
+<p><a href="javascript:Hyperlink('40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour')">40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour</a>
+<br>= 0.792813 hour
+<p>What prop pitch is required for a boat to do 40 knots at 2500 rpm, assuming 10% slip?
+<p><a href="javascript:Hyperlink('40 knot / (2500 rpm * 90%25) ? inch/rev')">40 knot / (2500 rpm * 90%) ? inch/rev</a>
+<br>= 21.604 inch/rev
+<p>What is the frequency of an LC oscillator?
+<p><a href="javascript:Hyperlink('1/sqrt(23mH; 10uF)?Hz')">1/sqrt(23mH; 10uF)?Hz</a>
+<br>= 331.861 Hz
+<p>How large of a solar collector do you need to heat a house with 20,000 Btu/hr assuming 80% efficiency?
+(Solar insolation for Denver in February is 14 megajoules/day/square meter.)
+<p><a href="javascript:Hyperlink('20000 btu/hour; 80%25 * 14 megajoules/day/square meter ? ft^2')">20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2</a>
+<br>= 486.708 ft^2
+<p>How many watts is a microwave oven putting out if it can bring 3/4 cup of water from 52 degrees F to a boil in 2 minutes and 4 seconds?
+<p><a href="javascript:Hyperlink('(3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt')">(3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt</a>
+<br>= 532.552 watt
+<p>What is the maximum angle a 2000 lb car with a 65 hp engine can climb at 55 mph, assuming 12 hp of drag at that speed:
+<p><a href="javascript:Hyperlink('asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees')">asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees</a>
+<br>= 10.4095 degrees
+
+<h1 id='database'>Database Notes</h1>
+<p>Units in the Calchemy database are case sensitive, and must be used with their proper case in equations.
+<p>The &lt;Find Units&gt; button allows you to also find units that differ by case, since some units have proper definitions whose case may be surprising (like Hz and Btu).
+<p>The Calchemy database contains a number of physical properties grouped by a short prefix, as follows:
+<table border=1>
+<tr><td>d_...</td><td>density of ...</td></tr>
+<tr><td>e_...</td><td>energy of ...</td></tr>
+<tr><td>hcm_...</td><td>heat of combustion by mass of ...</td></tr>
+<tr><td>hcv_...</td><td>heat of combustion by volume of ...</td></tr>
+<tr><td>hfm_...</td><td>heat of fusion by mass of ...</td></tr>
+<tr><td>hfv_...</td><td>heat of fusion by volume of ...</td></tr>
+<tr><td>shm_...</td><td>specific heat by mass of ...</td></tr>
+<tr><td>shv_...</td><td>specific heat by volume of ...</td></tr>
+<tr><td>hvm_...</td><td>heat of vaporization by mass of ...</td></tr>
+<tr><td>hvv_...</td><td>heat of vaporization by volume of ...</td></tr>
+<tr><td>ss_...</td><td>speed of sound in ...</td></tr>
+<tr><td>tc_...</td><td>thermal conductivity of ...</td></tr>
+<tr><td>visc_...</td><td>viscosity of ...</td></tr>
+</table>
+<p>The Calchemy database also contains a number of derived units appended with a short suffix, as follows:
+<table border=1>
+<tr><td>..._m</td><td>... by mass</td></tr>
+<tr><td>..._v</td><td>... by volume</td></tr>
+</table>
+
+<h1 id='cautions'>Cautions</h1>
+<p>Calchemy makes problem solving so easy that it is tempting to assume that any answer it gives you is correct.
+However, as with all calculators, the answer it gives you is only as good as the data you give it.
+<p>Calchemy ensures that the data you give it is dimensionally consistent. 
+<p>However, there are more aspects to good data than simple dimensional consistency.
+Many physical equations also include dimensionless factors like 2 pi, an efficiency, or 1/2, or involve temperature offsets.
+Beware that Calchemy cannot tell if you have left out (or inadvertently included) one of these factors.
+<p>You must know the physical equation for the problem you are trying to solve before entering it into Calchemy!
+And you must enter any dimensionless factors into Calchemy along with the other parameters of the physical equation, as these factors are part of the physical equation!
+Note that true physical equations do not specify the units used for the parameters.
+If your equation demands that parameters be entered in specific units, it is not a physical equation and cannot be used with Calchemy.
+(These equations usually contain some unusual conversion factor that represents the combined conversions required to make the specific units of the equation coherent.)
+<h2>Units of Cycle or Revolution</h2>
+<p>In Calchemy, the units for cycle and revolution are defined as 2 pi radians.
+As such, the units for rpm, cps, and Hz are defined in terms of radians per unit time.
+Calchemy cannot tell if you have left out or accidentally included a factor of 2 pi in your physical equation.
+<h2>Units of Offset Temperature</h2>
+<p>In Calchemy, the degC and degF units are defined as offsets into the Celsius and Fahrenheit temperature scales.
+As such, every time you enter one of these, you can and should think of it as being instantly converted to absolute Kelvin and Rankine temperatures.
+Likewise, when you ask for a result in degC or degF, the evaluated (absolute) Kelvin or Rankine temperature result is then converted back to Celsius or Fahrenheit.
+Calchemy cannot tell if you have accidentally converted a temperature offset into an absolute temperature or not.
+<h2>Ambiguous Dimensions</h2>
+<p>Dimensions such as Torque and Energy are identical, only differing in an unspecified vector component.
+Similarly, dimensions such as Pressure and Latent Heat by Volume are surprisingly identical, only differing in their use!
+<h2>Numeric Precision</h2>
+<p>Calchemy is not intended to be used for high precision calculations.
+<p>The number of significant digits typically carried by Calchemy during the phases of its calculations are summarized in the following table:
+<table border=1>
+<tr><td>Phase...</td><td>Digits...</td></tr>
+<tr><td>numeric input</td><td>10</td></tr>
+<tr><td>calculations</td><td>10</td></tr>
+<tr><td>database units</td><td>6</td></tr>
+<tr><td>database physical constants</td><td>6</td></tr>
+<tr><td>database physical properties</td><td>&lt;4 *</td></tr>
+<tr><td>numeric results</td><td>6</td></tr>
+</table>
+<p>* Note that database physical properties are also limited by the fact that they are typically an average over a range of assumptions.
+<p>Again, always double-check your answers!
+
+<h1 id='info'>For More Information</h1>
+<p>Visit us on the web at: <a href=http://www.calchemy.com target=_blank>http://www.calchemy.com</a>
+`;
+
+// the user clicked the Help button; show the internal help and point to calchemy.com
+function Help()
+{
+    // append a deletable chunk to the results list with the help, replacing any existing chunk so TOC hyperlinks work
+    Delete("help");
+    document.getElementById("results").innerHTML += Chunk(help, "help");
+    document.getElementById('toc').scrollIntoView();
+    Scroll(true);
+}
+
+</script>
+
+</body>
+
+</html>
