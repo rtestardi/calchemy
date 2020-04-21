@@ -99,7 +99,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.08e</p>
+v1.08f</p>
 </td>
 </tr>
 </table>
@@ -2152,13 +2152,6 @@ function SnoopAndDelete(tag)
 function Body()
 {
     try {
-        // if we have a query string...
-        var index = document.URL.indexOf('?');
-        if (index != -1) {
-            // hide the body for now
-            document.body.hidden = true;
-        }
-
         // split the database into lines
         var lines = database.split(/[\r\n]+/);
         loading = true;
@@ -2178,23 +2171,6 @@ function Body()
 
         loading = false;
 
-        // if we have a query string...
-        if (index != -1) {
-            offset_warn = false;
-            cycle_warn = false;
-            
-            // pretend the user entered the query string thru the UI
-            document.getElementById("equation").value = window.unescape(document.URL.slice(index+1));
-            Enter();
-
-            // update and unhide the body and show the result
-            document.body.innerHTML = document.getElementById("results").innerHTML;
-            document.body.hidden = false;
-
-            // we won't be called again
-            return;
-        }
-
         // identify our "special" base units
         for (i = 0; i < bases.length; i++) {
             if (bases[i].names[0] == "MASS") {
@@ -2209,6 +2185,26 @@ function Body()
         // recall our results history
         var temp = localStorage["calchemy.results"];
         document.getElementById("results").innerHTML = temp != undefined ? temp : "";
+
+        // if we have a query string...
+        var index = document.URL.indexOf('?');
+        if (index != -1) {
+            offset_warn = false;
+            cycle_warn = false;
+            
+            // split the query string by &'s
+            lines = window.unescape(document.URL.slice(index+1)).split('&');
+            for (i = 0; i < lines.length; i++) {
+                // pretend the user entered the query string thru the UI one line at a time
+                document.getElementById("equation").value = lines[i];
+                // if the evaluation failed...
+                if (! Enter()) {
+                    // don't evaluate any more equation lines
+                    break;
+                }
+            }
+        }
+
         document.getElementById("status").innerHTML = "database loaded";
     } catch (error) {
         document.getElementById("results").innerHTML = error;
@@ -2348,6 +2344,11 @@ function Enter()
             } else {
                 document.getElementById("results").innerHTML += Chunk("<a href=\"javascript:Hyperlink('" + line + "')\">" + line + "</a>" + html);
             }
+        }
+
+        if (success) {
+            var url = window.location.href.replace(/[?].*/, "") + '?' + window.escape(line);
+            window.history.pushState(line, line, url);
         }
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
@@ -2742,9 +2743,7 @@ var tests =`
     -foot^2 ? sqft | = 1 sqft
     -foot*2 ? foot | = -2 foot
     0+foot | [Length]
-    foot+0 | addition of dissimilar units
     0-foot | [Length]
-    foot-0 | subtraction of dissimilar units
 
     # functions
     3 3 | = 9
@@ -2933,6 +2932,8 @@ var teststhatmaythrow = `
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
     1/sqrt(23 mi:li) | bad token :
     q=1?xyz | bad unit filter
+    foot+0 | addition of dissimilar units
+    foot-0 | subtraction of dissimilar units
 
     # multi-line examples
     area,power=
