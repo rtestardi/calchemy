@@ -8,7 +8,7 @@ Calchemy™ is an exciting new tool which allows you to perform dimensional arit
 ## Files in the repository
 
 * calchemy.html -- released bits, including merged engine and database
-* calchemy_dev.html -- bits under development, enging only
+* calchemy_dev.html -- bits under development, engine only
 * database.txt -- bits under development, database only
 
 ## Basic Features
