@@ -99,7 +99,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.08k</p>
+v1.08m</p>
 </td>
 </tr>
 </table>
@@ -173,9 +173,8 @@ var storagebase;  // may be undefined
 
 var offset_warn = false;  // degC, absC, degF, absF
 var offset_warned = false;
-var cycle_warn = false;  // cycle_names
+var cycle_warn = false;  // category Angle
 var cycle_warned = false;
-var cycle_names = { "cps":true, "cycle":true, "Hz":true, "rev":true, "rpm":true };
 
 // these are the results from an expression evaluation
 var results;  // Unit
@@ -786,7 +785,7 @@ function EvaluateTokens(tokens)
                 result = CleanAndPush(stack, result, op, next);
                 next = prefixunit[1];
             }
-            if (cycle_names.hasOwnProperty(next.names[0])) {
+            if (next.categories.includes("Angle")) {
                 cycle_warn = true;
             }
             result = CleanAndPush(stack, result, op, next);
@@ -1533,17 +1532,9 @@ function Body()
             offset_warn = false;
             cycle_warn = false;
             
-            // split the query string by &'s
-            lines = window.unescape(document.URL.slice(index+1)).split('&');
-            for (i = 0; i < lines.length; i++) {
-                // pretend the user entered the query string thru the UI one line at a time
-                document.getElementById("equation").value = lines[i];
-                // if the evaluation failed...
-                if (! Enter()) {
-                    // don't evaluate any more equation lines
-                    break;
-                }
-            }
+            // pretend the user entered the query string thru the UI
+            document.getElementById("equation").value = window.unescape(document.URL.slice(index+1));
+            Enter();
 
             // reset url
             window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
@@ -1582,117 +1573,128 @@ function Body()
 // the user clicked the Enter button; run the user command line
 function Enter()
 {
-    var success = false;
-
     try {
-        // get the user command line
-        var line = document.getElementById("equation").value;
+        // get the user command line split by '&'
+        var lines = document.getElementById("equation").value.split('&');
+        var urls = [];
 
-        // parse the requested dimension from the command line
-        var question = line.indexOf('?');
-        var dimension;
-        if (question == -1) {
-            dimension = "";
-        } else {
-            dimension = " " + line.slice(question+1).trim();
-        }
+        var success = false;
 
-        // tokenize, parse, and run the command line
-        results = [];
-        mismatches = [];
-        errors = [];
-        defines = false;
-        undefines = false;
-        try {
-            ParseTokens(TokenizeLine(line), line);
-        } catch (error) {
-            if (! errors.includes(error)) {
-                errors.push(error);
+        for (var k = 0; k < lines.length; k++) {
+            // parse the requested dimension from the command line
+            var line = lines[k];
+            var question = line.indexOf('?');
+            var dimension;
+            if (question == -1) {
+                dimension = "";
+            } else {
+                dimension = " " + line.slice(question+1).trim();
             }
-        }
 
-        var output;
+            success = false;
 
-        // if we got one or more valid (dimensionally consistent) results...
-        if (results.length) {
-            // format the results we will output, appending the requested dimension we parsed from the command line
-            output = [];
-            for (var j = 0; j < results.length; j++) {
-                var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
-                if (! output.includes(string)) {
-                    output.push(string);
+            // tokenize, parse, and run the command line
+            results = [];
+            mismatches = [];
+            errors = [];
+            defines = false;
+            undefines = false;
+            try {
+                ParseTokens(TokenizeLine(line), line);
+            } catch (error) {
+                if (! errors.includes(error)) {
+                    errors.push(error);
                 }
             }
-            Clear();
-            success = true;
 
-        // otherwise, if we defined units...
-        } else if (defines) {
-            output = ["defined"];
-            Clear();
-            success = true;
+            var output;
 
-        // otherwise, if we undefined units...
-        } else if (undefines) {
-            output = ["undefined"];
-            Clear();
-            success = true;
-
-        // otherwise, if we got one or more dimensional mismatches (or SI results)...
-        } else if (mismatches.length) {
-            // use the mismatches (or SI results) as the results we will output
-            output = mismatches;
-            Clear();
-            success = true;
-
-        // otherwise, if we caught one or more exceptions as errors...
-        } else if (errors.length) {
-            // use the errors as the results we will output
-            output = errors;
-
-        } else {
-            output = [];
-            Clear();
-            success = true;
-        }
-
-        // transform the output into hyperlinked html
-        var html = "";
-        for (var i = 0; i < output.length; i++) {
-            if (output[i].match("^= ")) {
-                html += "<br>" + "<a href=\"javascript:Hyperlink('" + output[i].replace(/^= /, "") + "')\">" + output[i] + "</a>";
-            } else {
-                html += "<br>" + output[i];
-            }
-        }
-
-        // if we accessed offset temperature units...
-        if (offset_warn && ! offset_warned) {
-            html += "<br> Caution: Calculation involves offset temperature units; see Calchemy Help.";
-            offset_warned = true;
-        }
-
-        // if we accessed units of cycle or revolution...
-        if (cycle_warn && ! cycle_warned) {
-            html += "<br> Caution: Calculation involves units of cycle or revolution; see Calchemy Help.";
-            cycle_warned = true;
-        }
-
-        // append a deletable chunk to the results list with the results
-        if (line.trim().length) {
-            if (testing) {
-                if (html.length) {
-                    // N.B. if there is no new output we leave output from before TEST available
-                    document.getElementById("results").innerHTML += Chunk(html);
+            // if we got one or more valid (dimensionally consistent) results...
+            if (results.length) {
+                // format the results we will output, appending the requested dimension we parsed from the command line
+                output = [];
+                for (var j = 0; j < results.length; j++) {
+                    var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
+                    if (! output.includes(string)) {
+                        output.push(string);
+                    }
                 }
+                Clear();
+                success = true;
+
+            // otherwise, if we defined units...
+            } else if (defines) {
+                output = ["defined"];
+                Clear();
+                success = true;
+
+            // otherwise, if we undefined units...
+            } else if (undefines) {
+                output = ["undefined"];
+                Clear();
+                success = true;
+
+            // otherwise, if we got one or more dimensional mismatches (or SI results)...
+            } else if (mismatches.length) {
+                // use the mismatches (or SI results) as the results we will output
+                output = mismatches;
+                Clear();
+                success = true;
+
+            // otherwise, if we caught one or more exceptions as errors...
+            } else if (errors.length) {
+                // use the errors as the results we will output
+                output = errors;
+
             } else {
-                document.getElementById("results").innerHTML += Chunk("<a href=\"javascript:Hyperlink('" + line + "')\">" + line + "</a>" + html);
+                output = [];
+                Clear();
+                success = true;
             }
+
+            // transform the output into hyperlinked html
+            var html = "";
+            for (var i = 0; i < output.length; i++) {
+                if (output[i].match("^= ")) {
+                    html += "<br>" + "<a href=\"javascript:Hyperlink('" + output[i].replace(/^= /, "") + "')\">" + output[i] + "</a>";
+                } else {
+                    html += "<br>" + output[i];
+                }
+            }
+
+            // if we accessed offset temperature units...
+            if (offset_warn && ! offset_warned) {
+                html += "<br> Caution: Calculation involves offset temperature units; see Calchemy Help.";
+                offset_warned = true;
+            }
+
+            // if we accessed units of cycle or revolution...
+            if (cycle_warn && ! cycle_warned) {
+                html += "<br> Caution: Calculation involves units of cycle or revolution; see Calchemy Help.";
+                cycle_warned = true;
+            }
+
+            // append a deletable chunk to the results list with the results
+            if (line.trim().length) {
+                if (testing) {
+                    if (html.length) {
+                        // N.B. if there is no new output we leave output from before TEST available
+                        document.getElementById("results").innerHTML += Chunk(html);
+                    }
+                } else {
+                    document.getElementById("results").innerHTML += Chunk("<a href=\"javascript:Hyperlink('" + line + "')\">" + line + "</a>" + html);
+                }
+            }
+
+            if (! success) {
+                break;
+            }
+
+            urls.push(window.escape(line));
         }
 
         if (success && ! testing) {
-            var url = window.location.href.replace(/[?#].*/, "") + '?' + window.escape(line);
-            window.history.pushState(line, line, url);
+            window.history.pushState(line, line, window.location.href.replace(/[?#].*/, "") + '?' + urls.join('&'));
         }
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
