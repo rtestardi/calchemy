@@ -71,3 +71,4 @@ The "stories" and "story" units are called free units. Free units are units whic
 ### Pluralized Units
 The "stories" and "story" units also illustrate that Calchemy understands basic pluralization rules for units. This, again, allows you to enter equations in a more natural format.
 
+Copyright © 1988-2020 Ken Burgess and Rich Testardi.
