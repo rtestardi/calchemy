@@ -3,7 +3,13 @@ Calchemy™ -- Math Magic
 
 Calchemy™ is an exciting new tool which allows you to perform dimensional arithmetic, analysis, and conversions using any standard units. Calchemy "understands" the relationships between these units and performs conversions for you automatically as needed. It also checks your equations to ensure that they are always dimensionally correct.
 
-Calchemy now runs as javascript, entirely in your web browser -- just open calchemy.html and start having fun!  You can verify Calchemy's operation by clicking the "Test" button.
+**Calchemy now runs as javascript, entirely in your web browser -- just open calchemy.html and start having fun!  You can verify Calchemy's operation by clicking the "Test" button.**
+
+## Files in the repository
+
+* calchemy.html -- released bits, including merged engine and database
+* calchemy_dev.html -- bits under development, enging only
+* database.txt -- bits under development, database only
 
 ## Basic Features
 
