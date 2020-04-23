@@ -1404,7 +1404,6 @@ function Chunk(result, tag)
 {
     // create a random tag if one was not specified explicitly
     first = true;
-    cursor += (result.match(/javascript:Hyperlink/i) || []).length;
     if (tag == undefined) {
         tag = window.crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
