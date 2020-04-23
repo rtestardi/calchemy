@@ -2290,6 +2290,7 @@ var teststhatmaythrow = `
 function Test()
 {
     // append a temporary deletable chunk to the results list with the test in progress
+    lasttag = "";
     document.getElementById("results").innerHTML += Chunk("tests started ...");
     Scroll();
     setTimeout(TestReal, 100);  // XXX -- why does 0 not work?
