@@ -99,7 +99,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.08n</p>
+v1.08p</p>
 </td>
 </tr>
 </table>
@@ -1390,6 +1390,12 @@ function Scroll(noscroll)
     }
 }
 
+// wrap text in an html hyperlink
+function Html(text)
+{
+    return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + text + "</a>"
+}
+
 var lasttag = "";
 
 // return a tagged html chunk to allow results to be deleted
@@ -1650,8 +1656,8 @@ function Enter()
             // transform the output into hyperlinked html
             var html = "";
             for (var i = 0; i < output.length; i++) {
-                if (output[i].match("^= ")) {
-                    html += "<br>" + "<a href=\"javascript:Hyperlink('" + output[i].replace(/^= /, "") + "')\">" + output[i] + "</a>";
+                if (output[i].match(/^= /)) {
+                    html += "<br>" + Html(output[i]);
                 } else {
                     html += "<br>" + output[i];
                 }
@@ -1671,7 +1677,7 @@ function Enter()
 
             // record output
             if (lines.length > 1 && line.trim().length && ! testing) {
-                htmls.push("<br><a href=\"javascript:Hyperlink('" + line + "')\">" + line + "</a>" + html);
+                htmls.push("<br>" + Html(line) + html);
             } else {
                 htmls.push(html);
             }
@@ -1691,7 +1697,7 @@ function Enter()
                 document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
             }
         } else {
-            document.getElementById("results").innerHTML += Chunk("<a href=\"javascript:Hyperlink('" + equation + "')\">" + equation + "</a>" + htmls.join(' '));
+            document.getElementById("results").innerHTML += Chunk(Html(equation) + htmls.join(' '));
         }
 
         if (success && ! testing) {
@@ -1852,8 +1858,7 @@ function ShowUnitsByCategory(category, bydimension)
     Sort(names);
     var html = "";
     for (i = 0; i < names.length; i++) {
-        html += "<br>";
-        html += "<a href=\"javascript:Hyperlink('" + names[i] + "')\">" + names[i] + "</a>";
+        html += "<br>" + Html(names[i]);
     }
 
     // append a deletable chunk to the results list with the units list
@@ -1878,7 +1883,7 @@ function ShowUnitsByName(name)
     Sort(namesets);
     var html = "";
     for (i = 0; i < namesets.length; i++) {
-        html += "<br>" + "<a href=\"javascript:Hyperlink('" + namesets[i] + "')\">" + namesets[i] + "</a>";
+        html += "<br>" + Html(namesets[i]);
     }
 
     // append a deletable chunk to the results list with the units list
