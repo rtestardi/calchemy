@@ -1390,7 +1390,7 @@ function Scroll(noscroll)
     }
 }
 
-var lasttag;
+var lasttag = "";
 
 // return a tagged html chunk to allow results to be deleted
 function Chunk(result, tag)
@@ -1401,7 +1401,9 @@ function Chunk(result, tag)
     if (tag == undefined) {
         tag = window.crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
-    lasttag = tag;
+    if (lasttag == "") {
+        lasttag = tag;
+    }
     // create the chunk as a searchable comment preceded by a horizontal line and followed by a table with a delete button to the right
     var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated below
     var head = "<table><tr><td>";
@@ -1453,7 +1455,6 @@ function SnoopAndDelete(tag)
     // find the requested chunk in the results
     var head;
     var mid;
-    var tail;
     var orig = document.getElementById("results").innerHTML;
     var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated above
     var index = orig.indexOf(hrtag);
@@ -1464,17 +1465,9 @@ function SnoopAndDelete(tag)
     // delete everything up to the next chunk
     head = orig.slice(0, index);
     mid = orig.slice(index + hrtag.length);
-    var nexthr = "<hr>";
-    index = mid.indexOf(nexthr);
-    if (index != -1) {
-        tail = mid.slice(index);
-        mid = mid.slice(0, index);
-    } else {
-        tail = "";
-    }
 
     // update the results
-    document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
+    document.getElementById("results").innerHTML = head.trim();
 
     // return the snoop
     var lines = mid.split("<br>");
@@ -2197,6 +2190,7 @@ var tests =`
     scalecm=2000 ft
     3.2 scalecm * 4.8 scalecm ? acres | = 1410.47 acres
     scalecm=
+    1&2&3|= 1, = 2, = 3
 
     # temperatures
     25 degC ? degF | = 77 degF , Caution: Calculation involves offset temperature units; see Calchemy Help.
@@ -2329,6 +2323,7 @@ function TestReal()
             }
 
             // run the test
+            lasttag = "";
             document.getElementById("equation").value = sides[0];
             Enter();
             var output = SnoopAndDelete(lasttag);
@@ -2491,6 +2486,10 @@ The following table illustrates these rules:
 <p>When in doubt, it is always best to parenthesize!
 <p>You can enter a comment into your result history by preceding it with a pound sign, like:
 <p><b># comment...</b>
+<p>You can enter multiple equations on the same line by separating then with an ampersand, like:
+<p><b>expression1 &amp; expression2 ...</b>
+<p>You can also enter equations directly from the calchemy.html URL, by using URL encoding after the query '?', like:
+<p>https://rtestardi.github.io/calchemy/calchemy.html?<b>urlencodedexpression</b>
 
 <h1 id='definition'>Definition Syntax</h1>
 <p>Basic Calchemy definitions are of the form:
