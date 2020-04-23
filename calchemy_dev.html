@@ -1568,8 +1568,10 @@ function Enter()
 {
     try {
         // get the user command line split by '&'
-        var lines = document.getElementById("equation").value.split('&');
+        var equation = document.getElementById("equation").value;
+        var lines = equation.split('&');
         var urls = [];
+        var htmls = [];
 
         var success = false;
 
@@ -1667,23 +1669,29 @@ function Enter()
                 cycle_warned = true;
             }
 
-            // append a deletable chunk to the results list with the results
-            if (line.trim().length) {
-                if (testing) {
-                    if (html.length) {
-                        // N.B. if there is no new output we leave output from before TEST available
-                        document.getElementById("results").innerHTML += Chunk(html);
-                    }
-                } else {
-                    document.getElementById("results").innerHTML += Chunk("<a href=\"javascript:Hyperlink('" + line + "')\">" + line + "</a>" + html);
-                }
-            }
-
-            if (! success) {
-                break;
+            // record output
+            if (lines.length > 1 && line.trim().length && ! testing) {
+                htmls.push("<br><a href=\"javascript:Hyperlink('" + line + "')\">" + line + "</a>" + html);
+            } else {
+                htmls.push(html);
             }
 
             urls.push(window.escape(line));
+
+            // stop at first error
+            if (! success) {
+                break;
+            }
+        }
+
+        // append a deletable chunk to the results list with the results
+        if (testing) {
+            if (htmls.length) {
+                // N.B. if there is no new output we leave output from before TEST available
+                document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
+            }
+        } else {
+            document.getElementById("results").innerHTML += Chunk("<a href=\"javascript:Hyperlink('" + equation + "')\">" + equation + "</a>" + htmls.join(' '));
         }
 
         if (success && ! testing) {
@@ -1705,11 +1713,11 @@ function UpDown(up)
 {
     // get the list of lines and hyperlinks from the results history
     var html = document.getElementById("results").innerHTML;
-    var lines = html.split(/[<>]+/);
+    var lines = html.split(/[<]+/);
     var links = [];
     for (var i = 0; i < lines.length; i++) {
         if (lines[i].match(/javascript:Hyperlink/i)) {
-            links.push(lines[i].replace(/.*javascript[:]Hyperlink[(][']/i, "").replace(/['][)].*/, ""));
+            links.push(lines[i].replace(/.*javascript[:]Hyperlink[^>]*[>]/i, "").replace(/^= /, ""));
         }
     }
     if (first && up) {
@@ -1725,7 +1733,7 @@ function UpDown(up)
             // newer
             cursor = (cursor+1)%links.length;
         }
-        document.getElementById("equation").value = links[cursor];
+        document.getElementById("equation").value = links[cursor].replace(/&amp;/g, '&');
         first = false;
     }
     Scroll();
