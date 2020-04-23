@@ -99,7 +99,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.08q</p>
+v1.08r</p>
 </td>
 </tr>
 </table>
@@ -1404,7 +1404,6 @@ function Chunk(result, tag)
 {
     // create a random tag if one was not specified explicitly
     first = true;
-    cursor += (result.match(/javascript:Hyperlink/i) || []).length;
     if (tag == undefined) {
         tag = window.crypto.getRandomValues(new Uint32Array(4)).join('-');
     }
