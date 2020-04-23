@@ -7,7 +7,7 @@ Calchemy™ is an exciting not-so-new tool which allows you to perform dimension
 
 ## Files in the repository
 
-* calchemy.html -- released bits, including merged engine and database
+* calchemy.html -- released bits, single file, including merged engine and database
 * calchemy_dev.html -- bits under development, engine only
 * database_dev.txt -- bits under development, database only
 
