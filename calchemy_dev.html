@@ -99,7 +99,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.08t</p>
+v1.09</p>
 </td>
 </tr>
 </table>
@@ -709,18 +709,22 @@ function EvaluateTokens(tokens)
         // if the token is a function call...
         if (functions.hasOwnProperty(token)) {
             // power, trig, log, etc.
-            if (tokens.length == i+1) {
-                throw "missing argument " + tokens[i];
-            }
-            if (tokens[i+1] == '(') {
+            if (tokens.length > i+1 && tokens[i+1] == '(') {
                 // power, trig, log, etc. followed by parenthetical expression
                 j = MatchParen(tokens, i+1);
                 subtokens = tokens.slice(i+2, j);
                 result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
                 i = j;
-            } else {
+            } else if (tokens.length > i+3 && tokens[i+2] == '~') {
+                // power, trig, log, etc. followed by prefixed unit
+                result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1], '~', tokens[i+3]]));
+                i = i+3;
+            } else if (tokens.length > i+1) {
+                // power, trig, log, etc. followed by unit or number
                 result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
                 i = i+1;
+            } else {
+                throw "missing argument " + tokens[i];
             }
             if (token == "square") {
                 result = CleanAndPush(stack, result, '^', Value("2"));
@@ -2134,6 +2138,7 @@ var tests =`
     ft | [Length]
     21 inches * 0.25 acre ? gallons | = 142560 gallons
     gal^.33333333 | [Length]
+    square mm * 1000^2 ? square m | = 1 square m
 
     # free units and plurals
     2 dogs * 1 cat/dog ? cats | = 2 cats
