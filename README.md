@@ -5,7 +5,7 @@ Calchemy™ is an exciting not-so-new calculator which allows you to perform dim
 
 **Calchemy now runs as javascript, entirely in your web browser -- just open [calchemy.html](https://rtestardi.github.io/calchemy/calchemy.html) and start having fun!  You can verify Calchemy's operation by clicking the "Test" button.**  (For the latest and greatest development bits that may still have bugs, you can open [calchemy_dev.html](https://rtestardi.github.io/calchemy/calchemy_dev.html).)
 
-## Files in the repository
+## Files in the Repository
 
 * calchemy.html -- released bits, single file, including merged engine and database
 * calchemy_dev.html -- bits under development, engine only
