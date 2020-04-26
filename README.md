@@ -10,7 +10,7 @@ Calchemy™ is an exciting not-so-new calculator which allows you to perform dim
 * calchemy.html -- released bits, single file, including merged engine and database
 * calchemy_dev.html -- bits under development, engine only
 * database_dev.txt -- bits under development, database only
-* publish.ps1 -- merge calchemy_dev.html and database_dev.txt into calchemy.html
+* publish.ps1 -- script to merge calchemy_dev.html and database_dev.txt into calchemy.html
 
 ## Basic Features
 
