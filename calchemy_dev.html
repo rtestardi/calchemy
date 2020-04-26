@@ -263,7 +263,7 @@ class Unit {
 
         switch (op) {
             case '^':
-                // raise coefficient to dimensionless power; multiple exponents by power
+                // raise coefficient to dimensionless power; multiply exponents by power
                 unit.coefficient = Math.pow(this.coefficient, rhs.coefficient);
                 for (i = 0; i < maxbaseunits; i++) {
                     if (rhs.exponents[i]) {
