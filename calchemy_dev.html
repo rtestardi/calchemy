@@ -1105,6 +1105,20 @@ function ParseTokens(tokens, line)
     var i;
     var j;
     if (tokens.length) {
+        if (! loading && ! testing) {
+            // if we have [Derived] then ask for a value before we proceed...
+            for (i = 0; i < tokens.length; i++) {
+                if (tokens[i][0].match(unit_regexp_ch)) {
+                    if (i-1 >= 0 && tokens[i-1] == '[' && i+1 < tokens.length && tokens[i+1] == ']') {
+                        var unit = LookupUnit(tokens[i]);
+                        if (! unit || unit.type == "DERIVED") {
+                            throw "enter value for " + tokens[i];
+                        }
+                    }
+                }
+            }
+        }
+
         // if we are defining a base unit...
         if (tokens[0] == "BASE") {
             if (tokens.length != 2) {
@@ -1145,7 +1159,6 @@ function ParseTokens(tokens, line)
 
         // otherwise, if we are defining or undefining a unit...
         } else if (tokens.includes('=')) {
-            var i;
             var filter = null;
             if (! loading) {
                 // if a filtering dimension is specified...
