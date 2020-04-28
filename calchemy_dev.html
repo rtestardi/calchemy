@@ -1709,9 +1709,9 @@ function Enter()
             }
 
             // record output
-            if (lines.length > 1 && line.trim().length && ! testing) {
+            if (lines.length > 1 && line.trim().length && success && ! testing) {
                 htmls.push("<br>" + History(line) + html);
-            } else {
+            } else if (html.length) {
                 htmls.push(html);
             }
 
@@ -1724,17 +1724,12 @@ function Enter()
         }
 
         // append a deletable chunk to the results list with the results
-        if (testing) {
-            if (htmls.length) {
-                // N.B. if there is no new output we leave output from before TEST available
-                document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
-            }
-        } else {
+        if (equation.length && success && ! testing) {
             document.getElementById("results").innerHTML += Chunk(History(equation) + htmls.join(' '));
-        }
-
-        if (success && ! testing) {
             window.history.pushState(line, line, window.location.href.replace(/[?#].*/, "") + '?' + urls.join('&'));
+        } else if (htmls.length) {
+            // N.B. if there is no new output we leave output from before TEST available
+            document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
         }
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
