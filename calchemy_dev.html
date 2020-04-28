@@ -2037,13 +2037,13 @@ function Paste()
 
 var pre_equations =`
 Cd=1
+DERIVED Momentum=kgm m/s  # XXX -- belongs in database!
 `;
 
 var post_equations =`
 Cd=
 `;
 
-// XXX -- why no [Momentum] derived unit?
 // XXX -- why [Speed] and not [Velocity]?
 var equations =`
     # Electronics
@@ -2053,6 +2053,9 @@ var equations =`
     [Voltage]^2 / [Resistance] ? [Power] | = 1 [Power]
     1/(1/[Resistance] + 1/[Resistance]) ? [Resistance] # parallel resistors | = 0.5 [Resistance]
     1/(1/[Capacitance] + 1/[Capacitance]) ? [Capacitance] # series capacitors | = 0.5 [Capacitance]
+    0.5 [Capacitance] [Voltage]^2 ? [Energy] | = 0.5 [Energy]
+    1/(1/[Inductance] + 1/[Inductance]) ? [Inductance] # parallel inductors | = 0.5 [Inductance]
+    0.5 [Inductance] [Current]^2 ? [Energy] | = 0.5 [Energy]
     1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # LC oscillator | = 1 [Frequency]
     
     # Energy and Power
@@ -2060,6 +2063,11 @@ var equations =`
     [Mass] grav [Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
     [Energy] / [Time] ? [Power] | = 1 [Power]
     [Force] [Length] ? [Energy] | = 1 [Energy]
+    [Force] [Length] ? [Torque] | = 1 [Torque]
+
+    # Dynamics
+    [Mass] [Acceleration] ? [Force] | = 1 [Force]
+    [Mass] [Speed] ? [Momentum] | = 1 [Momentum]
 
     # Gravity
     G [Mass] [Mass] / [Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
