@@ -19,6 +19,7 @@ html,button,input { font: 36px Arial, Helvetica, sans-serif; padding: 15px; marg
 img { padding: 0px; margin: 10px 10px 0px 0px; }
 table,tr,td { margin: 0px; padding: 0px; }
 table.table1,table.table2 { width: 100%; }
+i.i1 { filter: grayscale(75%) opacity(75%); }
 hr { height: 2px; }
 body,html { margin: 0px; }
 </style>
@@ -40,6 +41,7 @@ body,html { margin: 0px; }
 <button type='button' onclick="Details()">Unit Details</button>
 <button type='button' onclick="Copy()">Copy</button>
 <button type='button' onclick="Paste()">Paste</button>
+<button type='button' onclick="Equations()">Equations</button>
 <button type='button' onclick="Example()">Example</button>
 <button type='button' onclick="Test()">Test</button>
 <button type='button' onclick="Help()">Help</button>
@@ -99,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09d</p>
+v1.09e</p>
 </td>
 </tr>
 </table>
@@ -142,6 +144,8 @@ v1.09d</p>
 <script>
 'use strict';
 
+var desktop = window.matchMedia("(min-width:80em)");
+
 // regular expressions for string identification
 // XXX -- use typeof for value; anything for operator?
 const value_regexp_ch =     /[0-9.]/;
@@ -152,7 +156,9 @@ const unit_regexp_ch =      /[_A-Za-z$%]/;
 const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const operator_regexp_ch =  /[-+*/^;?(),:=~]/;
+const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~]/;
+const opens = "([{";
+const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
 const functions = { "square":true, "cubic":true, "sqrt":true, "sin":true, "cos":true, "tan":true, "asn":true, "acs":true, "atn":true, "ln":true, "log":true, "exp":true };
 
@@ -641,20 +647,22 @@ var right = "<>^";
 // return the index of the matching parenthesis in an array of tokens
 function MatchParen(tokens, i)
 {
-    var opens = 1;
-    assert(tokens[i] == '(');
+    var stack = [];
+    var k = opens.indexOf(tokens[i]);
+    assert(k != -1);
+    stack.push(k);
     for (var j = i+1; j < tokens.length; j++) {
-        if (tokens[j] == '(') {
-            opens++;
-        } else if (tokens[j] == ')') {
-            opens--;
-            if (! opens) {
-                assert(tokens[j] == ')');
+        k = opens.indexOf(tokens[j]);
+        if (k != -1) {
+            stack.push(k);
+        } else if (tokens[j] == closes[stack[stack.length-1]]) {
+            stack.pop();
+            if (! stack.length) {
                 return j;
             }
         }
     }
-    throw "unmatched parenthesis";
+    throw "unmatched parenthesis " + opens[stack[stack.length-1]];
 }
 
 // clean low precedence operators off the stack and push a new operator on the stack if needed and set the next result
@@ -709,7 +717,7 @@ function EvaluateTokens(tokens)
         // if the token is a function call...
         if (functions.hasOwnProperty(token)) {
             // power, trig, log, etc.
-            if (tokens.length > i+1 && tokens[i+1] == '(') {
+            if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
                 // power, trig, log, etc. followed by parenthetical expression
                 j = MatchParen(tokens, i+1);
                 subtokens = tokens.slice(i+2, j);
@@ -764,7 +772,7 @@ function EvaluateTokens(tokens)
             }
 
         // otherwise, if the token opens a parenthetical expression...
-        } else if (token == '(') {
+        } else if (opens.indexOf(token) != -1) {
             // parenthetical expression
             j = MatchParen(tokens, i);
             subtokens = tokens.slice(i+1, j);
@@ -1097,6 +1105,20 @@ function ParseTokens(tokens, line)
     var i;
     var j;
     if (tokens.length) {
+        if (! loading && ! testing) {
+            // if we have [Derived] then ask for a value before we proceed...
+            for (i = 0; i < tokens.length; i++) {
+                if (tokens[i][0].match(unit_regexp_ch)) {
+                    if (i-1 >= 0 && tokens[i-1] == '[' && i+1 < tokens.length && tokens[i+1] == ']') {
+                        var unit = LookupUnit(tokens[i]);
+                        if (! unit || unit.type == "DERIVED") {
+                            throw "enter value for " + tokens[i];
+                        }
+                    }
+                }
+            }
+        }
+
         // if we are defining a base unit...
         if (tokens[0] == "BASE") {
             if (tokens.length != 2) {
@@ -1137,7 +1159,6 @@ function ParseTokens(tokens, line)
 
         // otherwise, if we are defining or undefining a unit...
         } else if (tokens.includes('=')) {
-            var i;
             var filter = null;
             if (! loading) {
                 // if a filtering dimension is specified...
@@ -1384,7 +1405,11 @@ function Scroll(noscroll)
     // if we're scrolling...
     if (noscroll != true) {
         // scroll the equation line into view and set the focus
-        document.getElementById("bottom").scrollIntoView();
+        if (desktop) {
+            document.getElementById("bottom").scrollIntoView();
+        } else {
+            document.getElementById("equation").scrollIntoView();
+        }
         document.getElementById("equation").focus();
         // if needed, scroll us all the way left
         // N.B. some browsers hide our margin otherwise and it looks bad
@@ -1398,7 +1423,11 @@ function Scroll(noscroll)
 // convert text to hyperlinked html for the history list
 function History(text)
 {
-    return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + text + "</a>"
+    var html = text;
+    if (html.match(/[#]/)) {
+        html = html.replace(/[#]/, "<i class='i1'>#").replace(/$/, "</i>");
+    }
+    return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + html + "</a>"
 }
 
 var lasttag = "";
@@ -1680,9 +1709,9 @@ function Enter()
             }
 
             // record output
-            if (lines.length > 1 && line.trim().length && ! testing) {
+            if (lines.length > 1 && line.trim().length && success && ! testing) {
                 htmls.push("<br>" + History(line) + html);
-            } else {
+            } else if (html.length) {
                 htmls.push(html);
             }
 
@@ -1695,17 +1724,12 @@ function Enter()
         }
 
         // append a deletable chunk to the results list with the results
-        if (testing) {
-            if (htmls.length) {
-                // N.B. if there is no new output we leave output from before TEST available
-                document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
-            }
-        } else {
+        if (equation.length && success && ! testing) {
             document.getElementById("results").innerHTML += Chunk(History(equation) + htmls.join(' '));
-        }
-
-        if (success && ! testing) {
             window.history.pushState(line, line, window.location.href.replace(/[?#].*/, "") + '?' + urls.join('&'));
+        } else if (htmls.length) {
+            // N.B. if there is no new output we leave output from before TEST available
+            document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
         }
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
@@ -1821,7 +1845,7 @@ function Sort(array)
 }
 
 // show units in a database category or dimension
-function ShowUnitsByCategory(category, bydimension)
+function ShowUnitsByCategory(category, bydimension)  // or "All Units"
 {
     var i, j;
     var names = [];
@@ -1947,8 +1971,14 @@ function Units()
         // if there is a word at the cursor...
         var word = Word();
         if (word) {
-            // do a unit search
-            ShowUnitsByName(word[0]);
+            var unit = LookupUnit(word[0]);
+            if (unit && unit.type) {
+                // do a unit category search
+                ShowUnitsByCategory(word[0]);
+            } else {
+                // do a unit search
+                ShowUnitsByName(word[0]);
+            }
         } else {
             // do a category search
             ShowCategories();
@@ -2005,6 +2035,82 @@ function Paste()
     Scroll();
 }
 
+var pre_equations =`
+Cd=1
+`;
+
+var post_equations =`
+Cd=
+`;
+
+// XXX -- why no [Momentum] derived unit?
+// XXX -- why [Speed] and not [Velocity]?
+var equations =`
+    # Electronics
+    [Current] [Resistance] ? [Voltage] | = 1 [Voltage]
+    [Voltage] [Current] ? [Power] | = 1 [Power]
+    [Current]^2 [Resistance] ? [Power] | = 1 [Power]
+    [Voltage]^2 / [Resistance] ? [Power] | = 1 [Power]
+    1/(1/[Resistance] + 1/[Resistance]) ? [Resistance] # parallel resistors | = 0.5 [Resistance]
+    1/(1/[Capacitance] + 1/[Capacitance]) ? [Capacitance] # series capacitors | = 0.5 [Capacitance]
+    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # LC oscillator | = 1 [Frequency]
+    
+    # Energy and Power
+    0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
+    [Mass] grav [Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
+    [Energy] / [Time] ? [Power] | = 1 [Power]
+    [Force] [Length] ? [Energy] | = 1 [Energy]
+
+    # Gravity
+    G [Mass] [Mass] / [Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
+    [Mass] grav [Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
+
+    # Drag Force
+    0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force] | = 500 [Force]
+`;
+
+function EquationsByGroup(group)  // or "All Equations"
+{
+    var found = group == "All Equations";
+    var lines = equations.split(/[\r\n]+/);
+    var html = "";
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].replace(/[|].*/, "").trim();
+        if (line.length) {
+            if (group != "All Equations" && line[0] == '#') {
+                found = line.replace(/[#] */, "") == group;
+            } else {
+                if (found) {
+                    html += "<br>" + History(line.trim());
+                }
+            }
+        }
+    }
+
+    // append a deletable chunk to the results list with the equations list
+    document.getElementById("results").innerHTML += Chunk("=== equations " + group + " ===" + html);
+    Scroll();
+}
+
+function Equations()
+{
+    var found = false;
+    var lines = equations.split(/[\r\n]+/);
+    var html = "<br><a href=\"javascript:EquationsByGroup('All Equations')\">All Equations</a>";
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.length) {
+            if (line[0] == '#') {
+                html += "<br>" + "<a href=\"javascript:EquationsByGroup('" + line.replace(/# */, "") + "')\">" + line.replace(/# */, "") + "</a>";
+            }
+        }
+    }
+
+    // append a deletable chunk to the results list with the equation groups list
+    document.getElementById("results").innerHTML += Chunk("=== equation groups ===" + html);
+    Scroll();
+}
+
 var untestedexamples = `
 `;
 
@@ -2012,7 +2118,7 @@ var testedexamples =`
     100 lbf * 60 mph ? hp | = 16 hp
     1 cup * 1.59 gram/cc ? lb  # weight of sugar | = 0.829325 lb
     35 ft * 20 meters ? acres | = 0.0527224 acres
-    1/sqrt(23 millihenry * 10 microfarad) ? Hz  # frequency of lc oscillator | = 331.861 Hz
+    1/sqrt(23 millihenry * 10 microfarad) ? Hz  # frequency of LC oscillator | = 331.861 Hz
     60 PiB/month ? Gbps  # fast network bandwidth | = 205.644 Gbps
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2  # solar collector size | = 486.71 ft^2
     2 packs; 30 rolls/pack; 425 sheets/roll; 40 sheets/poop; 1 poops/person/day; 3 persons ? months | = 6.9863 months
@@ -2026,9 +2132,9 @@ var testedexamples =`
     ( 3 / (4 pi) * 1 gal )^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
     (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
     40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
-    (1/2) (2000 lbm * ((60 mph)^2 - (55 mph)^2)) / (10 sec) ? hp  # measured power drag | = 6.98976 hp
+    (1/2) (2000 lbm * ((60 mph)^2 - (55 mph)^2)) / (10 sec) ? hp  # measured power drag on car | = 6.98976 hp
     3.4 mega byte / 1200 baud ? hour  # slow network time | = 6.2963 hour
-    6.98976 hp; 3500 rpm ? ft lb  # power to torque | = 10.4889 ft lb
+    6.98976 hp; 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
     (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
 `;
 
@@ -2280,7 +2386,7 @@ var teststhatmaythrow = `
     foot+second | addition of dissimilar units
     foot-second | subtraction of dissimilar units
     boo = abc | undefined unit abc
-    ( | unmatched parenthesis
+    ( | unmatched parenthesis (
     sin | missing argument sin
     sin(1 meter) | non-dimensionless exponent
     *2 | expected a value before *
@@ -2288,7 +2394,7 @@ var teststhatmaythrow = `
     ^=0 | unexpected ^
     =0 | missing name
     () | missing expression
-    ((0) | unmatched parenthesis
+    [(0) | unmatched parenthesis [
     ?? | ? may only occur once
     :: | : may only occur once
     == | = may only occur once
@@ -2321,7 +2427,7 @@ function Test()
 function TestReal()
 {
     try {
-        var lines = (tests+testedexamples+database_tests+teststhatmaythrow+database_teststhatmaythrow).split(/[\r\n]+/);
+        var lines = (tests+testedexamples+pre_equations+equations+post_equations+database_tests+teststhatmaythrow+database_teststhatmaythrow).split(/[\r\n]+/);
         testing = true;
         offset_warn = false;
         offset_warned = false;
