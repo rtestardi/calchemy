@@ -101,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09e</p>
+v1.09f</p>
 </td>
 </tr>
 </table>
@@ -677,7 +677,7 @@ function CleanAndPush(stack, result, op, next)
             var stacked = stack[stack.length-1];
             // if the operator has right-to-left associativity, pop if the operator precedence is greater-than the current precedence;
             // otherwise, pop if the operator precedence is greater-than-or-equal-to the current precedence
-            var pop = (right.indexOf(stacked.op) != -1) ? (prec[stacked.op] > prec[op]) : (prec[stacked.op] >= prec[op]);
+            var pop = (right.indexOf(stacked.op) != -1) ? (stacked.prec > prec[op]) : (stacked.prec >= prec[op]);
             if (! pop) {
                 // we're done popping
                 break;
@@ -692,7 +692,7 @@ function CleanAndPush(stack, result, op, next)
         // if there is a previous result...
         if (result != null) {
             // push the previous result and a new operator on the stack
-            stack.push({ result: result, op: op });
+            stack.push({ result: result, op: op, prec: prec[op] });
         }
 
         // and set the current result
@@ -1747,11 +1747,11 @@ function UpDown(up)
 {
     // get the list of lines and hyperlinks from the results history
     var html = document.getElementById("results").innerHTML;
-    var lines = html.split(/[<]+/);
+    var lines = html.split(/[<>]+/);
     var links = [];
     for (var i = 0; i < lines.length; i++) {
         if (lines[i].match(/javascript:Hyperlink/i)) {
-            links.push(lines[i].replace(/.*javascript[:]Hyperlink[^>]*[>]/i, "").replace(/^= /, ""));
+            links.push(lines[i].replace(/.*javascript[:]Hyperlink.[']/i, "").replace(/['].*/, ""));
         }
     }
     if (first && up) {
