@@ -209,7 +209,6 @@ class Unit {
         this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
-        this.simple = false;
     }
 
     // test if scalar zero
@@ -267,8 +266,6 @@ class Unit {
         for (i = rhs.exponents.length; i < maxbaseunits; i++) {
             rhs.exponents[i] = 0;
         }
-
-        unit.simple = this.simple && rhs.simple;
 
         switch (op) {
             case '^':
@@ -622,7 +619,6 @@ function Value(token)
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;
     }
-    unit.simple = true;
     return unit;
 }
 
@@ -669,18 +665,10 @@ function MatchParen(tokens, i)
     throw "unmatched parenthesis " + opens[stack[stack.length-1]];
 }
 
-var bump = 0;
-
 // clean low precedence operators off the stack and push a new operator on the stack if needed and set the next result
 function CleanAndPush(stack, result, op, next)
 {
     assert(prec.hasOwnProperty(op));
-
-    // if we're at a very low precedence operator...
-    if (prec[op] < prec['+']) {
-        // clean the stack
-        bump = 0;
-    }
 
     // handle stacked operator precedence and associativity; clean stack as needed
     if (result != null) {
@@ -689,23 +677,9 @@ function CleanAndPush(stack, result, op, next)
             var stacked = stack[stack.length-1];
             // if the operator has right-to-left associativity, pop if the operator precedence is greater-than the current precedence;
             // otherwise, pop if the operator precedence is greater-than-or-equal-to the current precedence
-            var pop = (right.indexOf(stacked.op) != -1) ? (stacked.prec > prec[op]+bump) : (stacked.prec >= prec[op]+bump);
+            var pop = (right.indexOf(stacked.op) != -1) ? (stacked.prec > prec[op]) : (stacked.prec >= prec[op]);
 
-            // if we have a number following a '/'...
-            if (result.simple && stacked.op == '/') {
-                // if there is a number preceding the divide as well...
-                if (stacked.result.simple) {
-                    // always pop
-                    pop = true;
-                } else {
-                    // don't pop
-                    pop = false;
-                    // hold off popping of anything to the left, until we reach a very low precedence operator
-                    bump += 10;
-                }
-            }
-
-            if (! pop && op != "zz") {
+            if (! pop) {
                 // we're done popping
                 break;
             }
@@ -720,7 +694,7 @@ function CleanAndPush(stack, result, op, next)
         // if there is a previous result...
         if (result != null) {
             // push the previous result and a new operator on the stack
-            stack.push({ result: result, op: op, prec: prec[op]+bump });
+            stack.push({ result: result, op: op, prec: prec[op] });
         }
 
         // and set the current result
@@ -738,8 +712,6 @@ function EvaluateTokens(tokens)
     var subtokens;
     var stack = [];
     var result = null;
-
-    bump = 0;
 
     // for all tokens in the equation...
     for (var i = 0; i < tokens.length; i++) {
@@ -2165,11 +2137,11 @@ var testedexamples =`
     2000 lbm * grav * 60 mph ? hp  # power to decelerate car at 1G | = 320 hp
     10 mph * 30 feet * 10 gal/acre ? gal/min  # fertilizer flow rate on tractor swath | = 6.06061 gal/min
     40 knot / (2500 rpm * 90%) ? inch/rev  # propeller pitch | = 21.604 inch/rev, Caution: Calculation involves units of cycle or revolution; see Calchemy Help.
-    3/4 cup * 1 cal/(cc deltaK) * (212 - 52) deltaF / (2 min + 4 sec) ? watt  # measured power of microwave oven | = 532.196 watt
+    (3/4) cup * 1 cal/(cc deltaK) * (212 - 52) deltaF / (2 min + 4 sec) ? watt  # measured power of microwave oven | = 532.196 watt
     10 km/l ? mpg | = 23.5215 mpg
     (3/(4 pi) * 1 gal)^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
-    (50 ft * 30 ft * 0.75 inches/week) / 5 gal/min ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
-    40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / 40000 btu/hour ? hour  # water heater recovery time | = 0.79228 hour
+    (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
+    40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
     1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / 10 sec ? hp  # measured power drag on car | = 6.98976 hp
     3.4 mega byte / 1200 baud ? hour  # slow network time | = 6.2963 hour
     6.98976 hp; 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
@@ -2235,7 +2207,7 @@ var tests =`
     1/2?4 | = 0.125 4
     1?2/4 | = 2 2/4
     1 2/4 | = 0.5
-    1/2 4 | = 2
+    1/2 4 | = 0.125
     ({2})[(4)] | = 8
     (1+(2+3)*(1+2)) | = 16
     -3 | = -3
