@@ -41,8 +41,8 @@ body,html { margin: 0px; }
 <button type='button' onclick="Details()">Unit Details</button>
 <button type='button' onclick="Copy()">Copy</button>
 <button type='button' onclick="Paste()">Paste</button>
-<button type='button' onclick="Equations()">Equations</button>
 <button type='button' onclick="Example()">Example</button>
+<button type='button' onclick="Equations()">Equations</button>
 <button type='button' onclick="Test()">Test</button>
 <button type='button' onclick="Help()">Help</button>
 <br>
@@ -101,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09g</p>
+v1.09h</p>
 </td>
 </tr>
 </table>
@@ -2037,6 +2037,54 @@ function Paste()
     Scroll();
 }
 
+var untestedexamples = `
+`;
+
+var testedexamples =`
+    100 lbf * 60 mph ? hp | = 16 hp
+    1 cup * 1.59 gram/cc ? lb  # weight of sugar | = 0.829325 lb
+    35 ft * 20 meters ? acres | = 0.0527224 acres
+    1/sqrt(23 millihenry * 10 microfarad) ? Hz  # frequency of LC oscillator | = 331.861 Hz
+    60 PiB/month ? Gbps  # fast network bandwidth | = 205.644 Gbps
+    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2  # solar collector size | = 486.71 ft^2
+    2 packs; 30 rolls/pack; 425 sheets/roll; 40 sheets/poop; 1 poops/person/day; 3 persons ? months | = 6.9863 months
+    pi * (0.25 inch)^2; 60 ft; 5 gal/min ? sec  # time for hot water to flow thru 1/2 inch pipe | = 7.34398 sec
+    40 gal; 120 degF - 45 degF; 1 cal/cc deltaC; 40000 btu/hr ? min  # water heater recovery time | = 37.5291 min
+    2000 lbm * grav * 60 mph ? hp  # power to decelerate car at 1G | = 320 hp
+    10 mph * 30 feet * 10 gal/acre ? gal/min  # fertilizer flow rate on tractor swath | = 6.06061 gal/min
+    40 knot / (2500 rpm * 90%) ? inch/rev  # propeller pitch | = 21.604 inch/rev, Caution: Calculation involves units of cycle or revolution; see Calchemy Help.
+    (3/4) cup * 1 cal/(cc deltaK) * (212 - 52) deltaF / (2 min + 4 sec) ? watt  # measured power of microwave oven | = 532.196 watt
+    10 km/l ? mpg | = 23.5215 mpg
+    (3/(4 pi) * 1 gal)^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
+    (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
+    40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
+    1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / 10 sec ? hp  # measured power drag on car | = 6.98976 hp
+    3.4 mega byte / 1200 baud ? hour  # slow network time | = 6.2963 hour
+    6.98976 hp; 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
+    (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
+`;
+
+var example = 0;
+
+// the user clicked the Example button; copy an example equation to the equation line
+function Example()
+{
+    try {
+        // get all the example lines, including blanks
+        var lines = (untestedexamples+testedexamples).split(/[\r\n]+/);
+        var line;
+        // recall the next non-blank example line, without comments
+        do {
+            line = lines[example%lines.length].replace(/[|].*/, "").trim();
+            example++;
+        } while (! line);
+        document.getElementById("equation").value = line;
+    } catch (error) {
+        document.getElementById("results").innerHTML += Chunk(error);
+    }
+    Scroll();
+}
+
 var pre_equations =`
 Cd=1
 Momentum=kilogramm meter/second  # XXX -- belongs in database!
@@ -2078,7 +2126,7 @@ var equations =`
     [Inductance] + [Inductance] ? [Inductance]  # series inductors | = 2 [Inductance]
     1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
     0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
-    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # LC oscillator frequency | = 1 [Frequency]
+    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 1 [Frequency]
     
     # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
@@ -2149,54 +2197,6 @@ function Equations()
 
     // append a deletable chunk to the results list with the equation groups list
     document.getElementById("results").innerHTML += Chunk("=== equation groups ===" + html);
-    Scroll();
-}
-
-var untestedexamples = `
-`;
-
-var testedexamples =`
-    100 lbf * 60 mph ? hp | = 16 hp
-    1 cup * 1.59 gram/cc ? lb  # weight of sugar | = 0.829325 lb
-    35 ft * 20 meters ? acres | = 0.0527224 acres
-    1/sqrt(23 millihenry * 10 microfarad) ? Hz  # frequency of LC oscillator | = 331.861 Hz
-    60 PiB/month ? Gbps  # fast network bandwidth | = 205.644 Gbps
-    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2  # solar collector size | = 486.71 ft^2
-    2 packs; 30 rolls/pack; 425 sheets/roll; 40 sheets/poop; 1 poops/person/day; 3 persons ? months | = 6.9863 months
-    pi * (0.25 inch)^2; 60 ft; 5 gal/min ? sec  # time for hot water to flow thru 1/2 inch pipe | = 7.34398 sec
-    40 gal; 120 degF - 45 degF; 1 cal/cc deltaC; 40000 btu/hr ? min  # water heater recovery time | = 37.5291 min
-    2000 lbm * grav * 60 mph ? hp  # power to decelerate car at 1G | = 320 hp
-    10 mph * 30 feet * 10 gal/acre ? gal/min  # fertilizer flow rate on tractor swath | = 6.06061 gal/min
-    40 knot / (2500 rpm * 90%) ? inch/rev  # propeller pitch | = 21.604 inch/rev, Caution: Calculation involves units of cycle or revolution; see Calchemy Help.
-    (3/4) cup * 1 cal/(cc deltaK) * (212 - 52) deltaF / (2 min + 4 sec) ? watt  # measured power of microwave oven | = 532.196 watt
-    10 km/l ? mpg | = 23.5215 mpg
-    (3/(4 pi) * 1 gal)^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
-    (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
-    40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
-    1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / 10 sec ? hp  # measured power drag on car | = 6.98976 hp
-    3.4 mega byte / 1200 baud ? hour  # slow network time | = 6.2963 hour
-    6.98976 hp; 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
-    (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
-`;
-
-var example = 0;
-
-// the user clicked the Example button; copy an example equation to the equation line
-function Example()
-{
-    try {
-        // get all the example lines, including blanks
-        var lines = (untestedexamples+testedexamples).split(/[\r\n]+/);
-        var line;
-        // recall the next non-blank example line, without comments
-        do {
-            line = lines[example%lines.length].replace(/[|].*/, "").trim();
-            example++;
-        } while (! line);
-        document.getElementById("equation").value = line;
-    } catch (error) {
-        document.getElementById("results").innerHTML += Chunk(error);
-    }
     Scroll();
 }
 
