@@ -1106,13 +1106,14 @@ function ParseTokens(tokens, line)
 {
     var i;
     var j;
+    var unit;
     if (tokens.length) {
         if (! loading && ! testing) {
             // if we have [Derived] then ask for a value before we proceed...
             for (i = 0; i < tokens.length; i++) {
                 if (tokens[i][0].match(unit_regexp_ch)) {
                     if (i-1 >= 0 && tokens[i-1] == '[' && i+1 < tokens.length && tokens[i+1] == ']') {
-                        var unit = LookupUnit(tokens[i]);
+                        unit = LookupUnit(tokens[i]);
                         if (! unit || unit.type == "DERIVED") {
                             throw "enter value for " + tokens[i];
                         }
@@ -1266,7 +1267,7 @@ function ParseTokens(tokens, line)
                     // if the result is compatible with the filter...
                     if (results[j].Compatible(filter, false)) {
                         // define a new unit!
-                        var unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
+                        unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
                         Object.freeze(unit);
                         units.push(unit);
                         defines = true;
@@ -1429,7 +1430,7 @@ function History(text)
     if (html.match(/[#]/)) {
         html = html.replace(/[#]/, "<i class='i1'>#").replace(/$/, "</i>");
     }
-    return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + html + "</a>"
+    return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + html + "</a>";
 }
 
 var lasttag = "";
@@ -1607,14 +1608,14 @@ function Body()
 // the user clicked the Enter button; run the user command line
 function Enter()
 {
+    var success = false;
+
     try {
         // get the user command line split by '&'
         var equation = document.getElementById("equation").value;
         var lines = equation.split('&');
         var urls = [];
         var htmls = [];
-
-        var success = false;
 
         for (var k = 0; k < lines.length; k++) {
             // parse the requested dimension from the command line
@@ -1728,7 +1729,7 @@ function Enter()
         // append a deletable chunk to the results list with the results
         if (equation.length && success && ! testing) {
             document.getElementById("results").innerHTML += Chunk(History(equation) + htmls.join(' '));
-            window.history.pushState(line, line, window.location.href.replace(/[?#].*/, "") + '?' + urls.join('&'));
+            window.history.pushState("", "", window.location.href.replace(/[?#].*/, "") + '?' + urls.join('&'));
         } else if (htmls.length) {
             // N.B. if there is no new output we leave output from before TEST available
             document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
@@ -2183,7 +2184,6 @@ function EquationsByGroup(group)  // or "All Equations"
 
 function Equations()
 {
-    var found = false;
     var lines = equations.split(/[\r\n]+/);
     var html = "<br><a href=\"javascript:EquationsByGroup('All Equations')\">All Equations</a>";
     var groups = [];
