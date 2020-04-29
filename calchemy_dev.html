@@ -144,8 +144,6 @@ v1.09i</p>
 <script>
 'use strict';
 
-var desktop = window.matchMedia("(min-width:80em)");
-
 // regular expressions for string identification
 // XXX -- use typeof for value; anything for operator?
 const value_regexp_ch =     /[0-9.]/;
@@ -172,8 +170,6 @@ var loading = false;  // while loading the units database, all ambiguities are t
 var deriving = false;  // while deriving units, secondary names may also be used
 var evaluating = false;  // while evaluating units, free units may be used
 var testing = false;  // while testing, don't put equation line into results
-var defines = false;
-var undefines = false;
 var si = false;  // request to display mismatch result in SI format
 var massbase;  // may be undefined
 var storagebase;  // may be undefined
@@ -183,10 +179,12 @@ var offset_warned = false;
 var cycle_warn = false;  // category Angle
 var cycle_warned = false;
 
-// these are the results from an expression evaluation
+// these are the results from a command line
 var results;  // Unit
 var mismatches;  // string
 var errors;  // string
+var defines;  // boolean
+var undefines;  // boolean
 
 function assert(bool)
 {
@@ -1101,6 +1099,73 @@ function AlternateTokens(tokens, n)
 
 // *** command line *******************************************************************************
 
+// tokenize a command line
+function TokenizeLine(input)
+{
+    // remove comments
+    input = input.replace(/[#|].*/, "").trim();
+
+    var token;
+    var tokens = [];
+    var colon = false;
+    var equal = false;
+    var question = false;
+    // for all letters in the command line...
+    for (var i = 0; i < input.length; i++) {
+        var ch = input[i];
+
+        // if the letter is the start of a numeric value...
+        if (ch.match(value_regexp_ch)) {
+            // value
+            token = input.slice(i).match(value_regexp_head)[0];
+            i += token.length-1;
+
+        // otherwise, if the letter is the start of a symbolic unit (or function call name)...
+        } else if (ch.match(unit_regexp_ch)) {
+            // unit
+            token = input.slice(i).match(unit_regexp_head)[0];
+            i += token.length-1;
+
+        // otherwise, if the letter is an arithmetic operator...
+        } else if (ch.match(operator_regexp_ch)) {
+            // operator
+            token = ch;
+            if (ch == ':') {
+                if (colon) {
+                    throw ": may only occur once";
+                }
+                colon = true;
+            }
+            if (ch == '=') {
+                if (equal) {
+                    throw "= may only occur once";
+                }
+                equal = true;
+            }
+            if (ch == '?') {
+                if (question) {
+                    throw "? may only occur once";
+                }
+                question = true;
+            }
+        } else if (ch == ' ') {
+            continue;
+        } else {
+            throw "token error " + ch;
+        }
+        tokens.push(token);
+    }
+
+    // remove trailing '?' for si or filter request
+    si = false;
+    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
+        si = true;
+        tokens.pop();
+    }
+
+    return tokens;
+}
+
 // parse and run a command line
 function ParseTokens(tokens, line)
 {
@@ -1326,71 +1391,57 @@ function ParseTokens(tokens, line)
     }
 }
 
-// tokenize a command line
-function TokenizeLine(input)
+// run a command line
+// N.B. output is in results, mismatches, errors, defines, undefines
+function RunLine(line)
 {
-    // remove comments
-    input = input.replace(/[#|].*/, "").trim();
-
-    var token;
-    var tokens = [];
-    var colon = false;
-    var equal = false;
-    var question = false;
-    // for all letters in the command line...
-    for (var i = 0; i < input.length; i++) {
-        var ch = input[i];
-
-        // if the letter is the start of a numeric value...
-        if (ch.match(value_regexp_ch)) {
-            // value
-            token = input.slice(i).match(value_regexp_head)[0];
-            i += token.length-1;
-
-        // otherwise, if the letter is the start of a symbolic unit (or function call name)...
-        } else if (ch.match(unit_regexp_ch)) {
-            // unit
-            token = input.slice(i).match(unit_regexp_head)[0];
-            i += token.length-1;
-
-        // otherwise, if the letter is an arithmetic operator...
-        } else if (ch.match(operator_regexp_ch)) {
-            // operator
-            token = ch;
-            if (ch == ':') {
-                if (colon) {
-                    throw ": may only occur once";
-                }
-                colon = true;
-            }
-            if (ch == '=') {
-                if (equal) {
-                    throw "= may only occur once";
-                }
-                equal = true;
-            }
-            if (ch == '?') {
-                if (question) {
-                    throw "? may only occur once";
-                }
-                question = true;
-            }
-        } else if (ch == ' ') {
-            continue;
-        } else {
-            throw "token error " + ch;
+    // tokenize, parse, and run the command line
+    results = [];
+    mismatches = [];
+    errors = [];
+    defines = false;
+    undefines = false;
+    try {
+        ParseTokens(TokenizeLine(line), line);
+    } catch (error) {
+        if (! errors.includes(error)) {
+            errors.push(error);
         }
-        tokens.push(token);
+    }
+}
+
+// load the units database
+function LoadDatabase()
+{
+    // split the database into lines
+    var lines = database.split(/[\r\n]+/);
+    loading = true;
+
+    // for each line of the database...
+    for (var i = 0; i < lines.length; i++) {
+        // evaluate the line
+        var line = lines[i];
+
+        results = [];
+        mismatches = [];
+        errors = [];
+        defines = false;
+        undefines = false;
+        ParseTokens(TokenizeLine(line), line);
     }
 
-    // remove trailing '?' for si or filter request
-    si = false;
-    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
-        si = true;
-        tokens.pop();
-    }
+    loading = false;
 
-    return tokens;
+    // identify our "special" base units
+    for (i = 0; i < bases.length; i++) {
+        if (bases[i].names[0] == "MASS") {
+            // we display SI units in kilograms rather than grams
+            massbase = i;
+        } else if (bases[i].names[0] == "STORAGE") {
+            // we only allow binary prefixes on storage units
+            storagebase = i;
+        }
+    }
 }
 
 // *** html elements ******************************************************************************
@@ -1408,11 +1459,7 @@ function Scroll(noscroll)
     // if we're scrolling...
     if (noscroll != true) {
         // scroll the equation line into view and set the focus
-        if (desktop) {
-            document.getElementById("bottom").scrollIntoView();
-        } else {
-            document.getElementById("equation").scrollIntoView();
-        }
+        document.getElementById("bottom").scrollIntoView();
         document.getElementById("equation").focus();
         // if needed, scroll us all the way left
         // N.B. some browsers hide our margin otherwise and it looks bad
@@ -1527,35 +1574,8 @@ function SnoopAndDelete(tag)
 function Body()
 {
     try {
-        // split the database into lines
-        var lines = database.split(/[\r\n]+/);
-        loading = true;
-
-        // for each line of the database...
-        for (var i = 0; i < lines.length; i++) {
-            // evaluate the line
-            var line = lines[i];
-
-            results = [];
-            mismatches = [];
-            errors = [];
-            defines = false;
-            undefines = false;
-            ParseTokens(TokenizeLine(line), line);
-        }
-
-        loading = false;
-
-        // identify our "special" base units
-        for (i = 0; i < bases.length; i++) {
-            if (bases[i].names[0] == "MASS") {
-                // we display SI units in kilograms rather than grams
-                massbase = i;
-            } else if (bases[i].names[0] == "STORAGE") {
-                // we only allow binary prefixes on storage units
-                storagebase = i;
-            }
-        }
+        // load the units database
+        LoadDatabase();
 
         // recall our results history
         var temp = localStorage["calchemy.results"];
@@ -1630,19 +1650,9 @@ function Enter()
 
             success = false;
 
-            // tokenize, parse, and run the command line
-            results = [];
-            mismatches = [];
-            errors = [];
-            defines = false;
-            undefines = false;
-            try {
-                ParseTokens(TokenizeLine(line), line);
-            } catch (error) {
-                if (! errors.includes(error)) {
-                    errors.push(error);
-                }
-            }
+            // run the command line
+            // N.B. output is in results, mismatches, errors, defines, undefines
+            RunLine(line);
 
             var output;
 
@@ -2178,7 +2188,7 @@ function EquationsByGroup(group)  // or "All Equations"
     }
 
     // append a deletable chunk to the results list with the equations list
-    document.getElementById("results").innerHTML += Chunk("=== equations " + group + " ===" + html);
+    document.getElementById("results").innerHTML += Chunk("=== equations in group " + group + " ===" + html);
     Scroll();
 }
 
