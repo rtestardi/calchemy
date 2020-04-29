@@ -2039,7 +2039,10 @@ function Paste()
 
 var pre_equations =`
 Cd=1
-DERIVED Momentum=kgm m/s  # XXX -- belongs in database!
+DERIVED Momentum=kilogramm meter/second  # XXX -- belongs in database!
+DERIVED Stiffness=newton/meter  # XXX -- belongs in database!
+DERIVED Radius=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
+DERIVED Height=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
 `;
 
 var post_equations =`
@@ -2048,35 +2051,60 @@ Cd=
 
 // XXX -- why [Speed] and not [Velocity]?
 var equations =`
-    # Electronics
-    [Current] [Resistance] ? [Voltage] | = 1 [Voltage]
+    # Geometrical
+    [Length] [Length] ? [Area]  # area of rectangle | = 1 [Area]
+    (1/2) [Length] [Length] ? [Area]  # area of triangle | = 0.5 [Area]
+    pi [Radius]^2 ? [Area]  # area of circle | = 3.14159 [Area]
+    4 pi [Radius]^2 ? [Area]  # area of sphere | = 12.5664 [Area]
+    [Length] [Length] [Length] ? [Volume]  # volume of a rectangular prism | = 1000 [Volume]
+    (1/3) [Length] [Length] [Length] ? [Volume]  # volume of a pyramid | = 333.333 [Volume]
+    pi [Radius]^2 [Length] ? [Volume]  # volume of cylinder | = 3141.59 [Volume]
+    (4/3) pi [Radius]^3 ? [Volume]  # volume of sphere | = 4188.79 [Volume]
+    sqrt([Length]^2 + [Length]^2) ? [Length]  # length of hypotenuse | = 1.41421 [Length]
+
+    # Electrical
+    [Current] [Resistance] ? [Voltage]  # ohm's law | = 1 [Voltage]
+    [Current]^2 [Resistance] ? [Power]  # joule's law | = 1 [Power]
     [Voltage] [Current] ? [Power] | = 1 [Power]
-    [Current]^2 [Resistance] ? [Power] | = 1 [Power]
     [Voltage]^2 / [Resistance] ? [Power] | = 1 [Power]
-    1/(1/[Resistance] + 1/[Resistance]) ? [Resistance] # parallel resistors | = 0.5 [Resistance]
-    1/(1/[Capacitance] + 1/[Capacitance]) ? [Capacitance] # series capacitors | = 0.5 [Capacitance]
-    0.5 [Capacitance] [Voltage]^2 ? [Energy] | = 0.5 [Energy]
-    1/(1/[Inductance] + 1/[Inductance]) ? [Inductance] # parallel inductors | = 0.5 [Inductance]
-    0.5 [Inductance] [Current]^2 ? [Energy] | = 0.5 [Energy]
-    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # LC oscillator | = 1 [Frequency]
+    [Resistance] + [Resistance] ? [Resistance]  # series resistors | = 2 [Resistance]
+    1/(1/[Resistance] + 1/[Resistance]) ? [Resistance]  # parallel resistors | = 0.5 [Resistance]
+    1/(1/[Capacitance] + 1/[Capacitance]) ? [Capacitance]  # series capacitors | = 0.5 [Capacitance]
+    [Capacitance] + [Capacitance] ? [Capacitance]  # parallel capacitors | = 2 [Capacitance]
+    0.5 [Capacitance] [Voltage]^2 ? [Energy]  # capacitor energy | = 0.5 [Energy]
+    [Inductance] + [Inductance] ? [Inductance]  # series inductors | = 2 [Inductance]
+    1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
+    0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
+    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # LC oscillator frequency | = 1 [Frequency]
     
-    # Energy and Power
+    # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
-    [Mass] grav [Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
-    [Energy] / [Time] ? [Power] | = 1 [Power]
+    [Mass] grav [Height] ? [Energy]  # potential energy | = 9.80665 [Energy]
     [Force] [Length] ? [Energy] | = 1 [Energy]
-    [Force] [Length] ? [Torque] | = 1 [Torque]
-
-    # Dynamics
-    [Mass] [Acceleration] ? [Force] | = 1 [Force]
+    [Force] [Speed] ? [Power] | = 1 [Power]
+    [Energy] / [Time] ? [Power] | = 1 [Power]
+    [Stiffness] [Length] ? [Force] | = 1 [Force]
+    [Stiffness] [Length]^2 ? [Energy] | = 1 [Energy]
+    [Mass] [Acceleration] ? [Force]  # newton's second law | = 1 [Force]
+    [Mass] [Acceleration] [Speed] ? [Power] | = 1 [Power]
+    [Mass] [Acceleration] [Length] ? [Energy] | = 1 [Energy]
     [Mass] [Speed] ? [Momentum] | = 1 [Momentum]
+    [Force] [Length] ? [Torque] | = 1 [Torque]
+    [Angular_velocity] [Radius] ? [Speed] | = 1 [Speed]
+    [Angular_velocity]^2 [Radius] ? [Acceleration] | = 1 [Acceleration]
 
-    # Gravity
+    # Fluid Mechanical
+    [Density] grav [Height] ? [Pressure]  # static head pressure | = 9806.65 [Pressure]
+    0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force]  # dynamic drag force | = 500 [Force]
+
+    # Orbit Mechanical
     G [Mass] [Mass] / [Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
-    [Mass] grav [Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
+    sqrt(2 G [Mass] / [Radius]) ? [Speed]  # escape speed | = 0.0000115521 [Speed]
+    G [Mass] [Mass] / (2 [Length]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
+    -G [Mass] [Mass] / [Length] ? [Energy]  # orbital potential energy | = -6.67259e-11 [Energy]
 
-    # Drag Force
-    0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force] | = 500 [Force]
+    # Nuclear
+    [Mass] c^2 ? [Energy] | = 89875500000000000 [Energy]
 `;
 
 function EquationsByGroup(group)  // or "All Equations"
