@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<title>Demo</title>
+</head>
+
+<body onload='Body()'>
+
+<h1>Demo</h1>
+<p id='results'></p>
+
+<script type="text/javascript" src="engine_dev.js">
+</script>
+
+<script>
+
+var database = `
+BASE BASE1
+BASE BASE2
+unit1=BASE1
+unit2=BASE2
+DERIVED DERIVED1=unit1/unit2
+DERIVED DERIVED2=unit2/unit1
+`;
+
+function Body()
+{
+    
+    LoadDatabase();
+    RunLine("unit1^2/unit2/unit1?");
+    document.getElementById("results").innerHTML = mismatches.join(' ');
+}
+
+</script>
+
+</body>
+
+</html>
