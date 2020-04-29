@@ -101,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09e</p>
+v1.09f</p>
 </td>
 </tr>
 </table>
@@ -677,11 +677,13 @@ function CleanAndPush(stack, result, op, next)
             var stacked = stack[stack.length-1];
             // if the operator has right-to-left associativity, pop if the operator precedence is greater-than the current precedence;
             // otherwise, pop if the operator precedence is greater-than-or-equal-to the current precedence
-            var pop = (right.indexOf(stacked.op) != -1) ? (prec[stacked.op] > prec[op]) : (prec[stacked.op] >= prec[op]);
+            var pop = (right.indexOf(stacked.op) != -1) ? (stacked.prec > prec[op]) : (stacked.prec >= prec[op]);
+
             if (! pop) {
                 // we're done popping
                 break;
             }
+            // pop and clean
             stacked = stack.pop();
             result = stacked.result.Operate(stacked.op, result);
         }
@@ -692,7 +694,7 @@ function CleanAndPush(stack, result, op, next)
         // if there is a previous result...
         if (result != null) {
             // push the previous result and a new operator on the stack
-            stack.push({ result: result, op: op });
+            stack.push({ result: result, op: op, prec: prec[op] });
         }
 
         // and set the current result
@@ -1747,11 +1749,11 @@ function UpDown(up)
 {
     // get the list of lines and hyperlinks from the results history
     var html = document.getElementById("results").innerHTML;
-    var lines = html.split(/[<]+/);
+    var lines = html.split(/[<>]+/);
     var links = [];
     for (var i = 0; i < lines.length; i++) {
         if (lines[i].match(/javascript:Hyperlink/i)) {
-            links.push(lines[i].replace(/.*javascript[:]Hyperlink[^>]*[>]/i, "").replace(/^= /, ""));
+            links.push(lines[i].replace(/.*javascript[:]Hyperlink.[']/i, "").replace(/['].*/, ""));
         }
     }
     if (first && up) {
@@ -2037,36 +2039,71 @@ function Paste()
 
 var pre_equations =`
 Cd=1
+DERIVED Momentum=kilogramm meter/second  # XXX -- belongs in database!
+DERIVED Stiffness=newton/meter  # XXX -- belongs in database!
+DERIVED Radius=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
+DERIVED Height=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
 `;
 
 var post_equations =`
 Cd=
 `;
 
-// XXX -- why no [Momentum] derived unit?
-// XXX -- why [Speed] and not [Velocity]?
 var equations =`
-    # Electronics
-    [Current] [Resistance] ? [Voltage] | = 1 [Voltage]
+    # Geometrical
+    [Length] [Length] ? [Area]  # area of rectangle | = 1 [Area]
+    (1/2) [Length] [Length] ? [Area]  # area of triangle | = 0.5 [Area]
+    pi [Radius]^2 ? [Area]  # area of circle | = 3.14159 [Area]
+    4 pi [Radius]^2 ? [Area]  # area of sphere | = 12.5664 [Area]
+    [Length] [Length] [Length] ? [Volume]  # volume of a rectangular prism | = 1000 [Volume]
+    (1/3) [Length] [Length] [Length] ? [Volume]  # volume of a pyramid | = 333.333 [Volume]
+    pi [Radius]^2 [Length] ? [Volume]  # volume of cylinder | = 3141.59 [Volume]
+    (4/3) pi [Radius]^3 ? [Volume]  # volume of sphere | = 4188.79 [Volume]
+    sqrt([Length]^2 + [Length]^2) ? [Length]  # length of hypotenuse | = 1.41421 [Length]
+
+    # Electrical
+    [Current] [Resistance] ? [Voltage]  # ohm's law | = 1 [Voltage]
+    [Current]^2 [Resistance] ? [Power]  # joule's law | = 1 [Power]
     [Voltage] [Current] ? [Power] | = 1 [Power]
-    [Current]^2 [Resistance] ? [Power] | = 1 [Power]
     [Voltage]^2 / [Resistance] ? [Power] | = 1 [Power]
-    1/(1/[Resistance] + 1/[Resistance]) ? [Resistance] # parallel resistors | = 0.5 [Resistance]
-    1/(1/[Capacitance] + 1/[Capacitance]) ? [Capacitance] # series capacitors | = 0.5 [Capacitance]
-    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # LC oscillator | = 1 [Frequency]
+    [Resistance] + [Resistance] ? [Resistance]  # series resistors | = 2 [Resistance]
+    1/(1/[Resistance] + 1/[Resistance]) ? [Resistance]  # parallel resistors | = 0.5 [Resistance]
+    1/(1/[Capacitance] + 1/[Capacitance]) ? [Capacitance]  # series capacitors | = 0.5 [Capacitance]
+    [Capacitance] + [Capacitance] ? [Capacitance]  # parallel capacitors | = 2 [Capacitance]
+    0.5 [Capacitance] [Voltage]^2 ? [Energy]  # capacitor energy | = 0.5 [Energy]
+    [Inductance] + [Inductance] ? [Inductance]  # series inductors | = 2 [Inductance]
+    1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
+    0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
+    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # LC oscillator frequency | = 1 [Frequency]
     
-    # Energy and Power
+    # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
-    [Mass] grav [Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
-    [Energy] / [Time] ? [Power] | = 1 [Power]
+    [Mass] grav [Height] ? [Energy]  # potential energy | = 9.80665 [Energy]
     [Force] [Length] ? [Energy] | = 1 [Energy]
+    [Force] [Speed] ? [Power] | = 1 [Power]
+    [Energy] / [Time] ? [Power] | = 1 [Power]
+    [Stiffness] [Length] ? [Force] | = 1 [Force]
+    [Stiffness] [Length]^2 ? [Energy] | = 1 [Energy]
+    [Mass] [Acceleration] ? [Force]  # newton's second law | = 1 [Force]
+    [Mass] [Acceleration] [Speed] ? [Power] | = 1 [Power]
+    [Mass] [Acceleration] [Length] ? [Energy] | = 1 [Energy]
+    [Mass] [Speed] ? [Momentum] | = 1 [Momentum]
+    [Force] [Length] ? [Torque] | = 1 [Torque]
+    [Angular_velocity] [Radius] ? [Speed] | = 1 [Speed]
+    [Angular_velocity]^2 [Radius] ? [Acceleration] | = 1 [Acceleration]
 
-    # Gravity
+    # Fluid Mechanical
+    [Density] grav [Height] ? [Pressure]  # static head pressure | = 9806.65 [Pressure]
+    0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force]  # dynamic drag force | = 500 [Force]
+
+    # Orbit Mechanical
     G [Mass] [Mass] / [Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
-    [Mass] grav [Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
+    sqrt(2 G [Mass] / [Radius]) ? [Speed]  # escape speed | = 0.0000115521 [Speed]
+    G [Mass] [Mass] / (2 [Length]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
+    -G [Mass] [Mass] / [Length] ? [Energy]  # orbital potential energy | = -6.67259e-11 [Energy]
 
-    # Drag Force
-    0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force] | = 500 [Force]
+    # Nuclear
+    [Mass] c^2 ? [Energy] | = 89875500000000000 [Energy]
 `;
 
 function EquationsByGroup(group)  // or "All Equations"
@@ -2129,10 +2166,10 @@ var testedexamples =`
     40 knot / (2500 rpm * 90%) ? inch/rev  # propeller pitch | = 21.604 inch/rev, Caution: Calculation involves units of cycle or revolution; see Calchemy Help.
     (3/4) cup * 1 cal/(cc deltaK) * (212 - 52) deltaF / (2 min + 4 sec) ? watt  # measured power of microwave oven | = 532.196 watt
     10 km/l ? mpg | = 23.5215 mpg
-    ( 3 / (4 pi) * 1 gal )^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
+    (3/(4 pi) * 1 gal)^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
     (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
     40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
-    (1/2) (2000 lbm * ((60 mph)^2 - (55 mph)^2)) / (10 sec) ? hp  # measured power drag on car | = 6.98976 hp
+    1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / 10 sec ? hp  # measured power drag on car | = 6.98976 hp
     3.4 mega byte / 1200 baud ? hour  # slow network time | = 6.2963 hour
     6.98976 hp; 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
     (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
@@ -2198,7 +2235,7 @@ var tests =`
     1?2/4 | = 2 2/4
     1 2/4 | = 0.5
     1/2 4 | = 0.125
-    ((2))((4)) | = 8
+    ({2})[(4)] | = 8
     (1+(2+3)*(1+2)) | = 16
     -3 | = -3
     --3 | = 3
@@ -2232,6 +2269,8 @@ var tests =`
     ln(e) | = 1
     log(10) | = 1
     exp(1) | = 2.71828
+    sqrt[4] | = 2
+    sqrt{4} | = 2
 
     # alternation
     1;1;1 | = 1
@@ -2395,6 +2434,8 @@ var teststhatmaythrow = `
     =0 | missing name
     () | missing expression
     [(0) | unmatched parenthesis [
+    [(0]) | unmatched parenthesis [
+    ([0)] | unmatched parenthesis (
     ?? | ? may only occur once
     :: | : may only occur once
     == | = may only occur once
