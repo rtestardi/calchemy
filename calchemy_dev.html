@@ -2144,11 +2144,11 @@ var equations =`
     [Angular_velocity] [Radius] ? [Speed] | = 1 [Speed]
     [Angular_velocity]^2 [Radius] ? [Acceleration] | = 1 [Acceleration]
 
-    # Fluid Mechanical
+    # Fluid_mechanical
     [Density] grav [Height] ? [Pressure]  # static head pressure | = 9806.65 [Pressure]
     0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force]  # dynamic drag force | = 500 [Force]
 
-    # Orbit Mechanical
+    # Orbit_mechanical
     G [Mass] [Mass] / [Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
     sqrt(2 G [Mass] / [Radius]) ? [Speed]  # escape speed | = 0.0000115521 [Speed]
     G [Mass] [Mass] / (2 [Length]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
@@ -2186,13 +2186,16 @@ function Equations()
     var found = false;
     var lines = equations.split(/[\r\n]+/);
     var html = "<br><a href=\"javascript:EquationsByGroup('All Equations')\">All Equations</a>";
+    var groups = [];
     for (var i = 0; i < lines.length; i++) {
         var line = lines[i].trim();
-        if (line.length) {
-            if (line[0] == '#') {
-                html += "<br>" + "<a href=\"javascript:EquationsByGroup('" + line.replace(/# */, "") + "')\">" + line.replace(/# */, "") + "</a>";
-            }
+        if (line[0] == '#') {
+            groups.push(line.replace(/# */, ""));
         }
+    }
+    Sort(groups);
+    for (i = 0; i < groups.length; i++) {
+        html += "<br>" + "<a href=\"javascript:EquationsByGroup('" + groups[i] + "')\">" + groups[i] + "</a>";
     }
 
     // append a deletable chunk to the results list with the equation groups list
