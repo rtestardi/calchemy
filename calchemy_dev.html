@@ -101,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09f</p>
+v1.09g</p>
 </td>
 </tr>
 </table>
@@ -2039,14 +2039,18 @@ function Paste()
 
 var pre_equations =`
 Cd=1
-DERIVED Momentum=kilogramm meter/second  # XXX -- belongs in database!
-DERIVED Stiffness=newton/meter  # XXX -- belongs in database!
-DERIVED Radius=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
-DERIVED Height=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
+Momentum=kilogramm meter/second  # XXX -- belongs in database!
+Stiffness=newton/meter  # XXX -- belongs in database!
+Radius=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
+Height=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
 `;
 
 var post_equations =`
 Cd=
+Momentum=
+Stiffness=
+Radius=
+Height=
 `;
 
 var equations =`
