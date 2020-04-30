@@ -13,6 +13,7 @@ const unit_regexp_ch =      /[_A-Za-z$%]/;
 const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const unit_regexp_all =    /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~]/;
 const opens = "([{";
 const closes = ")]}";
@@ -663,7 +664,7 @@ function EvaluateTokens(tokens)
                 result = CleanAndPush(stack, result, op, next);
                 next = prefixunit[1];
             }
-            if (next.categories.includes("Angle")) {
+            if (next.categories.includes("Angle") || next.categories.includes("Angular_velocity") || next.categories.includes("Angular_acceleration")) {
                 cycle_warn = true;
             }
             result = CleanAndPush(stack, result, op, next);
@@ -928,7 +929,7 @@ function AlternateTokens(tokens, n)
             // if "expression ? unit" was entered...
             if (question) {
                 // the user requested a unit and we mismatched; show what was missing as "1/dimension"
-                strings = ["Mismatch " + result.Dimension(question)];
+                strings = ["Dimensional Mismatch " + result.Dimension(question)];
 
             // otherwise, if "expression ?" was entered...
             } else if (si) {
@@ -1281,10 +1282,10 @@ function LoadDatabase(database)
             throw "unexpected result: " + lines[i];
         }
         if (mismatches.length) {
-            throw "unexpected mismatch: " + lines[i];
+            throw "unexpected mismatch: " + lines[i] + " " + mismatches.toString();
         }
         if (errors.length) {
-            throw "unexpected error: " + lines[i];
+            throw "unexpected error: " + lines[i] + " " + errors.toString();
         }
     }
 

@@ -14,6 +14,8 @@ CATEGORY Ice
 CATEGORY Air
 CATEGORY Batteries
 CATEGORY Speed_sound
+CATEGORY Frequency
+CATEGORY Angular_velocity
 
 BASE MASS
 BASE LENGTH
@@ -54,6 +56,9 @@ PREFIX Prefix:Ei,exbi=1024^6 #storage
 PREFIX Prefix:Zi,zebi=1024^7 #storage
 PREFIX Prefix:Yi,yobi=1024^8 #storage
 
+Number:pi=3.14159265358979323
+Number:e=2.71828182845904523
+
 #Primary
 *Common,SI:m,meter*,metre*=LENGTH
 *Common,SI:gm,gramm,g,gram*=MASS
@@ -64,6 +69,7 @@ Common,SI:deltaK,deltak=TEMP #interval (T-T0) Kelvin
 Common:$,dollar*=MONEY
 *Common,SI:A,amp*,ampere*=CURRENT
 *Advanced,SI:mol,mole*=SUBSTANCE
+*Common,SI,Frequency,Angular_velocity:Hz,hertz=2pi rad/s
 
 #Secondary
 *Common,SI:L,liter*,litre*,l=1 cubic dm #was 1.000028 before 1964
@@ -90,26 +96,27 @@ DERIVED Temperature=deltaK
 DERIVED Storage=bit
 DERIVED Area=meter^2
 DERIVED Volume=liter
-DERIVED Speed=meter/second
-DERIVED Acceleration=meter/second^2
+DERIVED Speed=meter per second
+DERIVED Acceleration=meter per second^2
 DERIVED Force=newton
 DERIVED Energy=joule
 AMBIGUOUS Torque=newton meter
 DERIVED Power=watt
 DERIVED Pressure=pascal
-DERIVED Frequency=1/second
-AMBIGUOUS Angular_velocity=1/second
-DERIVED Density=kilogramm/liter
-DERIVED Flow=liter/second
-DERIVED Heat_latent_m=joule/kilogramm
-AMBIGUOUS Heat_latent_v=joule/liter
-DERIVED Specific_heat_m=joule/(kilogramm*deltaK)
-DERIVED Specific_heat_v=joule/(liter*deltaK)
-AMBIGUOUS Heat_vaporization_m=joule/kilogramm
-AMBIGUOUS Heat_vaporization_v=joule/liter
-AMBIGUOUS Heat_fusion_m=joule/kilogramm
-AMBIGUOUS Heat_fusion_v=joule/liter
-DERIVED Thermal_conductivity=watt/(meter*deltaK)
+DERIVED Frequency=hertz
+AMBIGUOUS Angular_velocity=radian per second
+DERIVED Angular_acceleration=radian per second^2
+DERIVED Density=kilogramm per liter
+DERIVED Flow=liter per second
+DERIVED Heat_latent_m=joule per kilogramm
+AMBIGUOUS Heat_latent_v=joule per liter
+DERIVED Specific_heat_m=joule per (kilogramm*deltaK)
+DERIVED Specific_heat_v=joule per (liter*deltaK)
+AMBIGUOUS Heat_vaporization_m=joule per kilogramm
+AMBIGUOUS Heat_vaporization_v=joule per liter
+AMBIGUOUS Heat_fusion_m=joule per kilogramm
+AMBIGUOUS Heat_fusion_v=joule per liter
+DERIVED Thermal_conductivity=watt per (meter*deltaK)
 DERIVED Viscosity=pascal*second #(dynamic)
 DERIVED Current=ampere
 DERIVED Charge=coulomb
@@ -120,28 +127,27 @@ DERIVED Inductance=henry
 DERIVED Magnetic_flux=weber
 DERIVED Magnetic_flux_density=tesla
 DERIVED Substance=mole
-DERIVED Energy_flux=joule/meter^2
-DERIVED Molar_heat=joule/mole
-DERIVED Molar_heat_capacity=joule/(mole*deltaK)
-DERIVED Line_density=kilogramm/meter
-DERIVED Kinematic_viscosity=meter^2/second
-AMBIGUOUS Heat_combustion_m=J/kgm
-AMBIGUOUS Heat_combustion_v=J/L
-DERIVED Fuel_efficiency=km/liter
+DERIVED Energy_flux=joule per meter^2
+DERIVED Molar_heat=joule per mole
+DERIVED Molar_heat_capacity=joule per (mole*deltaK)
+DERIVED Line_density=kilogramm per meter
+DERIVED Kinematic_viscosity=meter^2 per second
+AMBIGUOUS Heat_combustion_m=joule per kilogramm
+AMBIGUOUS Heat_combustion_v=joule per liter
+DERIVED Fuel_efficiency=kilometer per liter
+DERIVED Momentum=kilogramm meter per second
+AMBIGUOUS Stiffness=newton per meter
+AMBIGUOUS Radius=meter
+AMBIGUOUS Height=meter
 
 Physical_constant:speed_of_light,c=2.99792458E+08 m/s #speed of light in vacuum
-Physical_constant:grav=9.80665 m/s^2 #standard acceleration of gravity
+Physical_constant:grav,gravity=9.80665 m/s^2 #standard acceleration of gravity
 
-Number:pi=3.14159265358979323
-Number:e=2.71828182845904523
-Angle:rev*,revolution*=2pi
-Angle:cycle*=2pi
 Number:percent*,%=1/100
 Number:dozen*=12
 Number:gross=144
 Number:karat*=1/24 #purity of gold (24 karat is pure)
 Number:ppm*=1E-06 #parts per million
-Number:e=2.7182818
 Number:million = 1E+06 #multiplier (1 000 000) as used in the U.S.
 Number:billion = 1E+09 #multiplier (1 000 000 000) as used in the U.S.
 Number:trillion = 1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
@@ -153,6 +159,8 @@ Number:trillion_long = 1E+18 #multiplier (1E+18) as used in the U.K.
 Number:quadrillion_long = 1E+24 #multiplier (1E+24) as used in the U.K.
 Number:quintillion_long = 1E+30 #multiplier (1E+30) as used in the U.K.
 
+Common,Angle:cycle*=2pi
+Common,Angle:rev*,revolution*=2pi
 Common,Angle:deg,degree*=(1/180) pi rad
 Common,Angle:grad,grade=0.9 deg
 Common,Angle:arcmin=(1/60)deg
@@ -280,7 +288,7 @@ Common,Energy:cal_food,foodcal,Cal,Calorie*=1 kcal #food package label energy
 Common,Energy:Btu*,btu*=1055.06 J #international table
 Common,Energy:therm*=1.05480E+08 J #CNG industry
 Common,Energy:quad*=1.055E+18 J
-Common,Energy:ton_explosive=4.184E+09 J #of TNT
+*Common,Energy:ton_explosive=4.184E+09 J #of TNT
 Common,Energy:erg*=1E-07 J #CGS
 
 #Torque
@@ -312,9 +320,9 @@ Common:absC,absc=1 deltaC #absolute Celsius, without caution
 Common:absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Frequency
-*Common,SI,Frequency,Angular_velocity:Hz,hertz=cycle/s
 Common,Frequency,Angular_velocity:rpm*=rev/min
-Common,Frequency,Angular_velocity:cps,rps=cycle/s
+Common,Frequency,Angular_velocity:cps=cycle/s
+Common,Frequency,Angular_velocity:rps=rev/s
 
 #Storage
 *Common:byte*,Byte*,B,char*=8 bit #computer storage
@@ -529,7 +537,7 @@ Ice,Thermal_conductivity:tc_ice=2.18 W/(m deltaC)
 Air:d_air=0.0012928 gm/cc #@ 1 atm, 0degC
 Air,Thermal_conductivity:tc_air=0.0242 W/(m deltaK) #@ 0 degC
 Air,Viscosity:visc_air=1.78E-05 Pa s #dynamic @ 20 degC
-Air:ss_air=1128.86 ft/s #@ 20 degC, 50% RH
+Air,Speed_sound:ss_air=1128.86 ft/s #@ 20 degC, 50% RH
 Air,Specific_heat_m:shm_air,sh_air=0.24 cal/(gm deltaK) #@ 0 degC
 Air,Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
 
@@ -647,20 +655,19 @@ Physical_property,Batteries:e_nicd_d=17280 J
 Physical_property,Batteries:e_nicd_n=648 J
 Physical_property,Batteries:e_nicd_9v=2419 J
 
-# a = 1 A
-# n = 1 N
-# j = 1 J
-# w = 1 W
-# pa = 1 Pa
-# v = 1 V
-# f = 1 F
-# h = 1 H
-# wb = 1 Wb
-
-# hz = 1 Hz
-# va = 1 VA
-# ev = 1 eV
-
+# *a=1A
+# *n=1N
+# *j=1J
+# *w=1W
+# *pa=1Pa
+# *v=1V
+# *f=1F
+# *h=1H
+# *wb=1Wb
+# *t=1T
+# *hz=1Hz
+# *va=1VA
+# *ev=1eV
 `;
 
 var database_tests = `
