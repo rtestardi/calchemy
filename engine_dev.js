@@ -245,13 +245,13 @@ class Unit {
                 // if this unit is a dimension...
                 if (units[i].type == "DERIVED") {
                     // if this unit is a compatible dimension...
-                    if (this.Compatible(units[i], invert)) {
+                    if (this.Compatible(units[i], xor)) {
                         // format its name
                         if (cont) {
                             // "or" if more than one
                             string += " or ";
                         }
-                        string += units[i].names[0] + (xor?"^-1":"");
+                        string += units[i].names[0] + (invert?"^-1":"");
                         cont = true;
                     }
                 }

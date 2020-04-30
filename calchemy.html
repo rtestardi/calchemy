@@ -1077,13 +1077,13 @@ class Unit {
                 // if this unit is a dimension...
                 if (units[i].type == "DERIVED") {
                     // if this unit is a compatible dimension...
-                    if (this.Compatible(units[i], invert)) {
+                    if (this.Compatible(units[i], xor)) {
                         // format its name
                         if (cont) {
                             // "or" if more than one
                             string += " or ";
                         }
-                        string += units[i].names[0] + (xor?"^-1":"");
+                        string += units[i].names[0] + (invert?"^-1":"");
                         cont = true;
                     }
                 }
@@ -3078,9 +3078,8 @@ var tests =`
     Length ? 1 | Mismatch [Length^-1]
     cup^(1/3) | [Length]
     acre^(1/2) | [Length]
-    s?1 | Mismatch [Time^-1 or Frequency or Angular_velocity]
+    s?1 | Mismatch [Frequency or Angular_velocity or Time^-1]
     s | [Time or Frequency^-1 or Angular_velocity^-1]
-    s?1 | Mismatch [Time^-1 or Frequency or Angular_velocity]
     s? | = 1 second
     kgm | [Mass]
     kgm? | = 1 kilogramm
