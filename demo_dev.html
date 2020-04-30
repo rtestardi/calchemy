@@ -45,10 +45,13 @@ function Body()
 
     var lines = demos.split(/[\r\n]+/);
 
+    // for each demo command...
     for (var i = 0; i < lines.length; i++) {
         if (lines[i].trim().length) {
+            // run the demo command
             var results = RunLine(lines[i]);
 
+            // gather the demo results
             html += "<hr><br><b>" + lines[i] + "</b>";
             html += "<br><i>" + (results.success?"success":"failure") + "</i>";
             for (j = 0; j < results.output.length; j++) {
@@ -57,7 +60,7 @@ function Body()
         }
     }
 
-    // display the results
+    // display the demo results
     document.getElementById("results").innerHTML = html;
 }
 
