@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<title>Demo</title>
+</head>
+
+<body onload='Body()'>
+
+<h1>Demo</h1>
+<p id='status'>loading database ...</p>
+<p id='results'></p>
+
+<script type="text/javascript" src="database_dev.txt">
+// import the database
+</script>
+
+<script type="text/javascript" src="calchemy_dev.js">
+// import the engine
+</script>
+
+<script>
+
+var demos =`
+60 mph; 100 lbf ? hp
+3 feet ?
+3 feet
+1;2
+q=8*8
+q
+q=
+xyz
+`;
+
+function Body()
+{
+    // load the database
+    LoadDatabase(database);
+
+    document.getElementById("status").innerHTML = "database loaded";
+
+    var j;
+    var html = "";
+
+    var lines = demos.split(/[\r\n]+/);
+
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].trim().length) {
+            var results = RunLine(lines[i]);
+
+            html += "<hr><br><b>" + lines[i] + "</b>";
+            html += "<br><i>" + (results.success?"success":"failure") + "</i>";
+            for (j = 0; j < results.output.length; j++) {
+                html += "<br>" + results.output[j];
+            }
+        }
+    }
+
+    // display the results
+    document.getElementById("results").innerHTML = html;
+}
+
+</script>
+
+</body>
+
+</html>
