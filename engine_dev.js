@@ -1254,6 +1254,48 @@ function ParseTokens(tokens, line)
     }
 }
 
+// load the units database
+function LoadDatabase(database)
+{
+    // split the database into lines
+    var lines = database.split(/[\r\n]+/);
+    loading = true;
+
+    // for each line of the database...
+    for (var i = 0; i < lines.length; i++) {
+        // tokenize, parse, and run the command line
+        results = [];
+        mismatches = [];
+        errors = [];
+        defines = false;
+        undefines = false;
+        ParseTokens(TokenizeLine(lines[i]), lines[i]);
+
+        if (results.length) {
+            throw "unexpected result: " + lines[i];
+        }
+        if (mismatches.length) {
+            throw "unexpected mismatch: " + lines[i];
+        }
+        if (errors.length) {
+            throw "unexpected error: " + lines[i];
+        }
+    }
+
+    loading = false;
+
+    // identify our "special" base units
+    for (i = 0; i < bases.length; i++) {
+        if (bases[i].names[0] == "MASS") {
+            // we display SI units in kilograms rather than grams
+            massbase = i;
+        } else if (bases[i].names[0] == "STORAGE") {
+            // we only allow binary prefixes on storage units
+            storagebase = i;
+        }
+    }
+}
+
 // run a command line and return the output as an array of strings and a success bool
 function RunLine(line)
 {
@@ -1304,51 +1346,8 @@ function RunLine(line)
     } else if (errors.length) {
         output = errors;
         success = false;
-
     }
 
     // return an array of strings and a success bool
     return { output:output, success:success };
-}
-
-// load the units database
-function LoadDatabase(database)
-{
-    // split the database into lines
-    var lines = database.split(/[\r\n]+/);
-    loading = true;
-
-    // for each line of the database...
-    for (var i = 0; i < lines.length; i++) {
-        // tokenize, parse, and run the command line
-        results = [];
-        mismatches = [];
-        errors = [];
-        defines = false;
-        undefines = false;
-        ParseTokens(TokenizeLine(lines[i]), lines[i]);
-
-        if (results.length) {
-            throw "unexpected result: " + lines[i];
-        }
-        if (mismatches.length) {
-            throw "unexpected mismatch: " + lines[i];
-        }
-        if (errors.length) {
-            throw "unexpected error: " + lines[i];
-        }
-    }
-
-    loading = false;
-
-    // identify our "special" base units
-    for (i = 0; i < bases.length; i++) {
-        if (bases[i].names[0] == "MASS") {
-            // we display SI units in kilograms rather than grams
-            massbase = i;
-        } else if (bases[i].names[0] == "STORAGE") {
-            // we only allow binary prefixes on storage units
-            storagebase = i;
-        }
-    }
 }
