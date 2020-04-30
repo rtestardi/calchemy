@@ -101,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09p</p>
+v1.09q</p>
 </td>
 </tr>
 </table>
@@ -156,6 +156,8 @@ CATEGORY Ice
 CATEGORY Air
 CATEGORY Batteries
 CATEGORY Speed_sound
+CATEGORY Frequency
+CATEGORY Angular_velocity
 
 BASE MASS
 BASE LENGTH
@@ -196,6 +198,9 @@ PREFIX Prefix:Ei,exbi=1024^6 #storage
 PREFIX Prefix:Zi,zebi=1024^7 #storage
 PREFIX Prefix:Yi,yobi=1024^8 #storage
 
+Number:pi=3.14159265358979323
+Number:e=2.71828182845904523
+
 #Primary
 *Common,SI:m,meter*,metre*=LENGTH
 *Common,SI:gm,gramm,g,gram*=MASS
@@ -206,6 +211,7 @@ Common,SI:deltaK,deltak=TEMP #interval (T-T0) Kelvin
 Common:$,dollar*=MONEY
 *Common,SI:A,amp*,ampere*=CURRENT
 *Advanced,SI:mol,mole*=SUBSTANCE
+*Common,SI,Frequency,Angular_velocity:Hz,hertz=2pi rad/s
 
 #Secondary
 *Common,SI:L,liter*,litre*,l=1 cubic dm #was 1.000028 before 1964
@@ -232,26 +238,27 @@ DERIVED Temperature=deltaK
 DERIVED Storage=bit
 DERIVED Area=meter^2
 DERIVED Volume=liter
-DERIVED Speed=meter/second
-DERIVED Acceleration=meter/second^2
+DERIVED Speed=meter per second
+DERIVED Acceleration=meter per second^2
 DERIVED Force=newton
 DERIVED Energy=joule
 AMBIGUOUS Torque=newton meter
 DERIVED Power=watt
 DERIVED Pressure=pascal
-DERIVED Frequency=1/second
-AMBIGUOUS Angular_velocity=1/second
-DERIVED Density=kilogramm/liter
-DERIVED Flow=liter/second
-DERIVED Heat_latent_m=joule/kilogramm
-AMBIGUOUS Heat_latent_v=joule/liter
-DERIVED Specific_heat_m=joule/(kilogramm*deltaK)
-DERIVED Specific_heat_v=joule/(liter*deltaK)
-AMBIGUOUS Heat_vaporization_m=joule/kilogramm
-AMBIGUOUS Heat_vaporization_v=joule/liter
-AMBIGUOUS Heat_fusion_m=joule/kilogramm
-AMBIGUOUS Heat_fusion_v=joule/liter
-DERIVED Thermal_conductivity=watt/(meter*deltaK)
+DERIVED Frequency=hertz
+AMBIGUOUS Angular_velocity=radian per second
+DERIVED Angular_acceleration=radian per second^2
+DERIVED Density=kilogramm per liter
+DERIVED Flow=liter per second
+DERIVED Heat_latent_m=joule per kilogramm
+AMBIGUOUS Heat_latent_v=joule per liter
+DERIVED Specific_heat_m=joule per (kilogramm*deltaK)
+DERIVED Specific_heat_v=joule per (liter*deltaK)
+AMBIGUOUS Heat_vaporization_m=joule per kilogramm
+AMBIGUOUS Heat_vaporization_v=joule per liter
+AMBIGUOUS Heat_fusion_m=joule per kilogramm
+AMBIGUOUS Heat_fusion_v=joule per liter
+DERIVED Thermal_conductivity=watt per (meter*deltaK)
 DERIVED Viscosity=pascal*second #(dynamic)
 DERIVED Current=ampere
 DERIVED Charge=coulomb
@@ -262,28 +269,27 @@ DERIVED Inductance=henry
 DERIVED Magnetic_flux=weber
 DERIVED Magnetic_flux_density=tesla
 DERIVED Substance=mole
-DERIVED Energy_flux=joule/meter^2
-DERIVED Molar_heat=joule/mole
-DERIVED Molar_heat_capacity=joule/(mole*deltaK)
-DERIVED Line_density=kilogramm/meter
-DERIVED Kinematic_viscosity=meter^2/second
-AMBIGUOUS Heat_combustion_m=J/kgm
-AMBIGUOUS Heat_combustion_v=J/L
-DERIVED Fuel_efficiency=km/liter
+DERIVED Energy_flux=joule per meter^2
+DERIVED Molar_heat=joule per mole
+DERIVED Molar_heat_capacity=joule per (mole*deltaK)
+DERIVED Line_density=kilogramm per meter
+DERIVED Kinematic_viscosity=meter^2 per second
+AMBIGUOUS Heat_combustion_m=joule per kilogramm
+AMBIGUOUS Heat_combustion_v=joule per liter
+DERIVED Fuel_efficiency=kilometer per liter
+DERIVED Momentum=kilogramm meter per second
+AMBIGUOUS Stiffness=newton per meter
+AMBIGUOUS Radius=meter
+AMBIGUOUS Height=meter
 
 Physical_constant:speed_of_light,c=2.99792458E+08 m/s #speed of light in vacuum
-Physical_constant:grav=9.80665 m/s^2 #standard acceleration of gravity
+Physical_constant:grav,gravity=9.80665 m/s^2 #standard acceleration of gravity
 
-Number:pi=3.14159265358979323
-Number:e=2.71828182845904523
-Angle:rev*,revolution*=2pi
-Angle:cycle*=2pi
 Number:percent*,%=1/100
 Number:dozen*=12
 Number:gross=144
 Number:karat*=1/24 #purity of gold (24 karat is pure)
 Number:ppm*=1E-06 #parts per million
-Number:e=2.7182818
 Number:million = 1E+06 #multiplier (1 000 000) as used in the U.S.
 Number:billion = 1E+09 #multiplier (1 000 000 000) as used in the U.S.
 Number:trillion = 1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
@@ -295,6 +301,8 @@ Number:trillion_long = 1E+18 #multiplier (1E+18) as used in the U.K.
 Number:quadrillion_long = 1E+24 #multiplier (1E+24) as used in the U.K.
 Number:quintillion_long = 1E+30 #multiplier (1E+30) as used in the U.K.
 
+Common,Angle:cycle*=2pi
+Common,Angle:rev*,revolution*=2pi
 Common,Angle:deg,degree*=(1/180) pi rad
 Common,Angle:grad,grade=0.9 deg
 Common,Angle:arcmin=(1/60)deg
@@ -422,7 +430,7 @@ Common,Energy:cal_food,foodcal,Cal,Calorie*=1 kcal #food package label energy
 Common,Energy:Btu*,btu*=1055.06 J #international table
 Common,Energy:therm*=1.05480E+08 J #CNG industry
 Common,Energy:quad*=1.055E+18 J
-Common,Energy:ton_explosive=4.184E+09 J #of TNT
+*Common,Energy:ton_explosive=4.184E+09 J #of TNT
 Common,Energy:erg*=1E-07 J #CGS
 
 #Torque
@@ -454,9 +462,9 @@ Common:absC,absc=1 deltaC #absolute Celsius, without caution
 Common:absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Frequency
-*Common,SI,Frequency,Angular_velocity:Hz,hertz=cycle/s
 Common,Frequency,Angular_velocity:rpm*=rev/min
-Common,Frequency,Angular_velocity:cps,rps=cycle/s
+Common,Frequency,Angular_velocity:cps=cycle/s
+Common,Frequency,Angular_velocity:rps=rev/s
 
 #Storage
 *Common:byte*,Byte*,B,char*=8 bit #computer storage
@@ -671,7 +679,7 @@ Ice,Thermal_conductivity:tc_ice=2.18 W/(m deltaC)
 Air:d_air=0.0012928 gm/cc #@ 1 atm, 0degC
 Air,Thermal_conductivity:tc_air=0.0242 W/(m deltaK) #@ 0 degC
 Air,Viscosity:visc_air=1.78E-05 Pa s #dynamic @ 20 degC
-Air:ss_air=1128.86 ft/s #@ 20 degC, 50% RH
+Air,Speed_sound:ss_air=1128.86 ft/s #@ 20 degC, 50% RH
 Air,Specific_heat_m:shm_air,sh_air=0.24 cal/(gm deltaK) #@ 0 degC
 Air,Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
 
@@ -789,20 +797,19 @@ Physical_property,Batteries:e_nicd_d=17280 J
 Physical_property,Batteries:e_nicd_n=648 J
 Physical_property,Batteries:e_nicd_9v=2419 J
 
-# a = 1 A
-# n = 1 N
-# j = 1 J
-# w = 1 W
-# pa = 1 Pa
-# v = 1 V
-# f = 1 F
-# h = 1 H
-# wb = 1 Wb
-
-# hz = 1 Hz
-# va = 1 VA
-# ev = 1 eV
-
+# *a=1A
+# *n=1N
+# *j=1J
+# *w=1W
+# *pa=1Pa
+# *v=1V
+# *f=1F
+# *h=1H
+# *wb=1Wb
+# *t=1T
+# *hz=1Hz
+# *va=1VA
+# *ev=1eV
 `;
 
 var database_tests = `
@@ -845,11 +852,12 @@ const unit_regexp_ch =      /[_A-Za-z$%]/;
 const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const unit_regexp_all =    /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~]/;
 const opens = "([{";
 const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
-const functions = { "square":true, "cubic":true, "sqrt":true, "sin":true, "cos":true, "tan":true, "asn":true, "acs":true, "atn":true, "ln":true, "log":true, "exp":true };
+const functions = { "square":1, "cubic":1, "sqrt":1, "sin":1, "cos":1, "tan":1, "asn":1, "acs":1, "atn":1, "ln":1, "log":1, "exp":1, "per":1 };
 
 // this is our units database
 var nextbaseunit = 0;
@@ -991,6 +999,7 @@ class Unit {
                 }
                 break;
 
+            case "per":  // unit division
             case '/':
             case '&':  // solve by dimensional analysis: l/r
             case '?':
@@ -1313,21 +1322,22 @@ function Value(token)
 
 // operator precedences
 var prec = {
-    '~':   2,  // left-to-right associativity  (prefix multiplication)
-    '>':   1,  // right-to-left associativity  (unary +)
-    '<':   1,  // right-to-left associativity  (unary -)
-    '^':   0,  // right-to-left associativity
-    ' ':  -1,  // left-to-right associativity  (implied multiplication)
-    '*':  -2,  // left-to-right associativity
-    '/':  -2,  // left-to-right associativity
-    '+':  -3,  // left-to-right associativity
-    '-':  -3,  // left-to-right associativity
-    '@':  -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
-    '&':  -4,  // left-to-right associativity  (solve by dimensional analysis: l/r)
-    '#':  -4,  // left-to-right associativity  (solve by dimensional analysis: r/l)
-    '!':  -4,  // left-to-right associativity  (solve by dimensional analysis: 1/(lr))
-    '?':  -5,  // left-to-right associativity
-    "zz": -7,
+    '~':    3,  // left-to-right associativity  (prefix multiplication)
+    '>':    2,  // right-to-left associativity  (unary +)
+    '<':    2,  // right-to-left associativity  (unary -)
+    '^':    1,  // right-to-left associativity
+    ' ':    0,  // left-to-right associativity  (implied multiplication)
+    "per": -1,  // left-to-right associativity  (unit division)
+    '*':   -2,  // left-to-right associativity
+    '/':   -2,  // left-to-right associativity
+    '+':   -3,  // left-to-right associativity
+    '-':   -3,  // left-to-right associativity
+    '@':   -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
+    '&':   -4,  // left-to-right associativity  (solve by dimensional analysis: l/r)
+    '#':   -4,  // left-to-right associativity  (solve by dimensional analysis: r/l)
+    '!':   -4,  // left-to-right associativity  (solve by dimensional analysis: 1/(lr))
+    '?':   -5,  // left-to-right associativity
+    "zz":  -7,
 };
 
 // operator associativities
@@ -1407,58 +1417,62 @@ function EvaluateTokens(tokens)
         var token = tokens[i];
         // if the token is a function call...
         if (functions.hasOwnProperty(token)) {
-            // power, trig, log, etc.
-            if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
-                // power, trig, log, etc. followed by parenthetical expression
-                j = MatchParen(tokens, i+1);
-                subtokens = tokens.slice(i+2, j);
-                result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
-                i = j;
-            } else if (tokens.length > i+3 && tokens[i+2] == '~') {
-                // power, trig, log, etc. followed by prefixed unit
-                result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1], '~', tokens[i+3]]));
-                i = i+3;
-            } else if (tokens.length > i+1) {
-                // power, trig, log, etc. followed by unit or number
-                result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
-                i = i+1;
+            if (token == "per") {
+                // unit division
+                result = CleanAndPush(stack, result, token, null);
             } else {
-                throw "missing argument " + tokens[i];
-            }
-            if (token == "square") {
-                result = CleanAndPush(stack, result, '^', Value("2"));
-            } else if (token == "cubic") {
-                result = CleanAndPush(stack, result, '^', Value("3"));
-            } else if (token == "sqrt") {
-                result = CleanAndPush(stack, result, '^', Value("0.5"));
-            } else {
-                for (j = 0; j < result.exponents.length; j++) {
-                    if (result.exponents[j]) {
-                        throw "non-dimensionless exponent";
-                    }
-                }
-                if (token == "sin") {
-                    result = Value(Math.sin(result.coefficient));
-                } else if (token == "cos") {
-                    result = Value(Math.cos(result.coefficient));
-                } else if (token == "tan") {
-                    result = Value(Math.tan(result.coefficient));
-                } else if (token == "asn") {
-                    // range -1..1
-                    result = Value(Math.asin(result.coefficient));
-                } else if (token == "acs") {
-                    // range -1..1
-                    result = Value(Math.acos(result.coefficient));
-                } else if (token == "atn") {
-                    result = Value(Math.atan(result.coefficient));
-                } else if (token == "ln") {
-                    result = Value(Math.log(result.coefficient));
-                } else if (token == "log") {
-                    result = Value(Math.log(result.coefficient)/Math.log(10));
-                } else if (token == "exp") {
-                    result = Value(Math.exp(result.coefficient));
+                if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
+                    // power, trig, log, etc. followed by parenthetical expression
+                    j = MatchParen(tokens, i+1);
+                    subtokens = tokens.slice(i+2, j);
+                    result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
+                    i = j;
+                } else if (tokens.length > i+3 && tokens[i+2] == '~') {
+                    // power, trig, log, etc. followed by prefixed unit
+                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1], '~', tokens[i+3]]));
+                    i = i+3;
+                } else if (tokens.length > i+1) {
+                    // power, trig, log, etc. followed by unit or number
+                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
+                    i = i+1;
                 } else {
-                    throw "bad function " + token;
+                    throw "missing argument " + tokens[i];
+                }
+                if (token == "square") {
+                    result = CleanAndPush(stack, result, '^', Value("2"));
+                } else if (token == "cubic") {
+                    result = CleanAndPush(stack, result, '^', Value("3"));
+                } else if (token == "sqrt") {
+                    result = CleanAndPush(stack, result, '^', Value("0.5"));
+                } else {
+                    for (j = 0; j < result.exponents.length; j++) {
+                        if (result.exponents[j]) {
+                            throw "non-dimensionless exponent";
+                        }
+                    }
+                    if (token == "sin") {
+                        result = Value(Math.sin(result.coefficient));
+                    } else if (token == "cos") {
+                        result = Value(Math.cos(result.coefficient));
+                    } else if (token == "tan") {
+                        result = Value(Math.tan(result.coefficient));
+                    } else if (token == "asn") {
+                        // range -1..1
+                        result = Value(Math.asin(result.coefficient));
+                    } else if (token == "acs") {
+                        // range -1..1
+                        result = Value(Math.acos(result.coefficient));
+                    } else if (token == "atn") {
+                        result = Value(Math.atan(result.coefficient));
+                    } else if (token == "ln") {
+                        result = Value(Math.log(result.coefficient));
+                    } else if (token == "log") {
+                        result = Value(Math.log(result.coefficient)/Math.log(10));
+                    } else if (token == "exp") {
+                        result = Value(Math.exp(result.coefficient));
+                    } else {
+                        throw "bad function " + token;
+                    }
                 }
             }
 
@@ -1489,7 +1503,7 @@ function EvaluateTokens(tokens)
                 result = CleanAndPush(stack, result, op, next);
                 next = prefixunit[1];
             }
-            if (next.categories.includes("Angle")) {
+            if (next.categories.includes("Angle") || next.categories.includes("Angular_velocity") || next.categories.includes("Angular_acceleration")) {
                 cycle_warn = true;
             }
             result = CleanAndPush(stack, result, op, next);
@@ -1754,7 +1768,7 @@ function AlternateTokens(tokens, n)
             // if "expression ? unit" was entered...
             if (question) {
                 // the user requested a unit and we mismatched; show what was missing as "1/dimension"
-                strings = ["Mismatch " + result.Dimension(question)];
+                strings = ["Dimensional Mismatch " + result.Dimension(question)];
 
             // otherwise, if "expression ?" was entered...
             } else if (si) {
@@ -2107,10 +2121,10 @@ function LoadDatabase(database)
             throw "unexpected result: " + lines[i];
         }
         if (mismatches.length) {
-            throw "unexpected mismatch: " + lines[i];
+            throw "unexpected mismatch: " + lines[i] + " " + mismatches.toString();
         }
         if (errors.length) {
-            throw "unexpected error: " + lines[i];
+            throw "unexpected error: " + lines[i] + " " + errors.toString();
         }
     }
 
@@ -2488,23 +2502,30 @@ function Clear()
     Scroll();
 }
 
-// the user clicked a hyperlink; enter text into the user equation replacing the word at the cursor
+// the user clicked a hyperlink; enter text into the user equation, possibly replacing the word at the cursor
 function Hyperlink(string)
 {
     var equation = document.getElementById("equation");
-    // find the start and end of the word at the cursor
     var start = equation.selectionStart;
-    var match = equation.value.slice(0, start).match(unit_regexp_tail);
-    if (match) {
-        start -= match[0].length;
-    }
     var end = equation.selectionEnd;
-    match = equation.value.slice(end).match(unit_regexp_head);
-    if (match) {
-        end += match[0].length;
+    // if this is a bare unit
+    if (string.match(unit_regexp_all)) {
+        // find the start and end of the word at the cursor
+        var match = equation.value.slice(0, start).match(unit_regexp_tail);
+        if (match) {
+            start -= match[0].length;
+        }
+        match = equation.value.slice(end).match(unit_regexp_head);
+        if (match) {
+            end += match[0].length;
+        }
+        // replace the word at the cursor with the hyperlinked string
+        equation.value = equation.value.slice(0, start) + string + equation.value.slice(end);
+    } else {
+        // insert the hyperlinked string at the cursor
+        equation.value = equation.value.slice(0, start) + string + equation.value.slice(end);
     }
-    // replace the word at the cursor with the hyperlinked string, and update the selection
-    equation.value = equation.value.slice(0, start) + string + equation.value.slice(end);
+    // update the selection
     equation.selectionStart = equation.selectionEnd = start + string.length;
     Scroll();
 }
@@ -2747,7 +2768,7 @@ var testedexamples =`
     40 gal; 120 degF - 45 degF; 1 cal/cc deltaC; 40000 btu/hr ? min  # water heater recovery time | = 37.5291 min
     2000 lbm * grav * 60 mph ? hp  # power to decelerate car at 1G | = 320 hp
     10 mph * 30 feet * 10 gal/acre ? gal/min  # fertilizer flow rate on tractor swath | = 6.06061 gal/min
-    40 knot / (2500 rpm * 90%) ? inch/rev  # propeller pitch | = 21.604 inch/rev, Caution: Calculation involves units of cycle or revolution; see Calchemy Help.
+    40 knot / (2500 rpm * 90%) ? inch/rev  # propeller pitch | = 21.604 inch/rev
     (3/4) cup * 1 cal/(cc deltaK) * (212 - 52) deltaF / (2 min + 4 sec) ? watt  # measured power of microwave oven | = 532.196 watt
     10 km/l ? mpg | = 23.5215 mpg
     (3/(4 pi) * 1 gal)^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
@@ -2778,18 +2799,10 @@ function Example()
 
 var pre_equations =`
 Cd=1
-Momentum=kilogramm meter/second  # XXX -- belongs in database!
-Stiffness=newton/meter  # XXX -- belongs in database!
-Radius=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
-Height=meter  # XXX -- belongs in database!  is this too many ambiguous terms for length?
 `;
 
 var post_equations =`
 Cd=
-Momentum=
-Stiffness=
-Radius=
-Height=
 `;
 
 var equations =`
@@ -2817,7 +2830,7 @@ var equations =`
     [Inductance] + [Inductance] ? [Inductance]  # series inductors | = 2 [Inductance]
     1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
     0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
-    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 1 [Frequency]
+    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 0.159155 [Frequency]
     
     # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
@@ -2831,7 +2844,7 @@ var equations =`
     [Mass] [Acceleration] [Speed] ? [Power] | = 1 [Power]
     [Mass] [Acceleration] [Length] ? [Energy] | = 1 [Energy]
     [Mass] [Speed] ? [Momentum] | = 1 [Momentum]
-    [Force] [Length] ? [Torque] | = 1 [Torque]
+    [Force] [Radius] ? [Torque] | = 1 [Torque]
     [Angular_velocity] [Radius] ? [Speed] | = 1 [Speed]
     [Angular_velocity]^2 [Radius] ? [Acceleration] | = 1 [Acceleration]
 
@@ -2840,10 +2853,10 @@ var equations =`
     0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force]  # dynamic drag force | = 500 [Force]
 
     # Orbit_mechanical
-    G [Mass] [Mass] / [Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
+    G [Mass] [Mass] / [Radius]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
     sqrt(2 G [Mass] / [Radius]) ? [Speed]  # escape speed | = 0.0000115521 [Speed]
-    G [Mass] [Mass] / (2 [Length]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
-    -G [Mass] [Mass] / [Length] ? [Energy]  # orbital potential energy | = -6.67259e-11 [Energy]
+    G [Mass] [Mass] / (2 [Radius]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
+    -G [Mass] [Mass] / [Radius] ? [Energy]  # orbital potential energy | = -6.67259e-11 [Energy]
 
     # Nuclear
     [Mass] c^2 ? [Energy] | = 89875500000000000 [Energy]
@@ -2943,8 +2956,12 @@ var tests =`
     (-foot)(-foot) ? sqft | = 1 sqft
     -foot^2 ? sqft | = 1 sqft
     -foot*2 ? foot | = -2 foot
-    0+foot | [Length]
-    0-foot | [Length]
+    0+foot | [Length or Radius or Height]
+    0-foot | [Length or Radius or Height]
+    cal per gm deltaK | [Specific_heat_m]
+    1/3 cal per gm deltaK | [Specific_heat_m^-1]
+    m per sec per sec | [Acceleration]
+    1/m per sec per sec | [Acceleration^-1]
 
     # functions
     3 3 | = 9
@@ -2960,9 +2977,9 @@ var tests =`
     sin(pi/2) | = 1
     cos(pi/4) | = 0.707107
     tan(pi/4) | = 1
-    asn(1) | = 1.5708
-    acs(1/sqrt(2)) | = 0.785398
-    atn(1) | = 0.785398
+    asn(1) ? radian | = 1.5708 radian, Caution: Calculation involves units of cycle or revolution; see Calchemy Help.
+    acs(1/sqrt(2)) ? degrees | = 45 degrees
+    atn(1) ? grad | = 50 grad
     ln(e) | = 1
     log(10) | = 1
     exp(1) | = 2.71828
@@ -2980,9 +2997,9 @@ var tests =`
     speed_of_light ? mph | = 670617000 mph
     2;3 | = 6, = 0.666667, = 1.5, = 0.166667
     lb | [Mass], [Force]
-    ft | [Length]
+    ft | [Length or Radius or Height]
     21 inches * 0.25 acre ? gallons | = 142560 gallons
-    gal^.33333333 | [Length]
+    gal^.33333333 | [Length or Radius or Height]
     square mm * 1000^2 ? square m | = 1 square m
 
     # free units and plurals
@@ -3019,7 +3036,7 @@ var tests =`
     Mass =
     Mass | [Mass]
     Mass = Length
-    Mass | [Mass], [Length]
+    Mass | [Mass], [Length or Radius or Height]
     Mass =
     Mass | [Mass]
     abc=
@@ -3063,41 +3080,42 @@ var tests =`
     lb? | = 0.453592 kilogramm,= 4.44822 newton
     1? | = 1
     3 foot/2 second | [Speed]
-    3 foot/2 second ? | = 0.4572 meter/second
+    3 foot/2 second ? | = 0.4572 meter per second
     3 lbf * 3 foot ? | = 12.2024 joule, = 12.2024 newton meter
     joule*meter | [MASS*LENGTH^3*TIME^-2]
     joule*meter?|= 1 kilogramm*meter^3*second^-2
-    shm_water?|= 4184 joule/(kilogramm*deltaK)
+    shm_water?|= 4184 joule per (kilogramm*deltaK)
     $?|= 1 MONEY
     1kgm^4 | [MASS^4]
     1kgm^4? | = 1 kilogramm^4
     1m^4 | [LENGTH^4]
     1m^4? | = 1 meter^4
-    1/grav? | = 0.101972 (meter/second^2)^-1
+    1/grav? | = 0.101972 (meter per second^2)^-1
+    1/sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 2085.14 radian per second
 
     # dimensions
-    Length | [Length]
-    Length ? 1 | Mismatch [Length^-1]
-    cup^(1/3) | [Length]
-    acre^(1/2) | [Length]
-    s?1 | Mismatch [Frequency or Angular_velocity or Time^-1]
+    Length | [Length or Radius or Height]
+    Length ? 1 | Dimensional Mismatch [Length^-1 or Radius^-1 or Height^-1]
+    cup^(1/3) | [Length or Radius or Height]
+    acre^(1/2) | [Length or Radius or Height]
+    s?1 | Dimensional Mismatch [Frequency or Angular_velocity or Time^-1]
     s | [Time or Frequency^-1 or Angular_velocity^-1]
     s? | = 1 second
     kgm | [Mass]
     kgm? | = 1 kilogramm
-    1 kgm?1 | Mismatch [Mass^-1]
+    1 kgm?1 | Dimensional Mismatch [Mass^-1]
     kgm? | = 1 kilogramm
     kg | [Mass], [Force]
     kg? | = 1 kilogramm, = 9.80665 newton
-    kg?1 | Mismatch [Mass^-1], Mismatch [Force^-1]
+    kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
 
     # unit help
     TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
-    TEST details ft | === unit details ft ===,Common:ft,foot,feet=12 in [Length]
+    TEST details ft | === unit details ft ===,Common:ft,foot,feet=12 in [Length or Radius or Height]
     TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix:k,kilo=1E+03*Common:byte*,Byte*,B,char*=8 bit #computer storage [Storage]
     TEST byname lb | === units by name lb ===,lb,lbf,lbm
-    TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
+    TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_explosive, fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
     TEST byname W | === units by name W ===,W,watt,Wb,weber,week,wh,Wh,wk
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb
@@ -3325,15 +3343,18 @@ This, again, allows you to enter equations in a more natural format.
 <table border=1>
 <tr><td>Operator...</td><td>Meaning...</td></tr>
 <tr><td>^</td><td>exponentiation</td></tr>
-<tr><td> </td><td>implied multiplication</td></tr>
+<tr><td>""</td><td>implied multiplication</td></tr>
+<tr><td>"per"</td><td>unit division</td></tr>
 <tr><td>* /</td><td>multiplication, division</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
 </table>  
 <p>All operators except "^" are left-associative; "^" is right-associative.
-<p>"+" and "-" can also be used as high-precedence right-associative unary operators.
+<p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
 <p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
-The precedence of the implied multiplication is just higher than that of "*" and "/".
+The precedence of implied multiplication is just lower than that of "^".
+<p>The "per" operator performs a higher-precedence unit division, with a precedence that is just lower than that of implied multiplication.
+Like implied multiplication, this can be used within a unit to keep the unit terms grouped together, like: "cal per gm deltaK".
 <p>Calchemy evaluates higher precedence operators before lower precedence operators.
 Left-associative operators of the same precedence are evaluated from left to right; right-associative operators of the same precedence are evaluated from right to left.
 The following table illustrates these rules:
@@ -3342,13 +3363,19 @@ The following table illustrates these rules:
 <tr><td>2*3^4</td><td>2*(3^4)</td></tr>
 <tr><td>2*3*4</td><td>(2*3)*4</td></tr>
 <tr><td>2^3^4</td><td>2^(3^4)</td></tr>
-<tr><td>3 meter / 2 seconds</td><td>(3 meter) / (2 seconds)</td></tr>
-<tr><td>1/2 foot</td><td>1 / (2 foot)</td></tr>
-<tr><td>1/2 foot/sec</td><td>(1 / (2 foot)) / sec</td></tr>
-<tr><td>1/2 foot pound</td><td>1 / (2 foot pound)</td></tr>
+<tr><td>1/2pi</td><td>1 / (2*pi)</td></tr>
+<tr><td>3 meter / 2 seconds</td><td>(3 * meter) / (2 * seconds)</td></tr>
+<tr><td>1/2 foot</td><td>1 / (2 * foot)</td></tr>
+<tr><td>1/2*foot</td><td>(1/2) * foot</td></tr>
+<tr><td>(1/2) foot</td><td>(1/2) * foot</td></tr>
+<tr><td>1/2 foot/sec</td><td>(1 / (2 * foot)) / sec</td></tr>
+<tr><td>1/2 foot per sec</td><td>1 / ((2 * foot)/sec)</td></tr>
+<tr><td>1/2 foot per sec^2</td><td>1 / ((2 * foot)/(sec^2))</td></tr>
+<tr><td>1/3 cal per gm deltaK</td><td>1 / ((3 * cal) / (gm * deltaK))</td></tr>
+<tr><td>1/2 foot pound</td><td>1 / ((2 * foot) * pound)</td></tr>
 <tr><td>1/2 foot*3 pound</td><td>(1 / (2 foot)) * (3 pound)</td></tr>
 <tr><td>3 meter^2</td><td>3 * (meter^2)</td></tr>
-<tr><td>3 lbm meter^2</td><td>3 * lbm * (meter^2)</td></tr>
+<tr><td>3 lbm meter^2</td><td>(3 * lbm) * (meter^2)</td></tr>
 <tr><td>pi (3 foot)^2</td><td>pi * ((3 foot)^2)</td></tr>
 <tr><td>1 / (4 foot)(3 foot)</td><td>1/((4 foot) * (3 foot))</td></tr>
 </table>
@@ -3461,12 +3488,16 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <tr><td>e_...</td><td>energy of ...</td></tr>
 <tr><td>hcm_...</td><td>heat of combustion by mass of ...</td></tr>
 <tr><td>hcv_...</td><td>heat of combustion by volume of ...</td></tr>
+<tr><td>hc_...</td><td>heat of combustion by mass or volume of ...</td></tr>
 <tr><td>hfm_...</td><td>heat of fusion by mass of ...</td></tr>
 <tr><td>hfv_...</td><td>heat of fusion by volume of ...</td></tr>
+<tr><td>hf_...</td><td>heat of fusion by mass or volume of ...</td></tr>
 <tr><td>shm_...</td><td>specific heat by mass of ...</td></tr>
 <tr><td>shv_...</td><td>specific heat by volume of ...</td></tr>
+<tr><td>sh_...</td><td>specific heat by mass or volume of ...</td></tr>
 <tr><td>hvm_...</td><td>heat of vaporization by mass of ...</td></tr>
 <tr><td>hvv_...</td><td>heat of vaporization by volume of ...</td></tr>
+<tr><td>hv_...</td><td>heat of vaporization by mass or volume of ...</td></tr>
 <tr><td>ss_...</td><td>speed of sound in ...</td></tr>
 <tr><td>tc_...</td><td>thermal conductivity of ...</td></tr>
 <tr><td>visc_...</td><td>viscosity of ...</td></tr>
