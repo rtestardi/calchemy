@@ -1,3 +1,8 @@
+// Calchemy (tm); Math Magic; http://www.calchemy.com
+// Copyright (c) 1988-2020 Ken Burgess and Rich Testardi.
+
+// This is the calchemy engine; it loads the database one line at a time and then runs user command lines one at a time, returning their output.
+
 // regular expressions for string identification
 // XXX -- use typeof for value; anything for operator?
 const value_regexp_ch =     /[0-9.]/;
@@ -1322,6 +1327,16 @@ function LoadDatabase(database)
         defines = false;
         undefines = false;
         ParseTokens(TokenizeLine(lines[i]), lines[i]);
+
+        if (results.length) {
+            throw "unexpected result: " + lines[i];
+        }
+        if (mismatches.length) {
+            throw "unexpected mismatch: " + lines[i];
+        }
+        if (errors.length) {
+            throw "unexpected error: " + lines[i];
+        }
     }
 
     loading = false;

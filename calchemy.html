@@ -101,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09m</p>
+v1.09n</p>
 </td>
 </tr>
 </table>
@@ -830,6 +830,11 @@ TEST database_throw | unknown test database_throw
 </script>
 
 <script>
+// Calchemy (tm); Math Magic; http://www.calchemy.com
+// Copyright (c) 1988-2020 Ken Burgess and Rich Testardi.
+
+// This is the calchemy engine; it loads the database one line at a time and then runs user command lines one at a time, returning their output.
+
 // regular expressions for string identification
 // XXX -- use typeof for value; anything for operator?
 const value_regexp_ch =     /[0-9.]/;
@@ -2154,6 +2159,16 @@ function LoadDatabase(database)
         defines = false;
         undefines = false;
         ParseTokens(TokenizeLine(lines[i]), lines[i]);
+
+        if (results.length) {
+            throw "unexpected result: " + lines[i];
+        }
+        if (mismatches.length) {
+            throw "unexpected mismatch: " + lines[i];
+        }
+        if (errors.length) {
+            throw "unexpected error: " + lines[i];
+        }
     }
 
     loading = false;
@@ -2326,7 +2341,7 @@ function Body()
 
         document.getElementById("status").innerHTML = "database loaded";
     } catch (error) {
-        document.getElementById("results").innerHTML = error;
+        document.getElementById("status").innerHTML = error;
     } finally {
         offset_warn = false;
         cycle_warn = false;
@@ -2658,24 +2673,20 @@ function Word()
 // the user clicked the Find Units button; find units requested by the user
 function Units()
 {
-    try {
-        // if there is a word at the cursor...
-        var word = Word();
-        if (word) {
-            var unit = LookupUnit(word[0]);
-            if (unit && unit.type) {
-                // do a unit category search
-                ShowUnitsByCategory(word[0]);
-            } else {
-                // do a unit search
-                ShowUnitsByName(word[0]);
-            }
+    // if there is a word at the cursor...
+    var word = Word();
+    if (word) {
+        var unit = LookupUnit(word[0]);
+        if (unit && unit.type) {
+            // do a unit category search
+            ShowUnitsByCategory(word[0]);
         } else {
-            // do a category search
-            ShowCategories();
+            // do a unit search
+            ShowUnitsByName(word[0]);
         }
-    } catch (error) {
-        document.getElementById("results").innerHTML += Chunk(error);
+    } else {
+        // do a category search
+        ShowCategories();
     }
     Scroll();
 }
@@ -2683,15 +2694,11 @@ function Units()
 // the user clicked the Unit Details button; show unit details requested by the user
 function Details()
 {
-    try {
-        // if there is a word at the cursor...
-        var word = Word();
-        if (word) {
-            // show unit details
-            ShowUnitsDetails(word[0]);
-        }
-    } catch (error) {
-        document.getElementById("results").innerHTML += Chunk(error);
+    // if there is a word at the cursor...
+    var word = Word();
+    if (word) {
+        // show unit details
+        ShowUnitsDetails(word[0]);
     }
     Scroll();
 }
@@ -2758,19 +2765,15 @@ var example = 0;
 // the user clicked the Example button; copy an example equation to the equation line
 function Example()
 {
-    try {
-        // get all the example lines, including blanks
-        var lines = (untestedexamples+testedexamples).split(/[\r\n]+/);
-        var line;
-        // recall the next non-blank example line, without comments
-        do {
-            line = lines[example%lines.length].replace(/[|].*/, "").trim();
-            example++;
-        } while (! line);
-        document.getElementById("equation").value = line;
-    } catch (error) {
-        document.getElementById("results").innerHTML += Chunk(error);
-    }
+    // get all the example lines, including blanks
+    var lines = (untestedexamples+testedexamples).split(/[\r\n]+/);
+    var line;
+    // recall the next non-blank example line, without comments
+    do {
+        line = lines[example%lines.length].replace(/[|].*/, "").trim();
+        example++;
+    } while (! line);
+    document.getElementById("equation").value = line;
     Scroll();
 }
 
@@ -3173,6 +3176,8 @@ function TestReal()
         var passed = 0;
         var firsttag = lasttag;
 
+        var html = "";
+
         // for all tests...
         for (var i = 0; i < lines.length; i++) {
             tested++;
@@ -3182,7 +3187,8 @@ function TestReal()
             console.log("Test " + line);
             var sides = line.split('|');
             if (sides.length >= 3) {
-                throw "failed: " + line + " -- | may only occur once";
+                html += "<br>test failed: " + line + " -- | may only occur once";
+                continue;
             }
 
             // run the test
@@ -3201,7 +3207,8 @@ function TestReal()
                     // if the actual output did not match the expected output...
                     if (output.join().replace(/  */g, "") != expected.join().replace(/  */g, "")) {
                         // the test failed!
-                        throw "failed: " + line + " -- expected: " + expected.toString() + " output: " + output.toString();
+                        html += "<br>test failed: " + line + " -- expected: " + expected.toString() + " output: " + output.toString();
+                        continue;
                     }
                 }
                 passed++;
@@ -3213,7 +3220,7 @@ function TestReal()
 
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
-        document.getElementById("results").innerHTML += Chunk("tests started ... tests complete " + passed + " of " + tested + " tests passed");
+        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " + Math.trunc(passed*100/tested) + "% of " + tested + " passed");
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
     } finally {
