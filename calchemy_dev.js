@@ -1173,6 +1173,10 @@ function ParseTokens(tokens, line)
                                 throw "unambiguous ambiguous unit " + names[0];
                             }
                         }
+                    } catch (error) {
+                        if (! errors.includes(error)) {
+                            errors.push(error);
+                        }                                        
                     } finally {
                         deriving = false;
                     }
@@ -1245,27 +1249,65 @@ function ParseTokens(tokens, line)
     }
 }
 
-// run a command line
-// N.B. output is in results, mismatches, errors, defines, undefines
+// run a command line and return the output as an array of strings and a success bool
 function RunLine(line)
 {
+    var output = [];
+    var success = true;
+
+    // capture the result dimension
+    var question = line.indexOf('?');
+    var dimension;
+    if (question == -1) {
+        dimension = "";
+    } else {
+        dimension = " " + line.slice(question+1).replace(/[#].*/, "").trim();
+    }
+
     // tokenize, parse, and run the command line
     results = [];
     mismatches = [];
     errors = [];
     defines = false;
     undefines = false;
-    try {
-        ParseTokens(TokenizeLine(line), line);
-    } catch (error) {
-        if (! errors.includes(error)) {
-            errors.push(error);
+    ParseTokens(TokenizeLine(line), line);
+
+    // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
+    if (results.length) {
+        // format the results we will output, appending the captured dimension we parsed from the command line
+        for (var j = 0; j < results.length; j++) {
+            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
+            if (! output.includes(string)) {
+                output.push(string);
+            }
         }
+
+    // otherwise, if we defined units...
+    } else if (defines) {
+        output = ["defined"];
+
+    // otherwise, if we undefined units...
+    } else if (undefines) {
+        output = ["undefined"];
+
+    // otherwise, if we got one or more dimensional mismatches (or SI results)...
+    } else if (mismatches.length) {
+        // use the mismatches (or SI results) as the results we will output
+        output = mismatches;
+
+    // otherwise, if we caught one or more exceptions as errors...
+    } else if (errors.length) {
+        output = errors;
+        success = false;
+
     }
+
+    // return an array of strings and a success bool
+    return { output:output, success:success };
 }
 
 // load the units database
-function LoadDatabase()
+function LoadDatabase(database)
 {
     // split the database into lines
     var lines = database.split(/[\r\n]+/);
@@ -1273,15 +1315,13 @@ function LoadDatabase()
 
     // for each line of the database...
     for (var i = 0; i < lines.length; i++) {
-        // evaluate the line
-        var line = lines[i];
-
+        // tokenize, parse, and run the command line
         results = [];
         mismatches = [];
         errors = [];
         defines = false;
         undefines = false;
-        ParseTokens(TokenizeLine(line), line);
+        ParseTokens(TokenizeLine(lines[i]), lines[i]);
     }
 
     loading = false;

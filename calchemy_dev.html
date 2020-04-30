@@ -142,7 +142,7 @@ v1.09j</p>
 <script type="text/javascript" src="database_dev.txt">
 </script>
 
-<script type="text/javascript" src="engine_dev.js">
+<script type="text/javascript" src="calchemy_dev.js">
 </script>
 
 <script>
@@ -278,7 +278,7 @@ function Body()
 {
     try {
         // load the units database
-        LoadDatabase();
+        LoadDatabase(database);
 
         // recall our results history
         var temp = localStorage["calchemy.results"];
@@ -343,64 +343,11 @@ function Enter()
         for (var k = 0; k < lines.length; k++) {
             // parse the requested dimension from the command line
             var line = lines[k];
-            var question = line.indexOf('?');
-            var dimension;
-            if (question == -1) {
-                dimension = "";
-            } else {
-                dimension = " " + line.slice(question+1).replace(/[#].*/, "").trim();
-            }
-
-            success = false;
 
             // run the command line
-            // N.B. output is in results, mismatches, errors, defines, undefines
-            RunLine(line);
-
-            var output;
-
-            // if we got one or more valid (dimensionally consistent) results...
-            if (results.length) {
-                // format the results we will output, appending the requested dimension we parsed from the command line
-                output = [];
-                for (var j = 0; j < results.length; j++) {
-                    var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
-                    if (! output.includes(string)) {
-                        output.push(string);
-                    }
-                }
-                Clear();
-                success = true;
-
-            // otherwise, if we defined units...
-            } else if (defines) {
-                output = ["defined"];
-                Clear();
-                success = true;
-
-            // otherwise, if we undefined units...
-            } else if (undefines) {
-                output = ["undefined"];
-                Clear();
-                success = true;
-
-            // otherwise, if we got one or more dimensional mismatches (or SI results)...
-            } else if (mismatches.length) {
-                // use the mismatches (or SI results) as the results we will output
-                output = mismatches;
-                Clear();
-                success = true;
-
-            // otherwise, if we caught one or more exceptions as errors...
-            } else if (errors.length) {
-                // use the errors as the results we will output
-                output = errors;
-
-            } else {
-                output = [];
-                Clear();
-                success = true;
-            }
+            var results = RunLine(line);
+            success = results.success;
+            var output = results.output;
 
             // transform the output into hyperlinked html
             var html = "";
@@ -437,6 +384,8 @@ function Enter()
             if (! success) {
                 break;
             }
+
+            Clear();
         }
 
         // append a deletable chunk to the results list with the results
