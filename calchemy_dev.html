@@ -101,7 +101,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09p</p>
+v1.09q</p>
 </td>
 </tr>
 </table>
@@ -905,6 +905,10 @@ var tests =`
     -foot*2 ? foot | = -2 foot
     0+foot | [Length]
     0-foot | [Length]
+    cal per gm deltaK | [Specific_heat_m]
+    1/3 cal per gm deltaK | [Specific_heat_m^-1]
+    m per sec per sec | [Acceleration]
+    1/m per sec per sec | [Acceleration^-1]
 
     # functions
     3 3 | = 9
@@ -1285,15 +1289,18 @@ This, again, allows you to enter equations in a more natural format.
 <table border=1>
 <tr><td>Operator...</td><td>Meaning...</td></tr>
 <tr><td>^</td><td>exponentiation</td></tr>
-<tr><td> </td><td>implied multiplication</td></tr>
+<tr><td>""</td><td>implied multiplication</td></tr>
+<tr><td>"per"</td><td>unit division</td></tr>
 <tr><td>* /</td><td>multiplication, division</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
 </table>  
 <p>All operators except "^" are left-associative; "^" is right-associative.
-<p>"+" and "-" can also be used as high-precedence right-associative unary operators.
+<p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
 <p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
-The precedence of the implied multiplication is just higher than that of "*" and "/".
+The precedence of implied multiplication is just lower than that of "^".
+<p>The "per" operator performs a higher-precedence unit division, with a precedence that is just lower than that of implied multiplication.
+Like implied multiplication, this can be used within a unit to keep the unit terms grouped together, like: "cal per gm deltaK".
 <p>Calchemy evaluates higher precedence operators before lower precedence operators.
 Left-associative operators of the same precedence are evaluated from left to right; right-associative operators of the same precedence are evaluated from right to left.
 The following table illustrates these rules:
@@ -1302,13 +1309,17 @@ The following table illustrates these rules:
 <tr><td>2*3^4</td><td>2*(3^4)</td></tr>
 <tr><td>2*3*4</td><td>(2*3)*4</td></tr>
 <tr><td>2^3^4</td><td>2^(3^4)</td></tr>
-<tr><td>3 meter / 2 seconds</td><td>(3 meter) / (2 seconds)</td></tr>
-<tr><td>1/2 foot</td><td>1 / (2 foot)</td></tr>
-<tr><td>1/2 foot/sec</td><td>(1 / (2 foot)) / sec</td></tr>
-<tr><td>1/2 foot pound</td><td>1 / (2 foot pound)</td></tr>
+<tr><td>1/2pi</td><td>1 / (2*pi)</td></tr>
+<tr><td>3 meter / 2 seconds</td><td>(3 * meter) / (2 * seconds)</td></tr>
+<tr><td>1/2 foot</td><td>1 / (2 * foot)</td></tr>
+<tr><td>1/2 foot/sec</td><td>(1 / (2 * foot)) / sec</td></tr>
+<tr><td>1/2 foot per sec</td><td>1 / ((2 * foot)/sec)</td></tr>
+<tr><td>1/2 foot per sec^2</td><td>1 / ((2 * foot)/(sec^2))</td></tr>
+<tr><td>1/3 cal per gm deltaK</td><td>1 / ((3 * cal) / (gm * deltaK))</td></tr>
+<tr><td>1/2 foot pound</td><td>1 / ((2 * foot) * pound)</td></tr>
 <tr><td>1/2 foot*3 pound</td><td>(1 / (2 foot)) * (3 pound)</td></tr>
 <tr><td>3 meter^2</td><td>3 * (meter^2)</td></tr>
-<tr><td>3 lbm meter^2</td><td>3 * lbm * (meter^2)</td></tr>
+<tr><td>3 lbm meter^2</td><td>(3 * lbm) * (meter^2)</td></tr>
 <tr><td>pi (3 foot)^2</td><td>pi * ((3 foot)^2)</td></tr>
 <tr><td>1 / (4 foot)(3 foot)</td><td>1/((4 foot) * (3 foot))</td></tr>
 </table>

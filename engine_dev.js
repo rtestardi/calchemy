@@ -17,7 +17,7 @@ const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~]/;
 const opens = "([{";
 const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
-const functions = { "square":true, "cubic":true, "sqrt":true, "sin":true, "cos":true, "tan":true, "asn":true, "acs":true, "atn":true, "ln":true, "log":true, "exp":true };
+const functions = { "square":1, "cubic":1, "sqrt":1, "sin":1, "cos":1, "tan":1, "asn":1, "acs":1, "atn":1, "ln":1, "log":1, "exp":1, "per":1 };
 
 // this is our units database
 var nextbaseunit = 0;
@@ -159,6 +159,7 @@ class Unit {
                 }
                 break;
 
+            case "per":  // unit division
             case '/':
             case '&':  // solve by dimensional analysis: l/r
             case '?':
@@ -481,21 +482,22 @@ function Value(token)
 
 // operator precedences
 var prec = {
-    '~':   2,  // left-to-right associativity  (prefix multiplication)
-    '>':   1,  // right-to-left associativity  (unary +)
-    '<':   1,  // right-to-left associativity  (unary -)
-    '^':   0,  // right-to-left associativity
-    ' ':  -1,  // left-to-right associativity  (implied multiplication)
-    '*':  -2,  // left-to-right associativity
-    '/':  -2,  // left-to-right associativity
-    '+':  -3,  // left-to-right associativity
-    '-':  -3,  // left-to-right associativity
-    '@':  -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
-    '&':  -4,  // left-to-right associativity  (solve by dimensional analysis: l/r)
-    '#':  -4,  // left-to-right associativity  (solve by dimensional analysis: r/l)
-    '!':  -4,  // left-to-right associativity  (solve by dimensional analysis: 1/(lr))
-    '?':  -5,  // left-to-right associativity
-    "zz": -7,
+    '~':    3,  // left-to-right associativity  (prefix multiplication)
+    '>':    2,  // right-to-left associativity  (unary +)
+    '<':    2,  // right-to-left associativity  (unary -)
+    '^':    1,  // right-to-left associativity
+    ' ':    0,  // left-to-right associativity  (implied multiplication)
+    "per": -1,  // left-to-right associativity  (unit division)
+    '*':   -2,  // left-to-right associativity
+    '/':   -2,  // left-to-right associativity
+    '+':   -3,  // left-to-right associativity
+    '-':   -3,  // left-to-right associativity
+    '@':   -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
+    '&':   -4,  // left-to-right associativity  (solve by dimensional analysis: l/r)
+    '#':   -4,  // left-to-right associativity  (solve by dimensional analysis: r/l)
+    '!':   -4,  // left-to-right associativity  (solve by dimensional analysis: 1/(lr))
+    '?':   -5,  // left-to-right associativity
+    "zz":  -7,
 };
 
 // operator associativities
@@ -575,58 +577,62 @@ function EvaluateTokens(tokens)
         var token = tokens[i];
         // if the token is a function call...
         if (functions.hasOwnProperty(token)) {
-            // power, trig, log, etc.
-            if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
-                // power, trig, log, etc. followed by parenthetical expression
-                j = MatchParen(tokens, i+1);
-                subtokens = tokens.slice(i+2, j);
-                result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
-                i = j;
-            } else if (tokens.length > i+3 && tokens[i+2] == '~') {
-                // power, trig, log, etc. followed by prefixed unit
-                result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1], '~', tokens[i+3]]));
-                i = i+3;
-            } else if (tokens.length > i+1) {
-                // power, trig, log, etc. followed by unit or number
-                result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
-                i = i+1;
+            if (token == "per") {
+                // unit division
+                result = CleanAndPush(stack, result, token, null);
             } else {
-                throw "missing argument " + tokens[i];
-            }
-            if (token == "square") {
-                result = CleanAndPush(stack, result, '^', Value("2"));
-            } else if (token == "cubic") {
-                result = CleanAndPush(stack, result, '^', Value("3"));
-            } else if (token == "sqrt") {
-                result = CleanAndPush(stack, result, '^', Value("0.5"));
-            } else {
-                for (j = 0; j < result.exponents.length; j++) {
-                    if (result.exponents[j]) {
-                        throw "non-dimensionless exponent";
-                    }
-                }
-                if (token == "sin") {
-                    result = Value(Math.sin(result.coefficient));
-                } else if (token == "cos") {
-                    result = Value(Math.cos(result.coefficient));
-                } else if (token == "tan") {
-                    result = Value(Math.tan(result.coefficient));
-                } else if (token == "asn") {
-                    // range -1..1
-                    result = Value(Math.asin(result.coefficient));
-                } else if (token == "acs") {
-                    // range -1..1
-                    result = Value(Math.acos(result.coefficient));
-                } else if (token == "atn") {
-                    result = Value(Math.atan(result.coefficient));
-                } else if (token == "ln") {
-                    result = Value(Math.log(result.coefficient));
-                } else if (token == "log") {
-                    result = Value(Math.log(result.coefficient)/Math.log(10));
-                } else if (token == "exp") {
-                    result = Value(Math.exp(result.coefficient));
+                if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
+                    // power, trig, log, etc. followed by parenthetical expression
+                    j = MatchParen(tokens, i+1);
+                    subtokens = tokens.slice(i+2, j);
+                    result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
+                    i = j;
+                } else if (tokens.length > i+3 && tokens[i+2] == '~') {
+                    // power, trig, log, etc. followed by prefixed unit
+                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1], '~', tokens[i+3]]));
+                    i = i+3;
+                } else if (tokens.length > i+1) {
+                    // power, trig, log, etc. followed by unit or number
+                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
+                    i = i+1;
                 } else {
-                    throw "bad function " + token;
+                    throw "missing argument " + tokens[i];
+                }
+                if (token == "square") {
+                    result = CleanAndPush(stack, result, '^', Value("2"));
+                } else if (token == "cubic") {
+                    result = CleanAndPush(stack, result, '^', Value("3"));
+                } else if (token == "sqrt") {
+                    result = CleanAndPush(stack, result, '^', Value("0.5"));
+                } else {
+                    for (j = 0; j < result.exponents.length; j++) {
+                        if (result.exponents[j]) {
+                            throw "non-dimensionless exponent";
+                        }
+                    }
+                    if (token == "sin") {
+                        result = Value(Math.sin(result.coefficient));
+                    } else if (token == "cos") {
+                        result = Value(Math.cos(result.coefficient));
+                    } else if (token == "tan") {
+                        result = Value(Math.tan(result.coefficient));
+                    } else if (token == "asn") {
+                        // range -1..1
+                        result = Value(Math.asin(result.coefficient));
+                    } else if (token == "acs") {
+                        // range -1..1
+                        result = Value(Math.acos(result.coefficient));
+                    } else if (token == "atn") {
+                        result = Value(Math.atan(result.coefficient));
+                    } else if (token == "ln") {
+                        result = Value(Math.log(result.coefficient));
+                    } else if (token == "log") {
+                        result = Value(Math.log(result.coefficient)/Math.log(10));
+                    } else if (token == "exp") {
+                        result = Value(Math.exp(result.coefficient));
+                    } else {
+                        throw "bad function " + token;
+                    }
                 }
             }
 
