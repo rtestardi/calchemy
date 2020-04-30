@@ -41,10 +41,8 @@ function Body()
 
     document.getElementById("status").innerHTML = "database loaded";
 
-    var j;
-    var html = "";
-
     var lines = demos.split(/[\r\n]+/);
+    var html = "";
 
     // for each demo command...
     for (var i = 0; i < lines.length; i++) {
@@ -55,7 +53,7 @@ function Body()
             // gather the demo results
             html += "<hr><br><b>" + lines[i] + "</b>";
             html += "<br><i>" + (results.success?"success":"failure") + "</i>";
-            for (j = 0; j < results.output.length; j++) {
+            for (var j = 0; j < results.output.length; j++) {
                 html += "<br>" + results.output[j];
             }
         }
