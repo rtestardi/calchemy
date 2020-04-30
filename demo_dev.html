@@ -36,31 +36,36 @@ xyz
 
 function Body()
 {
-    // load the database
-    LoadDatabase(database);
+    try {
+        // load the database
+        LoadDatabase(database);
 
-    document.getElementById("status").innerHTML = "database loaded";
+        document.getElementById("status").innerHTML = "database loaded";
 
-    var lines = demos.split(/[\r\n]+/);
-    var html = "";
+        var lines = demos.split(/[\r\n]+/);
+        var html = "";
 
-    // for each demo command...
-    for (var i = 0; i < lines.length; i++) {
-        if (lines[i].trim().length) {
-            // run the demo command
-            var results = RunLine(lines[i]);
+        // for each demo command...
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i].trim().length) {
+                // run the demo command
+                var results = RunLine(lines[i]);
 
-            // gather the demo results
-            html += "<hr><br><b>" + lines[i] + "</b>";
-            html += "<br><i>" + (results.success?"success":"failure") + "</i>";
-            for (var j = 0; j < results.output.length; j++) {
-                html += "<br>" + results.output[j];
+                // gather the demo results
+                html += "<hr><br><b>" + lines[i] + "</b>";
+                html += "<br><i>" + (results.success?"success":"failure") + "</i>";
+                for (var j = 0; j < results.output.length; j++) {
+                    html += "<br>" + results.output[j];
+                }
             }
         }
-    }
 
-    // display the demo results
-    document.getElementById("results").innerHTML = html;
+        // display the demo results
+        document.getElementById("results").innerHTML = html;
+    } catch (error) {
+        document.getElementById("status").innerHTML = error;
+        return;
+    }
 }
 
 </script>
