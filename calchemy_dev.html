@@ -286,7 +286,9 @@ function Body()
 
     try {
         // load the units database
+        loading = true;
         LoadDatabase(database);
+        loading = false;
 
         // load custom units
         if (custom != null) {
@@ -1242,27 +1244,31 @@ var help =`
 <ul>
 <li><a href=#overview>Overview</a>
 <ul>
-<li><a href=#basic>Basic Features</a></li>
-<li><a href=#advanced>Advanced Features</a>
-<ul>
-<li><a href=#solve>Solve By Dimensional Analysis</a>
-<li><a href=#overload>Overloaded Units</a>
-<li><a href=#free>Free Units</a>
-<li><a href=#plural>Pluralized Units</a>
-</ul>
+    <li><a href=#basic>Basic Features</a></li>
+    <li><a href=#advanced>Advanced Features</a>
+    <ul>
+        <li><a href=#solve>Solve By Dimensional Analysis</a>
+        <li><a href=#overload>Overloaded Units</a>
+        <li><a href=#free>Free Units</a>
+        <li><a href=#plural>Pluralized Units</a>
+    </ul>
 </ul>
 <li><a href=#syntax>Equation Syntax</a></li>
 <li><a href=#definition>Definition Syntax</a></li>
 <li>
 <a href=#ui>User Interface</a>
 <ul>
-<li><a href=#history>History List</a></li>
-<li><a href=#line>Equation Line</a></li>
-<li><a href=#buttons>Buttons</a></li>
+    <li><a href=#history>History List</a></li>
+    <li><a href=#line>Equation Line</a></li>
+    <li><a href=#buttons>Buttons</a></li>
 </ul>
 </li>
 <li><a href=#examples>Examples</a></li>
 <li><a href=#database>Database Notes</a></li>
+<ul>
+    <li><a href=#custom>Custom Database</a></li>
+    <li><a href=#runtime>Runtime Database</a></li>
+</ul>
 <li><a href=#cautions>Cautions</a></li>
 <li><a href=#info>For More Information</a></li>
 </ul>
@@ -1403,7 +1409,7 @@ The following table illustrates these rules:
 <h1 id='ui'>User Interface</h1>
 <h2 id='history'>History List</h2>
 <p>The History List is at the top of the user interface and grows to include all your calculated equations and results;
-initially, the history list contains only the words, "database loaded".
+initially, the history list contains only the words, "loading database ... database loaded".
 <p>Equations and results in the history list are hyperlinks which you can click/tap to re-enter the equation or result into the Equation Line, as a form of history recall.
 <p>The history list also contains unit category names or unit names you have searched for (also as hyperlinks) as well as unit details and online help.
 <p>Each entry in the history list can be deleted by clicking/tapping its &lt;Delete&gt; button;
@@ -1432,6 +1438,7 @@ click/tap a unit name to enter its name into the equation line at the cursor.</d
 <dt>&lt;Equations&gt;</dt><dd>Display a list of equation groups.
 Click/tap an equation group to display all equations in the group.
 Click/tap an equation to enter it into the equation line at the cursor.</dd>
+<dt>&lt;Load&gt;</dt><dd>Load an additional runtime units database from the local computer.</dd>
 <dt>&lt;Test&gt;</dt><dd>Run the internal tests to confirm proper javascript operation.</dd>
 <dt>&lt;Help&gt;</dt><dd>Display this internal online help.</dd>
 </dl>
@@ -1494,6 +1501,19 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <tr><td>..._m</td><td>... by mass</td></tr>
 <tr><td>..._v</td><td>... by volume</td></tr>
 </table>
+<h2 id='custom'>Custom Database</h2>
+<p>A custom database named custom.js will be automatically loaded from the location of calchemy.html.
+To take advantage of this feature you will typically copy calchemy.html to a local folder, create custom.js in the same folder, and launch calchemy.html from that folder.
+Custom.js must define the javascript variable "custom" as a multi-line string containing one or more unit definitions and/or undefinitions, like:
+<pre>
+custom=&#096
+foreverandaday=1e99 years + 1 day
+slowasmolasses=0.001 mph
+&#096;
+</pre>
+<h2 id='runtime'>Runtime Database</h2>
+<p>A database from the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button.
+<p>Runtime unit definitions and undefinitions are lost when Calchemy is reloaded!
 
 <h1 id='cautions'>Cautions</h1>
 <p>Calchemy makes problem solving so easy that it is tempting to assume that any answer it gives you is correct.

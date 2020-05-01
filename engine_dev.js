@@ -1266,7 +1266,6 @@ function LoadDatabase(database)
 {
     // split the database into lines
     var lines = database.split(/[\r\n]+/);
-    loading = true;
 
     // for each line of the database...
     for (var i = 0; i < lines.length; i++) {
@@ -1292,8 +1291,6 @@ function LoadDatabase(database)
             throw "unexpected error: " + lines[i] + " : " + errors.toString();
         }
     }
-
-    loading = false;
 
     // identify our "special" base units
     for (i = 0; i < bases.length; i++) {
