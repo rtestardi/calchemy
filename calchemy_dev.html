@@ -29,9 +29,10 @@ body,html { margin: 0px; }
 
 <h1>Calchemy&trade; -- Math Magic</h1>
 <table class='table1'><tr>
-<td><p id='status'>loading database ...</p></td>
+<td><p id='status'>loading database ... </p></td>
 <td style='text-align: right'><button id='all' type='button' style='margin: 0px;' onclick="Delete('all')">Delete All</button></td>
 </tr></table>
+<input type="file" id="file" style="display:none">
 <p id='results'></p>
 <input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false'/>
 <br>
@@ -43,6 +44,7 @@ body,html { margin: 0px; }
 <button type='button' onclick="Paste()">Paste</button>
 <button type='button' onclick="Example()">Example</button>
 <button type='button' onclick="Equations()">Equations</button>
+<button type='button' onclick="Load()">Load</button>
 <button type='button' onclick="Test()">Test</button>
 <button type='button' onclick="Help()">Help</button>
 <br>
@@ -101,13 +103,14 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09r</p>
+v1.09s</p>
 </td>
 </tr>
 </table>
 
 <script>
 'use strict';
+var custom = null;
 // Coverage test:
 //   reload, <Delete All>, <Test>
 //   1, <Clear>, 11, <Enter>, 2, <Enter>
@@ -143,6 +146,9 @@ v1.09r</p>
 </script>
 
 <script type="text/javascript" src="engine_dev.js">
+</script>
+
+<script type="text/javascript" src="custom.js">
 </script>
 
 <script>
@@ -276,9 +282,21 @@ function SnoopAndDelete(tag)
 // the user loaded the webpage; initialize the units database
 function Body()
 {
+    var what = "database";
+
     try {
         // load the units database
+        loading = true;
         LoadDatabase(database);
+        loading = false;
+
+        // load custom units
+        if (custom != null) {
+            document.getElementById("status").innerHTML += what + " loaded";
+            what = "custom";
+            document.getElementById("status").innerHTML += "<br>loading custom ... ";
+            LoadDatabase(custom);
+        }
 
         // recall our results history
         var temp = localStorage["calchemy.results"];
@@ -298,9 +316,9 @@ function Body()
             window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
         }
 
-        document.getElementById("status").innerHTML = "database loaded";
+        document.getElementById("status").innerHTML += what + " loaded";
     } catch (error) {
-        document.getElementById("status").innerHTML = error;
+        document.getElementById("status").innerHTML += "<br>" + error;
     } finally {
         offset_warn = false;
         cycle_warn = false;
@@ -323,6 +341,23 @@ function Body()
             event.preventDefault();
             UpDown(true);
         }
+    });
+
+    // handle database load events
+    document.getElementById("file").addEventListener('input', function() {
+        var file = document.getElementById("file").files[0];
+        var reader = new FileReader();
+        reader.addEventListener('load', function(e) {
+            var text = e.target.result;
+            try {
+                LoadDatabase(text);
+                document.getElementById("results").innerHTML += Chunk(file.name + " loaded");
+            } catch (error) {
+                // append a deletable chunk with any errors
+                document.getElementById("results").innerHTML += Chunk(error);
+            }
+        });
+        reader.readAsText(file);
     });
 
     Scroll();
@@ -808,6 +843,7 @@ var equations =`
     [Mass] c^2 ? [Energy] | = 89875500000000000 [Energy]
 `;
 
+// the user clicked an equation group; show equations
 function EquationsByGroup(group)  // or "All Equations"
 {
     var found = group == "All Equations";
@@ -831,6 +867,7 @@ function EquationsByGroup(group)  // or "All Equations"
     Scroll();
 }
 
+// the user clicked the Equations button; show equation groups
 function Equations()
 {
     var lines = equations.split(/[\r\n]+/);
@@ -850,6 +887,12 @@ function Equations()
     // append a deletable chunk to the results list with the equation groups list
     document.getElementById("results").innerHTML += Chunk("=== equation groups ===" + html);
     Scroll();
+}
+
+// the user clicked the Load button; load optional units
+function Load()
+{
+    document.getElementById("file").click();
 }
 
 var tests =`
@@ -1201,27 +1244,31 @@ var help =`
 <ul>
 <li><a href=#overview>Overview</a>
 <ul>
-<li><a href=#basic>Basic Features</a></li>
-<li><a href=#advanced>Advanced Features</a>
-<ul>
-<li><a href=#solve>Solve By Dimensional Analysis</a>
-<li><a href=#overload>Overloaded Units</a>
-<li><a href=#free>Free Units</a>
-<li><a href=#plural>Pluralized Units</a>
-</ul>
+    <li><a href=#basic>Basic Features</a></li>
+    <li><a href=#advanced>Advanced Features</a>
+    <ul>
+        <li><a href=#solve>Solve By Dimensional Analysis</a>
+        <li><a href=#overload>Overloaded Units</a>
+        <li><a href=#free>Free Units</a>
+        <li><a href=#plural>Pluralized Units</a>
+    </ul>
 </ul>
 <li><a href=#syntax>Equation Syntax</a></li>
 <li><a href=#definition>Definition Syntax</a></li>
 <li>
 <a href=#ui>User Interface</a>
 <ul>
-<li><a href=#history>History List</a></li>
-<li><a href=#line>Equation Line</a></li>
-<li><a href=#buttons>Buttons</a></li>
+    <li><a href=#history>History List</a></li>
+    <li><a href=#line>Equation Line</a></li>
+    <li><a href=#buttons>Buttons</a></li>
 </ul>
 </li>
 <li><a href=#examples>Examples</a></li>
 <li><a href=#database>Database Notes</a></li>
+<ul>
+    <li><a href=#custom>Custom Database</a></li>
+    <li><a href=#runtime>Runtime Database</a></li>
+</ul>
 <li><a href=#cautions>Cautions</a></li>
 <li><a href=#info>For More Information</a></li>
 </ul>
@@ -1331,8 +1378,8 @@ The following table illustrates these rules:
 <p><b># comment ...</b>
 <p>You can enter multiple equations on the same line by separating then with an ampersand, like:
 <p><b>equation1 &amp; equation2 ...</b>
-<p>You can also enter equations directly from the calchemy.html URL, by using URL encoding after the query '?', like:
-<p>.../calchemy.html?<b>urlencodedequation</b>
+<p>You can also enter equations directly from the calchemy.html URL, by using <b><i>URL encoding</i></b> after the query '?', like:
+<p>.../calchemy.html?<b><i>urlequation</i></b>
 
 <h1 id='definition'>Definition Syntax</h1>
 <p>Basic Calchemy definitions are of the form:
@@ -1362,7 +1409,7 @@ The following table illustrates these rules:
 <h1 id='ui'>User Interface</h1>
 <h2 id='history'>History List</h2>
 <p>The History List is at the top of the user interface and grows to include all your calculated equations and results;
-initially, the history list contains only the words, "database loaded".
+initially, the history list contains only the words, "loading database ... database loaded".
 <p>Equations and results in the history list are hyperlinks which you can click/tap to re-enter the equation or result into the Equation Line, as a form of history recall.
 <p>The history list also contains unit category names or unit names you have searched for (also as hyperlinks) as well as unit details and online help.
 <p>Each entry in the history list can be deleted by clicking/tapping its &lt;Delete&gt; button;
@@ -1391,6 +1438,7 @@ click/tap a unit name to enter its name into the equation line at the cursor.</d
 <dt>&lt;Equations&gt;</dt><dd>Display a list of equation groups.
 Click/tap an equation group to display all equations in the group.
 Click/tap an equation to enter it into the equation line at the cursor.</dd>
+<dt>&lt;Load&gt;</dt><dd>Load an additional runtime units database from the local computer.</dd>
 <dt>&lt;Test&gt;</dt><dd>Run the internal tests to confirm proper javascript operation.</dd>
 <dt>&lt;Help&gt;</dt><dd>Display this internal online help.</dd>
 </dl>
@@ -1453,6 +1501,19 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <tr><td>..._m</td><td>... by mass</td></tr>
 <tr><td>..._v</td><td>... by volume</td></tr>
 </table>
+<h2 id='custom'>Custom Database</h2>
+<p>A custom database named custom.js will be automatically loaded from the location of calchemy.html.
+To take advantage of this feature you will typically copy calchemy.html to a local folder, create custom.js in the same folder, and launch calchemy.html from that folder.
+Custom.js must define the javascript variable "custom" as a multi-line string containing one or more unit definitions and/or undefinitions, like:
+<pre>
+custom=&#096
+foreverandaday=1e99 years + 1 day
+slowasmolasses=0.001 mph
+&#096;
+</pre>
+<h2 id='runtime'>Runtime Database</h2>
+<p>A database from the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button.
+<p>Runtime unit definitions and undefinitions are lost when Calchemy is reloaded!
 
 <h1 id='cautions'>Cautions</h1>
 <p>Calchemy makes problem solving so easy that it is tempting to assume that any answer it gives you is correct.

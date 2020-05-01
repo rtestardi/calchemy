@@ -1266,7 +1266,6 @@ function LoadDatabase(database)
 {
     // split the database into lines
     var lines = database.split(/[\r\n]+/);
-    loading = true;
 
     // for each line of the database...
     for (var i = 0; i < lines.length; i++) {
@@ -1276,20 +1275,22 @@ function LoadDatabase(database)
         errors = [];
         defines = false;
         undefines = false;
-        ParseTokens(TokenizeLine(lines[i]), lines[i]);
+        try {
+            ParseTokens(TokenizeLine(lines[i]), lines[i]);
+        } catch (error) {
+            throw "exception: " + lines[i] + " : " + error;
+        }
 
         if (results.length) {
-            throw "unexpected result: " + lines[i];
+            throw "unexpected result: " + lines[i] + " : " + (results[0].coefficient.toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision();
         }
         if (mismatches.length) {
-            throw "unexpected mismatch: " + lines[i] + " " + mismatches.toString();
+            throw "unexpected mismatch: " + lines[i] + " : " + mismatches.toString();
         }
         if (errors.length) {
-            throw "unexpected error: " + lines[i] + " " + errors.toString();
+            throw "unexpected error: " + lines[i] + " : " + errors.toString();
         }
     }
-
-    loading = false;
 
     // identify our "special" base units
     for (i = 0; i < bases.length; i++) {
