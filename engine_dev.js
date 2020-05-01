@@ -1276,16 +1276,20 @@ function LoadDatabase(database)
         errors = [];
         defines = false;
         undefines = false;
-        ParseTokens(TokenizeLine(lines[i]), lines[i]);
+        try {
+            ParseTokens(TokenizeLine(lines[i]), lines[i]);
+        } catch (error) {
+            throw "exception: " + lines[i] + " : " + error;
+        }
 
         if (results.length) {
-            throw "unexpected result: " + lines[i];
+            throw "unexpected result: " + lines[i] + " : " + (results[0].coefficient.toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision();
         }
         if (mismatches.length) {
-            throw "unexpected mismatch: " + lines[i] + " " + mismatches.toString();
+            throw "unexpected mismatch: " + lines[i] + " : " + mismatches.toString();
         }
         if (errors.length) {
-            throw "unexpected error: " + lines[i] + " " + errors.toString();
+            throw "unexpected error: " + lines[i] + " : " + errors.toString();
         }
     }
 

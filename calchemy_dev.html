@@ -29,9 +29,10 @@ body,html { margin: 0px; }
 
 <h1>Calchemy&trade; -- Math Magic</h1>
 <table class='table1'><tr>
-<td><p id='status'>loading database ...</p></td>
+<td><p id='status'>loading database ... </p></td>
 <td style='text-align: right'><button id='all' type='button' style='margin: 0px;' onclick="Delete('all')">Delete All</button></td>
 </tr></table>
+<input type="file" id="file" style="display:none">
 <p id='results'></p>
 <input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false'/>
 <br>
@@ -43,6 +44,7 @@ body,html { margin: 0px; }
 <button type='button' onclick="Paste()">Paste</button>
 <button type='button' onclick="Example()">Example</button>
 <button type='button' onclick="Equations()">Equations</button>
+<button type='button' onclick="Load()">Load</button>
 <button type='button' onclick="Test()">Test</button>
 <button type='button' onclick="Help()">Help</button>
 <br>
@@ -108,6 +110,7 @@ v1.09r</p>
 
 <script>
 'use strict';
+var custom = null;
 // Coverage test:
 //   reload, <Delete All>, <Test>
 //   1, <Clear>, 11, <Enter>, 2, <Enter>
@@ -143,6 +146,9 @@ v1.09r</p>
 </script>
 
 <script type="text/javascript" src="engine_dev.js">
+</script>
+
+<script type="text/javascript" src="custom.js">
 </script>
 
 <script>
@@ -276,9 +282,19 @@ function SnoopAndDelete(tag)
 // the user loaded the webpage; initialize the units database
 function Body()
 {
+    var what = "database";
+
     try {
         // load the units database
         LoadDatabase(database);
+
+        // load custom units
+        if (custom != null) {
+            document.getElementById("status").innerHTML += what + " loaded";
+            what = "custom";
+            document.getElementById("status").innerHTML += "<br>loading custom... ";
+            LoadDatabase(custom);
+        }
 
         // recall our results history
         var temp = localStorage["calchemy.results"];
@@ -298,9 +314,9 @@ function Body()
             window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
         }
 
-        document.getElementById("status").innerHTML = "database loaded";
+        document.getElementById("status").innerHTML += what + " loaded";
     } catch (error) {
-        document.getElementById("status").innerHTML = error;
+        document.getElementById("status").innerHTML += "<br>" + error;
     } finally {
         offset_warn = false;
         cycle_warn = false;
@@ -323,6 +339,23 @@ function Body()
             event.preventDefault();
             UpDown(true);
         }
+    });
+
+    // handle database load events
+    document.getElementById("file").addEventListener('input', function() {
+        var file = document.getElementById("file").files[0];
+        var reader = new FileReader();
+        reader.addEventListener('load', function(e) {
+            var text = e.target.result;
+            try {
+                LoadDatabase(text);
+                document.getElementById("results").innerHTML += Chunk(file.name + " loaded");
+            } catch (error) {
+                // append a deletable chunk with any errors
+                document.getElementById("results").innerHTML += Chunk(error);
+            }
+        });
+        reader.readAsText(file);
     });
 
     Scroll();
@@ -808,6 +841,7 @@ var equations =`
     [Mass] c^2 ? [Energy] | = 89875500000000000 [Energy]
 `;
 
+// the user clicked an equation group; show equations
 function EquationsByGroup(group)  // or "All Equations"
 {
     var found = group == "All Equations";
@@ -831,6 +865,7 @@ function EquationsByGroup(group)  // or "All Equations"
     Scroll();
 }
 
+// the user clicked the Equations button; show equation groups
 function Equations()
 {
     var lines = equations.split(/[\r\n]+/);
@@ -850,6 +885,12 @@ function Equations()
     // append a deletable chunk to the results list with the equation groups list
     document.getElementById("results").innerHTML += Chunk("=== equation groups ===" + html);
     Scroll();
+}
+
+// the user clicked the Load button; load optional units
+function Load()
+{
+    document.getElementById("file").click();
 }
 
 var tests =`
