@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09t</p>
+v1.09u</p>
 </td>
 </tr>
 </table>
@@ -1504,7 +1504,7 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <h2 id='custom'>Custom Database</h2>
 <p>A custom database named custom.js will be automatically loaded from the location of calchemy.html.
 To take advantage of this feature you will typically copy calchemy.html to a local folder, create custom.js in the same folder, and launch calchemy.html from that folder.
-Custom.js must define the javascript variable "custom" as a multi-line string containing one or more unit definitions and/or undefinitions, like:
+Custom.js must define the javascript variable "custom" as a multi-line template string containing one or more unit definitions and/or undefinitions within back-ticks, like:
 <pre>
 custom=&#096;
 foreverandaday=1e99 years + 1 day
@@ -1513,7 +1513,7 @@ slowasmolasses=0.001 mph
 </pre>
 <h2 id='runtime'>Runtime Database</h2>
 <p>A database from a file on the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button and browsing to the file.
-The file should contain one or more unit definitions and/or undefinitions, like:
+The file should contain lines with one or more unit definitions and/or undefinitions, like:
 <pre>
 foreverandaday=1e99 years + 1 day
 slowasmolasses=0.001 mph
