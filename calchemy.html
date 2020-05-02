@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09w</p>
+v1.09y</p>
 </td>
 </tr>
 </table>
@@ -800,42 +800,11 @@ Physical_property,Batteries:e_nicd_d=17280 J
 Physical_property,Batteries:e_nicd_n=648 J
 Physical_property,Batteries:e_nicd_9v=2419 J
 
-# *a=1A
-# *n=1N
-# *j=1J
-# *w=1W
-# *pa=1Pa
-# *v=1V
-# *f=1F
-# *h=1H
-# *wb=1Wb
-# *t=1T
-# *hz=1Hz
-# *va=1VA
-# *ev=1eV
-`;
-
-var database_tests = `
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-`;
-
-var database_teststhatmaythrow = `
-TEST database_throw | unknown test database_throw
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST e_nicd_9v? | = 2419 joule, = 2419 newton meter
 `;
 </script>
 
@@ -856,7 +825,7 @@ const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const unit_regexp_all =    /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~]/;
+const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~|]/;
 const opens = "([{";
 const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
@@ -875,6 +844,7 @@ var testing = false;  // while testing, don't put equation line into results
 var si = false;  // request to display mismatch result in SI format
 var massbase;  // may be undefined
 var storagebase;  // may be undefined
+var database_tests = "";
 
 var offset_warn = false;  // degC, absC, degF, absF
 var offset_warned = false;
@@ -1810,8 +1780,11 @@ function AlternateTokens(tokens, n)
 // tokenize a command line
 function TokenizeLine(input)
 {
-    // remove comments
-    input = input.replace(/[#|].*/, "").trim();
+    var test = input.match(/^TEST/);
+    if (! test) {
+        // remove comments except for TEST lines
+        input = input.replace(/[#|].*/, "").trim();
+    }
 
     var token;
     var tokens = [];
@@ -1845,7 +1818,7 @@ function TokenizeLine(input)
                 colon = true;
             }
             if (ch == '=') {
-                if (equal) {
+                if (equal && ! test) {
                     throw "= may only occur once";
                 }
                 equal = true;
@@ -1929,8 +1902,11 @@ function ParseTokens(tokens, line)
             } else if (tokens[1] == "details") {
                 document.getElementById("equation").value = tokens[2];
                 Details();
+            } else if (tokens[1] == "throw") {
+                throw "unknown test throw"
             } else {
-                throw "unknown test " + tokens[1];
+                // remember this entire database test for later
+                database_tests += line.replace(/^TEST */, "") + '\n';
             }
 
         // otherwise, if we are defining or undefining a unit...
@@ -2342,6 +2318,9 @@ function LoadRuntimeDatabase(name, text)
     } catch (error) {
         // append a deletable chunk with any errors
         document.getElementById("results").innerHTML += Chunk(error);
+    } finally {
+        offset_warn = false;
+        cycle_warn = false;
     }
 }
 
@@ -2799,10 +2778,7 @@ function Paste()
     Scroll();
 }
 
-var untestedexamples = `
-`;
-
-var testedexamples =`
+var examples =`
     100 lbf * 60 mph ? hp | = 16 hp
     1 cup * 1.59 gram/cc ? lb  # weight of sugar | = 0.829325 lb
     35 ft * 20 meters ? acres | = 0.0527224 acres
@@ -2832,7 +2808,7 @@ var example = 0;
 function Example()
 {
     // get all the example lines, including blanks
-    var lines = (untestedexamples+testedexamples).split(/[\r\n]+/);
+    var lines = examples.split(/[\r\n]+/);
     var line;
     // recall the next non-blank example line, without comments
     do {
@@ -2842,14 +2818,6 @@ function Example()
     document.getElementById("equation").value = line;
     Scroll();
 }
-
-var pre_equations =`
-Cd=1
-`;
-
-var post_equations =`
-Cd=
-`;
 
 var equations =`
     # Geometrical
@@ -2960,7 +2928,7 @@ function LoadLocal()
     document.getElementById("file").click();
 }
 
-var remotes = [ "solarsys.js" ];
+var remotes = [ "flexcase.js", "solarsys.js" ];
 
 // load units from where calchemy.html was found
 function LoadRemote(file)
@@ -3203,10 +3171,16 @@ var tests =`
     TEST bycategory abc | === units in category abc ===
     TEST bycategory Angular_velocity | === units in category Angular_velocity ===, cps, hertz, Hz, rpm, rps
     TEST bydimension Fuel_efficiency | === units in category Fuel_efficiency ===, mpg
+
+    # equation support
+    Cd = 1
 `;
 
 var teststhatmaythrow = `
-    # errors that may throw
+    # equation support
+    Cd =
+
+    # tests that may throw
     TEST throw | unknown test throw
     TEST details abc | undefined unit abc
     TEST byname abc | undefined unit abc
@@ -3262,7 +3236,7 @@ function Test()
 function TestReal()
 {
     try {
-        var lines = (tests+testedexamples+pre_equations+equations+post_equations+database_tests+teststhatmaythrow+database_teststhatmaythrow).split(/[\r\n]+/);
+        var lines = (tests+examples+equations+teststhatmaythrow+database_tests).split(/[\r\n]+/);
         testing = true;
         offset_warn = false;
         offset_warned = false;
@@ -3277,47 +3251,50 @@ function TestReal()
 
         // for all tests...
         for (var i = 0; i < lines.length; i++) {
-            tested++;
-
-            // get the test equation line and expected results on either side of the '|'
             var line = lines[i].replace(/^ *[#].*/, "").trim();  // # for comment only at beginning of line
-            console.log("Test " + line);
-            var sides = line.split('|');
-            if (sides.length >= 3) {
-                html += "<br>test failed: " + line + " -- | may only occur once";
-                continue;
-            }
+            if (line.length) {
+                tested++;
 
-            // run the test
-            lasttag = "";
-            document.getElementById("equation").value = sides[0];
-            Enter();
-            var output = SnoopAndDelete(lasttag);
-            
-            // if we have expected output...
-            if (sides.length == 2) {
-                // verify that the expected output matches
-                var expected = sides[1].split(',');
-                if (output.length == 0 && (expected.length == 0 || (expected.length == 1 && expected[0] == ""))) {
-                    // ignore split weirdness with no input
-                } else {
-                    // if the actual output did not match the expected output...
-                    if (output.join().replace(/  */g, "") != expected.join().replace(/  */g, "")) {
-                        // the test failed!
-                        html += "<br>test failed: " + line + " -- expected: " + expected.toString() + " output: " + output.toString();
-                        continue;
-                    }
+                // get the test equation line and expected results on either side of the '|'
+                console.log("Test " + line);
+                var sides = line.split('|');
+                if (sides.length >= 3) {
+                    html += "<br>test failed: " + line + " -- | may only occur once";
+                    continue;
                 }
-                passed++;
-            } else {
-                // no expected output
-                passed++;
+
+                // run the test
+                lasttag = "";
+                document.getElementById("equation").value = sides[0];
+                Enter();
+                var output = SnoopAndDelete(lasttag);
+                
+                // if we have expected output...
+                if (sides.length == 2) {
+                    // verify that the expected output matches
+                    var expected = sides[1].split(',');
+                    if (output.length == 0 && (expected.length == 0 || (expected.length == 1 && expected[0] == ""))) {
+                        // ignore split weirdness with no input
+                    } else {
+                        // if the actual output did not match the expected output...
+                        if (output.join().replace(/  */g, "") != expected.join().replace(/  */g, "")) {
+                            // the test failed!
+                            html += "<br>test failed: " + line + " -- expected: " + expected.toString() + " output: " + output.toString();
+                            continue;
+                        }
+                    }
+                    passed++;
+                } else {
+                    // no expected output
+                    passed++;
+                }
             }
         }
 
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
-        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " + Math.trunc(passed*100/tested) + "% of " + tested + " passed");
+        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " + 
+                                                                     passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
     } finally {

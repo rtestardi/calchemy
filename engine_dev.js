@@ -14,7 +14,7 @@ const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const unit_regexp_all =    /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~]/;
+const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~|]/;
 const opens = "([{";
 const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
@@ -33,6 +33,7 @@ var testing = false;  // while testing, don't put equation line into results
 var si = false;  // request to display mismatch result in SI format
 var massbase;  // may be undefined
 var storagebase;  // may be undefined
+var database_tests = "";
 
 var offset_warn = false;  // degC, absC, degF, absF
 var offset_warned = false;
@@ -968,8 +969,11 @@ function AlternateTokens(tokens, n)
 // tokenize a command line
 function TokenizeLine(input)
 {
-    // remove comments
-    input = input.replace(/[#|].*/, "").trim();
+    var test = input.match(/^TEST/);
+    if (! test) {
+        // remove comments except for TEST lines
+        input = input.replace(/[#|].*/, "").trim();
+    }
 
     var token;
     var tokens = [];
@@ -1003,7 +1007,7 @@ function TokenizeLine(input)
                 colon = true;
             }
             if (ch == '=') {
-                if (equal) {
+                if (equal && ! test) {
                     throw "= may only occur once";
                 }
                 equal = true;
@@ -1087,8 +1091,11 @@ function ParseTokens(tokens, line)
             } else if (tokens[1] == "details") {
                 document.getElementById("equation").value = tokens[2];
                 Details();
+            } else if (tokens[1] == "throw") {
+                throw "unknown test throw"
             } else {
-                throw "unknown test " + tokens[1];
+                // remember this entire database test for later
+                database_tests += line.replace(/^TEST */, "") + '\n';
             }
 
         // otherwise, if we are defining or undefining a unit...

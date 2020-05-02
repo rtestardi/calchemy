@@ -655,40 +655,9 @@ Physical_property,Batteries:e_nicd_d=17280 J
 Physical_property,Batteries:e_nicd_n=648 J
 Physical_property,Batteries:e_nicd_9v=2419 J
 
-# *a=1A
-# *n=1N
-# *j=1J
-# *w=1W
-# *pa=1Pa
-# *v=1V
-# *f=1F
-# *h=1H
-# *wb=1Wb
-# *t=1T
-# *hz=1Hz
-# *va=1VA
-# *ev=1eV
-`;
-
-var database_tests = `
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-    1|= 1
-`;
-
-var database_teststhatmaythrow = `
-TEST database_throw | unknown test database_throw
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST e_nicd_9v? | = 2419 joule, = 2419 newton meter
 `;
