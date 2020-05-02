@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.10d</p>
+v1.10e</p>
 </td>
 </tr>
 </table>
@@ -581,7 +581,7 @@ function ShowUnitsByCategory(category, bydimension)  // or "All Units"
     if (bydimension != true) {
         // first look for category matches
         for (i = 0; i < units.length; i++) {
-            if (! units[i].type) {
+            if (! units[i].type || units[i].type == "PREFIX") {
                 if (units[i].categories.includes(category)) {
                     for (j = 0; j < units[i].names.length; j++) {
                         if (! names.includes(units[i].names[j])) {
