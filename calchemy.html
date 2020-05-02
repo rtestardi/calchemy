@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09u</p>
+v1.09v</p>
 </td>
 </tr>
 </table>
@@ -2334,6 +2334,17 @@ function SnoopAndDelete(tag)
     return snoops;
 }
 
+function LoadRuntimeDatabase(name, text)
+{
+    try {
+        LoadDatabase(text);
+        document.getElementById("results").innerHTML += Chunk(name + " loaded");
+    } catch (error) {
+        // append a deletable chunk with any errors
+        document.getElementById("results").innerHTML += Chunk(error);
+    }
+}
+
 // the user loaded the webpage; initialize the units database
 function Body()
 {
@@ -2405,8 +2416,7 @@ function Body()
         reader.addEventListener('load', function(e) {
             var text = e.target.result;
             try {
-                LoadDatabase(text);
-                document.getElementById("results").innerHTML += Chunk(file.name + " loaded");
+                LoadRuntimeDatabase(file.name, text);
             } catch (error) {
                 // append a deletable chunk with any errors
                 document.getElementById("results").innerHTML += Chunk(error);
@@ -2944,10 +2954,36 @@ function Equations()
     Scroll();
 }
 
+// load units from a local file
+function LoadLocal()
+{
+    document.getElementById("file").click();
+}
+
+var remotes = [ "solarsys.js" ];
+
+// load units from where calchemy.html was found
+function LoadRemote(file)
+{
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('script');
+    script.src = file;
+    script.type = 'text/javascript';
+    head.append(script);
+}
+
 // the user clicked the Load button; load optional units
 function Load()
 {
-    document.getElementById("file").click();
+    // compute the list of hyperlinked databases
+    var html = "<br><a href=\"javascript:LoadLocal()\">Local Database</a>";
+    for (var i = 0; i < remotes.length; i++) {
+        html += "<br>" + "<a href=\"javascript:LoadRemote('" + remotes[i] + "')\">" + remotes[i] + "</a>";
+    }
+
+    // append a deletable chunk to the results list with the categories list
+    document.getElementById("results").innerHTML += Chunk("=== unit databases ===" + html);
+    Scroll();
 }
 
 var tests =`
@@ -3557,7 +3593,7 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <tr><td>..._v</td><td>... by volume</td></tr>
 </table>
 <h2 id='custom'>Custom Database</h2>
-<p>A custom database named custom.js will be automatically loaded from the location of calchemy.html.
+<p>A custom database named custom.js will automatically be loaded from the location of calchemy.html.
 To take advantage of this feature you will typically copy calchemy.html to a local folder, create custom.js in the same folder, and launch calchemy.html from that folder.
 Custom.js must define the javascript variable "custom" as a multi-line template string containing one or more unit definitions and/or undefinitions within back-ticks, like:
 <pre>
@@ -3567,12 +3603,14 @@ slowasmolasses=0.001 mph
 &#096;;
 </pre>
 <h2 id='runtime'>Runtime Database</h2>
-<p>A database from a file on the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button and browsing to the file.
+<p>A database from a file on the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button, selecting "Local Database", and browsing to the file.
 The file should contain lines with one or more unit definitions and/or undefinitions, like:
 <pre>
 foreverandaday=1e99 years + 1 day
 slowasmolasses=0.001 mph
 </pre>
+<p>
+<p>An optional database from the location of calchemy.html may also be loaded at runtime by clicking/tapping the &lt;Load&gt; button and selecting the database in the list.
 <p>Runtime unit definitions and undefinitions are lost when Calchemy is reloaded!
 
 <h1 id='cautions'>Cautions</h1>
