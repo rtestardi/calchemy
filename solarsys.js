@@ -43,4 +43,10 @@ solarsys:neptune_dist = 4.50E+12 meter #mean distance neptune to sun
 solarsys:pluto_mass = 5.9E+24 kilogramm #mass of pluto
 solarsys:pluto_diam = 12700 kilometer #mean diameter of pluto
 solarsys:pluto_dist = 5.91E+12 meter #mean distance pluto to sun
+
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST sun_mass? | = 1.99e+30 kilogramm
 `);
