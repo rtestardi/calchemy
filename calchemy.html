@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.09s</p>
+v1.09t</p>
 </td>
 </tr>
 </table>
@@ -3561,13 +3561,18 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 To take advantage of this feature you will typically copy calchemy.html to a local folder, create custom.js in the same folder, and launch calchemy.html from that folder.
 Custom.js must define the javascript variable "custom" as a multi-line string containing one or more unit definitions and/or undefinitions, like:
 <pre>
-custom=&#096
+custom=&#096;
 foreverandaday=1e99 years + 1 day
 slowasmolasses=0.001 mph
-&#096;
+&#096;;
 </pre>
 <h2 id='runtime'>Runtime Database</h2>
-<p>A database from the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button.
+<p>A database from a file on the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button and browsing to the file.
+The file should contain one or more unit definitions and/or undefinitions, like:
+<pre>
+foreverandaday=1e99 years + 1 day
+slowasmolasses=0.001 mph
+</pre>
 <p>Runtime unit definitions and undefinitions are lost when Calchemy is reloaded!
 
 <h1 id='cautions'>Cautions</h1>
