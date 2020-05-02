@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.10c</p>
+v1.10d</p>
 </td>
 </tr>
 </table>
@@ -284,8 +284,10 @@ function SnoopAndDelete(tag)
 function LoadRuntimeDatabase(name, text)
 {
     try {
+        var number = units.length;
         LoadDatabase(text);
-        document.getElementById("results").innerHTML += Chunk(name + " loaded");
+        number = units.length - number;
+        document.getElementById("results").innerHTML += Chunk(name + " loaded " + number + " units");
     } catch (error) {
         // append a deletable chunk with any errors
         document.getElementById("results").innerHTML += Chunk(error);
@@ -300,6 +302,7 @@ function LoadRuntimeDatabase(name, text)
 function Body()
 {
     var what = "database";
+    var number = units.length;
 
     try {
         // load the units database
@@ -309,8 +312,10 @@ function Body()
 
         // load custom units
         if (custom != null) {
-            document.getElementById("status").innerHTML += what + " loaded";
+            number = units.length - number;
+            document.getElementById("status").innerHTML += what + " loaded " + number + " units";
             what = "custom";
+            var number = units.length;
             document.getElementById("status").innerHTML += "<br>loading custom ... ";
             LoadDatabase(custom);
         }
@@ -333,7 +338,8 @@ function Body()
             window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
         }
 
-        document.getElementById("status").innerHTML += what + " loaded";
+        number = units.length - number;
+        document.getElementById("status").innerHTML += what + " loaded " + number + " units";
     } catch (error) {
         document.getElementById("status").innerHTML += "<br>" + error;
     } finally {
@@ -900,7 +906,7 @@ function LoadLocal()
     document.getElementById("file").click();
 }
 
-var remotes = [ "flexcase.js", "solarsys.js" ];
+var remotes = [ "elements.js", "flexcase.js", "solarsys.js" ];
 
 // load units from where calchemy.html was found
 function LoadRemote(file)
