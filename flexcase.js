@@ -13,4 +13,9 @@ CATEGORY flexcase
 *hz=1Hz
 *va=1VA
 *ev=1eV
+
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
 `);
