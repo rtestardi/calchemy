@@ -13,6 +13,7 @@ Calchemy™ is an exciting not-so-new calculator which allows you to perform dim
 * demo_dev.html -- demo bits showing interface to database and engine
 * engine_dev.js -- bits under development, engine only
 * publish.ps1 -- script to merge calchemy_dev.html, database_dev.js, and engine_dev.js into calchemy.html
+* solarsys.js -- optional runtime database with solar system units
 
 ## Basic Features
 
