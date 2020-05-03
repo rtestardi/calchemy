@@ -129,36 +129,91 @@ class Unit {
         }
 
         if (! loading) {
-            if (op == '~') {
-                // prefix multiplication
-                unit.interpretation = this.interpretation + rhs.interpretation;
-            } else if (op == '>') {
-                // unary +
-                unit.interpretation = "+" + rhs.interpretation;
-            } else if (op == '<') {
-                // unary -
-                unit.interpretation = "-" + rhs.interpretation;
-            } else if (op == '^' || op == ' ' || op == '*' || op == '+' || op == '-') {
-                unit.interpretation = "(" + this.interpretation + ")" + op + "(" + rhs.interpretation + ")";
-            } else if (op == "per" || op == '/') {
-                unit.interpretation = "(" + this.interpretation + ")" + " " + op + " " + "(" + rhs.interpretation + ")";
-            } else if (op == '@') {
-                // solve by dimensional analysis: l*r
-                unit.interpretation = "(" + this.interpretation + ")" + " * " + "(" + rhs.interpretation + ")";
-            } else if (op == '&') {
-                // solve by dimensional analysis: l/r
-                unit.interpretation = "(" + this.interpretation + ")" + " / " + "(" + rhs.interpretation + ")";
-            } else if (op == '#') {
-                // solve by dimensional analysis: r/l
-                unit.interpretation = + "(" + this.interpretation + ")" + "^-1 * " + "(" + rhs.interpretation + ")";
-            } else if (op == '!') {
-                // solve by dimensional analysis: 1/(lr)
-                unit.interpretation = "(" + this.interpretation + " * " + rhs.interpretation + ")" + "^-1";
-            } else if (op == '?') {
-                unit.interpretation = this.interpretation + " " + op + " " + rhs.interpretation;
-            } else {
-                assert(0);
+            var display = null;
+            var dividing = false;
+            var multiplying = false;
+            switch (op) {
+                case '~':
+                    display = "";
+                    break;
+                case '>':
+                    display = '+';
+                    break;
+                case '<':
+                    display = '-';
+                    break;
+                case '^':
+                    display = op;
+                    break;
+                case ' ':
+                    display = op;
+                    multiplying = true;
+                    break;
+                case '*':
+                    display = ' ' + op + ' ';
+                    multiplying = true;
+                    break;
+                case "per":
+                case '/':
+                    display = ' ' + op + ' ';
+                    dividing = true;
+                    break;
+                case '+':
+                case '-':
+                    display = ' ' + op + ' ';
+                    break;
+                case '@':
+                    display = " * ";
+                    multiplying = true;
+                    break;
+                case '&':
+                    display = " / ";
+                    dividing = true;
+                    break;
             }
+
+            if (this.multiplying == true && (multiplying || dividing)) {
+                // continue multiplication or a single division without parenthesis; we'll add them later
+                assert(display != null);
+                if ((rhs.multiplying && ! multiplying) || rhs.dividing) {
+                    // add the deferred parenthesis now
+                    rhs.interpretation = "(" + rhs.interpretation + ")";
+                }
+                unit.interpretation = this.interpretation + display + rhs.interpretation;
+            } else {
+                if (op == '?') {
+                    unit.interpretation = this.interpretation + " ? " + rhs.interpretation;
+                } else {
+                    var interpretation = this.interpretation;
+                    if (this.multiplying || this.dividing || op == '^') {
+                        // add the deferred or required parenthesis now
+                        interpretation = "(" + interpretation + ")";
+                    }
+                    if (rhs.multiplying || rhs.dividing) {
+                        // add the deferred parenthesis now
+                        rhs.interpretation = "(" + rhs.interpretation + ")";
+                    }
+                    if (display != null) {
+                        unit.interpretation = interpretation + display + rhs.interpretation;
+                        if (op == '+' || op == '-') {
+                            // add required parenthesis now
+                            unit.interpretation = "(" + unit.interpretation + ")";
+                        }
+                    } else if (op == '#') {
+                        // solve by dimensional analysis: r/l
+                        unit.interpretation = interpretation + "^-1 * " + rhs.interpretation;
+                    } else if (op == '!') {
+                        // solve by dimensional analysis: 1/(lr)
+                        unit.interpretation = "(" + interpretation + " * " + rhs.interpretation + ")^-1";
+                    } else {
+                        assert(0);
+                    }
+                }
+            }
+
+            assert(! (multiplying && dividing));
+            unit.multiplying = multiplying;
+            unit.dividing = dividing;
         }
 
         switch (op) {
@@ -760,7 +815,11 @@ function EvaluateTokens(tokens)
 // simplify an equation interpretation
 function Simplify(interpretation)
 {
-    interpretation = interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1");
+    var orig;
+    do {
+        orig = interpretation;
+        interpretation = interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1");
+    } while (interpretation != orig);
     // XXX -- alternate parens; remove redundant parens
     return interpretation;
 }
