@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.10e</p>
+v1.10f</p>
 </td>
 </tr>
 </table>
@@ -556,7 +556,8 @@ function ShowUnitsDetails(name)
         // append the dimension of the unit to the unit details
         var tokens = TokenizeLine(more[i]);
         var filter = EvaluateTokens(tokens);
-        html += " " + filter.Dimension(false);
+        // XXX -- hack for now to ignore interpretations
+        html += " " + filter.Dimension(false)[1];
     }
 
     // append a deletable chunk to the results list with the unit details
@@ -1246,6 +1247,13 @@ function TestReal()
                 document.getElementById("equation").value = sides[0];
                 Enter();
                 var output = SnoopAndDelete(lasttag);
+
+                // XXX -- hack for now to ignore interpretations
+                for (var j = output.length-1; j >= 0; j--) {
+                    if (output[j].match(/^[&]gt[;] /)) {
+                        output.splice(j, 1);
+                    }
+                }
                 
                 // if we have expected output...
                 if (sides.length == 2) {

@@ -5,16 +5,18 @@
 
 // regular expressions for string identification
 // XXX -- use typeof for value; anything for operator?
-const value_regexp_ch =     /[0-9.]/;
-const value_regexp =        /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_head =  /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_tail =   /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-const unit_regexp_ch =      /[_A-Za-z$%]/;
-const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
-const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
-const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const unit_regexp_all =    /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~|]/;
+const value_regexp_ch =       /[0-9.]/;
+const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)]/g;
+const unit_regexp_ch =        /[_A-Za-z$%]/;
+const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)]/g;
+const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
 const opens = "([{";
 const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
@@ -124,6 +126,39 @@ class Unit {
         }
         for (i = rhs.exponents.length; i < maxbaseunits; i++) {
             rhs.exponents[i] = 0;
+        }
+
+        if (! loading) {
+            if (op == '~') {
+                // prefix multiplication
+                unit.interpretation = this.interpretation + rhs.interpretation;
+            } else if (op == '>') {
+                // unary +
+                unit.interpretation = "+" + rhs.interpretation;
+            } else if (op == '<') {
+                // unary -
+                unit.interpretation = "-" + rhs.interpretation;
+            } else if (op == '^' || op == ' ' || op == '*' || op == '+' || op == '-') {
+                unit.interpretation = "(" + this.interpretation + ")" + op + "(" + rhs.interpretation + ")";
+            } else if (op == "per" || op == '/') {
+                unit.interpretation = "(" + this.interpretation + ")" + " " + op + " " + "(" + rhs.interpretation + ")";
+            } else if (op == '@') {
+                // solve by dimensional analysis: l*r
+                unit.interpretation = "(" + this.interpretation + ")" + " * " + "(" + rhs.interpretation + ")";
+            } else if (op == '&') {
+                // solve by dimensional analysis: l/r
+                unit.interpretation = "(" + this.interpretation + ")" + " / " + "(" + rhs.interpretation + ")";
+            } else if (op == '#') {
+                // solve by dimensional analysis: r/l
+                unit.interpretation = + "(" + this.interpretation + ")" + "^-1 * " + "(" + rhs.interpretation + ")";
+            } else if (op == '!') {
+                // solve by dimensional analysis: 1/(lr)
+                unit.interpretation = "(" + this.interpretation + " * " + rhs.interpretation + ")" + "^-1";
+            } else if (op == '?') {
+                unit.interpretation = this.interpretation + " " + op + " " + rhs.interpretation;
+            } else {
+                assert(0);
+            }
         }
 
         switch (op) {
@@ -240,10 +275,13 @@ class Unit {
     // format a unit as a dimension string
     Dimension(question)
     {
+        var strings = [];
+
         // look for single dimension matches, possibly inverted
         var i;
         var cont = false;
-        var string = "[";
+        var string = (question?"Dimensional Mismatch ":"") + "[";
+
         // for uninverted and then inverted...
         for (var invert = 0; invert < 2; invert++) {
             // report ^-1 if the number of inversions is odd
@@ -261,7 +299,7 @@ class Unit {
                         }
                         string += units[i].names[0] + (invert?"^-1":"");
                         cont = true;
-                    }
+                     }
                 }
             }
         }
@@ -270,7 +308,9 @@ class Unit {
         if (cont) {
             // return it
             string += "]";
-            return string;
+            strings.push("> " + Simplify(this.interpretation));
+            strings.push(string);
+            return strings;
         }
 
         // otherwise, we have to match individual base dimensions and powers
@@ -290,9 +330,12 @@ class Unit {
             }
         }
 
-        // return the individual base dimensions and powers
         string += "]";
-        return string;
+
+        // return the individual base dimensions and powers
+        strings.push("> " + Simplify(this.interpretation));
+        strings.push(string);
+        return strings;
     }
 
     // format a unit as an SI result string
@@ -313,6 +356,7 @@ class Unit {
                         // format the SI result
                         var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
                         string += (invert?"(":"") + units[i].definition.replace(/.*= */, "") + (invert?")^-1":"");
+                        strings.push("> " + Simplify(this.interpretation));
                         strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
                     }
                 }
@@ -367,7 +411,9 @@ class Unit {
 
         // return the overall coefficient and individual base dimensions and powers
         var string1 = ((coefficient).toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision()
-        return ["= " + string1 + " " + string2];  // XXX -- seems weird these are passed up as mismatch string with "= "...
+        strings.push("> " + Simplify(this.interpretation));
+        strings.push("= " + string1 + " " + string2);  // XXX -- seems weird these are passed up as mismatch string with "= "...
+        return strings;
     }
 }
 
@@ -384,6 +430,7 @@ function DefineBaseUnit(name, pluralizable)
     bases[nextbaseunit] = unit;
     nextbaseunit++;
     // make the unit (mostly) immutable
+    unit.interpretation = name;
     Object.freeze(unit);
     units.push(unit);
     // return the unit
@@ -427,6 +474,7 @@ function LookupPrefixedUnit(name)
     for (var ii = 0; ii < units.length; ii++) {
         // if this is a prefix...
         if (units[ii].type == "PREFIX") {
+            // N.B. we use index 1 for PREFIX solo
             var storage = units[ii].names[1].slice(2) == "bi";  // storage prefix
             // for all prefix names...
             for (var jj = 0; jj < units[ii].names.length; jj++) {
@@ -479,6 +527,7 @@ function Value(token)
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;
     }
+    unit.interpretation = token;
     return unit;
 }
 
@@ -583,23 +632,25 @@ function EvaluateTokens(tokens)
                 // unit division
                 result = CleanAndPush(stack, result, token, null);
             } else {
+                var unit;
                 if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
                     // power, trig, log, etc. followed by parenthetical expression
                     j = MatchParen(tokens, i+1);
                     subtokens = tokens.slice(i+2, j);
-                    result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
+                    unit = EvaluateTokens(subtokens);
                     i = j;
                 } else if (tokens.length > i+3 && tokens[i+2] == '~') {
                     // power, trig, log, etc. followed by prefixed unit
-                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1], '~', tokens[i+3]]));
+                    unit = EvaluateTokens([tokens[i+1], '~', tokens[i+3]]);
                     i = i+3;
                 } else if (tokens.length > i+1) {
                     // power, trig, log, etc. followed by unit or number
-                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
+                    unit = EvaluateTokens([tokens[i+1]]);
                     i = i+1;
                 } else {
                     throw "missing argument " + tokens[i];
                 }
+                result = CleanAndPush(stack, result, ' ', unit);
                 if (token == "square") {
                     result = CleanAndPush(stack, result, '^', Value("2"));
                 } else if (token == "cubic") {
@@ -607,6 +658,7 @@ function EvaluateTokens(tokens)
                 } else if (token == "sqrt") {
                     result = CleanAndPush(stack, result, '^', Value("0.5"));
                 } else {
+                    var interpretation = token + "(" + result.interpretation + ")";
                     for (j = 0; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
                             throw "non-dimensionless exponent";
@@ -635,6 +687,7 @@ function EvaluateTokens(tokens)
                     } else {
                         throw "bad function " + token;
                     }
+                    result.interpretation = interpretation;
                 }
             }
 
@@ -702,6 +755,14 @@ function EvaluateTokens(tokens)
     assert(! stack.length);
 
     return result;
+}
+
+// simplify an equation interpretation
+function Simplify(interpretation)
+{
+    interpretation = interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1");
+    // XXX -- alternate parens; remove redundant parens
+    return interpretation;
 }
 
 // *** expression alternation *********************************************************************
@@ -797,6 +858,7 @@ function LookupUnits(name, prefixable, search)
             unit = units[ii];
             // if this is a prefix...
             if (unit.type == "PREFIX") {
+                // N.B. we use index 1 for PREFIX solo
                 var storage = unit.names[1].slice(2) == "bi";  // storage prefix
                 // for all prefix names...
                 for (var jj = 0; jj < unit.names.length; jj++) {
@@ -930,7 +992,7 @@ function AlternateTokens(tokens, n)
             // if "expression ? unit" was entered...
             if (question) {
                 // the user requested a unit and we mismatched; show what was missing as "1/dimension"
-                strings = ["Dimensional Mismatch " + result.Dimension(question)];
+                strings = result.Dimension(question);
 
             // otherwise, if "expression ?" was entered...
             } else if (si) {
@@ -940,7 +1002,7 @@ function AlternateTokens(tokens, n)
             // "expression" was entered...
             } else {
                 // the user requested a dimension; show what was evaluated as "dimension"
-                strings = [result.Dimension(question)];
+                strings = result.Dimension(question);
             }
 
             // record the result as a mismatch
@@ -1210,6 +1272,8 @@ function ParseTokens(tokens, line)
                     if (results[j].Compatible(filter, false)) {
                         // define a new unit!
                         unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
+                        // N.B. we prefer index 1 for name
+                        unit.interpretation = names.length > 1 ? names[1] : names[0];
                         Object.freeze(unit);
                         units.push(unit);
                         defines = true;
@@ -1340,6 +1404,7 @@ function RunLine(line)
         for (var j = 0; j < results.length; j++) {
             var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
             if (! output.includes(string)) {
+                output.push("> " + Simplify(results[j].interpretation));
                 output.push(string);
             }
         }
