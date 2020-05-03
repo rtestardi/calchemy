@@ -297,7 +297,7 @@ Common,Torque:ftlb*=1 ft lbf
 
 #Power
 Common:va,VA =1 W
-Common:hp,HP,horsepower=550 ft lbf/s
+Common:hp,horsepower,HP=550 ft lbf/s
 Common:ton_refrig=200 Btu/min #cooling equipment capacity
 
 #Flow
