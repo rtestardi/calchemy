@@ -135,7 +135,8 @@ class Unit {
             var adding = false;
             switch (op) {
                 case '~':
-                    display = "";
+                    display = "~";
+                    //multiplying = true;
                     break;
                 case '>':
                     display = '+';
