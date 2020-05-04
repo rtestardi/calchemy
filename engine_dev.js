@@ -215,9 +215,10 @@ class Unit {
                 }
             }
 
+            var orig;
             do {
-                var orig = unit.interpretation;
-                unit.interpretation = unit.interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1")
+                orig = unit.interpretation;
+                unit.interpretation = unit.interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1");
             } while (orig != unit.interpretation);
 
             assert(! (multiplying && dividing));
@@ -1217,7 +1218,7 @@ function ParseTokens(tokens, line)
                 document.getElementById("equation").value = tokens[2];
                 Details();
             } else if (tokens[1] == "throw") {
-                throw "unknown test throw"
+                throw "unknown test throw";
             } else {
                 // remember this entire database test for later
                 database_tests += line.replace(/^TEST */, "") + '\n';

@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.10i</p>
+v1.11</p>
 </td>
 </tr>
 </table>
@@ -315,7 +315,7 @@ function Body()
             number = units.length - number;
             document.getElementById("status").innerHTML += what + " loaded " + number + " units";
             what = "custom";
-            var number = units.length;
+            number = units.length;
             document.getElementById("status").innerHTML += "<br>loading custom ... ";
             LoadDatabase(custom);
         }
@@ -745,7 +745,7 @@ function Paste()
         // for each equation line in the clipboard...
         var lines = text.split(/[\r\n]+/);
         for (var i = 0; i < lines.length; i++) {
-            if (! lines[i].match(/^[[=]/) && ! lines[i].match(/^(un)?defined/) && ! lines[i].match(/^Caution/) && ! lines[i].match(/^Delete/) && ! lines[i].match(/^Mismatch/)) {
+            if (! lines[i].match(/^[[>=]/) && ! lines[i].match(/^(un)?defined/) && ! lines[i].match(/^Caution/) && ! lines[i].match(/^Delete/) && ! lines[i].match(/^Mismatch/)) {
                 // evaluate the equation line
                 document.getElementById("equation").value = lines[i];
                 // if the evaluation failed...
@@ -1350,11 +1350,12 @@ var help =`
 </ul>
 </li>
 <li><a href=#examples>Examples</a></li>
-<li><a href=#database>Database Notes</a></li>
+<li><a href=#database>Database Notes</a>
 <ul>
     <li><a href=#custom>Custom Database</a></li>
     <li><a href=#runtime>Runtime Database</a></li>
 </ul>
+</li>
 <li><a href=#cautions>Cautions</a></li>
 <li><a href=#info>For More Information</a></li>
 </ul>
@@ -1385,13 +1386,16 @@ Calchemy would respond:
 <p><a href="javascript:Hyperlink('2+3*5')">2+3*5</a>
 <p>Calchemy would respond with the algebraically correct answer:
 <p>= 17
+
 <h2 id='advanced'>Advanced Features</h2>
 <p>You could also enter the original equation in the following less explicit form:
 <p><a href="javascript:Hyperlink('2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower')">2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower</a>
 <p>Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct,
 and then express the final result in horsepower.
 Calchemy would again respond:
-<p>= 7.27273 horsepower
+<p>&gt; 2000 poundf * 10 story * (12 foot / story) / (1 minute) ? horsepower
+<br>= 7.27273 horsepower
+<p>Notice above that Calchemy will always show you how it is interpreting your equations, with a line that begins with "&gt;".
 <p>This example illustrates the following features:
 <h3 id='solve'>Solve By Dimensional Analysis</h3>
 <p>The "<b>;</b>" operator tells Calchemy to use dimensional analysis to determine whether its operands should be in the numerator or the denominator of the equation.
