@@ -132,15 +132,18 @@ class Unit {
             var display = null;
             var dividing = false;
             var multiplying = false;
+            var adding = false;
             switch (op) {
                 case '~':
                     display = "";
                     break;
                 case '>':
                     display = '+';
+                    adding = true;
                     break;
                 case '<':
                     display = '-';
+                    adding = true;
                     break;
                 case '^':
                     display = op;
@@ -161,6 +164,7 @@ class Unit {
                 case '+':
                 case '-':
                     display = ' ' + op + ' ';
+                    adding = true;
                     break;
                 case '@':
                     display = " * ";
@@ -195,7 +199,7 @@ class Unit {
                     }
                     if (display != null) {
                         unit.interpretation = interpretation + display + rhs.interpretation;
-                        if (op == '+' || op == '-') {
+                        if (adding) {
                             // add required parenthesis now
                             unit.interpretation = "(" + unit.interpretation + ")";
                         }
@@ -210,6 +214,11 @@ class Unit {
                     }
                 }
             }
+
+            do {
+                var orig = unit.interpretation;
+                unit.interpretation = unit.interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1")
+            } while (orig != unit.interpretation);
 
             assert(! (multiplying && dividing));
             unit.multiplying = multiplying;
@@ -411,7 +420,7 @@ class Unit {
                         // format the SI result
                         var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
                         string += (invert?"(":"") + units[i].definition.replace(/.*= */, "") + (invert?")^-1":"");
-                        strings.push("> " + Simplify(this.interpretation));
+                        strings.push("> " + Simplify(this.interpretation) + " ?");
                         strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
                     }
                 }
@@ -466,7 +475,7 @@ class Unit {
 
         // return the overall coefficient and individual base dimensions and powers
         var string1 = ((coefficient).toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision()
-        strings.push("> " + Simplify(this.interpretation));
+        strings.push("> " + Simplify(this.interpretation) + " ?");
         strings.push("= " + string1 + " " + string2);  // XXX -- seems weird these are passed up as mismatch string with "= "...
         return strings;
     }
@@ -713,7 +722,7 @@ function EvaluateTokens(tokens)
                 } else if (token == "sqrt") {
                     result = CleanAndPush(stack, result, '^', Value("0.5"));
                 } else {
-                    var interpretation = token + "(" + result.interpretation + ")";
+                    var interpretation = token + "{" + result.interpretation + "}";
                     for (j = 0; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
                             throw "non-dimensionless exponent";
@@ -815,13 +824,8 @@ function EvaluateTokens(tokens)
 // simplify an equation interpretation
 function Simplify(interpretation)
 {
-    var orig;
-    do {
-        orig = interpretation;
-        interpretation = interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1");
-    } while (interpretation != orig);
     // XXX -- alternate parens; remove redundant parens
-    return interpretation;
+    return interpretation.replace(/[{]/g, "(").replace(/[}]/g, ")");
 }
 
 // *** expression alternation *********************************************************************
