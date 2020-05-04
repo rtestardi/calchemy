@@ -136,7 +136,7 @@ class Unit {
             switch (op) {
                 case '~':
                     display = "~";
-                    //multiplying = true;
+                    multiplying = true;
                     break;
                 case '>':
                     display = '+';
@@ -178,7 +178,11 @@ class Unit {
             }
 
             // format interpretations
-            if (this.multiplying == true && (multiplying || dividing)) {
+            if ((this.multiplying == true || rhs.multiplying == true) && (multiplying || dividing)) {
+                if (this.dividing) {
+                    // add the deferred parenthesis for the lhs now, if it differs from the current operation
+                    this.interpretation = "(" + this.interpretation + ")";
+                }
                 if ((rhs.multiplying && ! multiplying) || rhs.dividing) {
                     // add the deferred parenthesis for the rhs now, if it differs from the current operation
                     rhs.interpretation = "(" + rhs.interpretation + ")";
