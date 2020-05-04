@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.11b</p>
+v1.11c</p>
 </td>
 </tr>
 </table>
@@ -1146,6 +1146,8 @@ var tests =`
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 btu / hour) / ((80 % * 14 megajoule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
     2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
     --3 | > (0-(0-3)), = 3
+    cal per gm deltaK | > calorie per (gramm deltak), [Specific_heat_m]
+    1/cal per gm deltaK | > 1 / (calorie per (gramm deltak)), [Specific_heat_m^-1]
 
     # unit help
     TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
