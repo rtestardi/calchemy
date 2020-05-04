@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.11e</p>
+v1.11f</p>
 </td>
 </tr>
 </table>
@@ -3318,6 +3318,7 @@ var tests =`
     --3 | > (0-(0-3)), = 3
     cal per gm deltaK | > calorie per (gramm deltak), [Specific_heat_m]
     1/cal per gm deltaK | > 1 / (calorie per (gramm deltak)), [Specific_heat_m^-1]
+    (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
 
     # unit help
     TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
