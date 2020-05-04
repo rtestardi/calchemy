@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.11</p>
+v1.11a</p>
 </td>
 </tr>
 </table>
@@ -1139,6 +1139,14 @@ var tests =`
     kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
 
+    # interpretations
+    1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
+    1/2 feet * 2 meters ? | > (1 / (2 foot)) * (2 meter), = 3.28084
+    1/sqrt(23mH * 10uF)? | > 1 / (23 millihenry * 10 microfarad)^0.5 ?, = 331.861 hertz, = 2085.14 radian per second
+    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 btu / hour) / ((80 % * 14 megajoule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
+    2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
+    --3 | > (0-(0-3)), = 3
+
     # unit help
     TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
     TEST details ft | === unit details ft ===,Common:ft,foot,feet=12 in [Length or Radius or Height]
@@ -1250,41 +1258,48 @@ function TestReal()
                 Enter();
                 var output = SnoopAndDelete(lasttag);
 
-                // search for interpretations in the test output
-                for (var j = output.length-1; j >= 0; j--) {
-                    if (output[j].match(/[&]gt[;]/)) {
-                        // get the interpretation
-                        var interpretation = output[j].replace(/[&]gt[;]/, ">");
+                for (var j = 0; j < output.length; j++) {
+                    output[j] = output[j].replace(/[&]gt[;]/, ">");
+                }
 
-                        // remove the interpretation
-                        output.splice(j, 1);
+                // if expected results do not include interpretations...
+                if (sides.length == 2 && ! sides[1].match(/[>]/)) {
+                    // search for interpretations in the test output
+                    for (j = output.length-1; j >= 0; j--) {
+                        if (output[j].match(/[>]/)) {
+                            // get the interpretation
+                            var interpretation = output[j];
 
-                        // run the re-interpretation
-                        var results = RunLine(interpretation.replace(/[>]/, ""));
-                        if (! results.success) {
-                            html += "<br>test failed: " + line + " interpretation:" + interpretation + "error:" + results.output.toString();
-                            break;
-                        }
+                            // remove the interpretation
+                            output.splice(j, 1);
 
-                        if (results.output.length == 2) {
-                            // XXX -- handle length != 2???
-                            var lhs = results.output[1].trim();
-                            if (lhs.match(/^= /)) {
-                                lhs = lhs.replace(/^=  */, "").replace(/ .*/, "");
-                            }
-                            var rhs = output[j].trim();
-                            if (rhs.match(/^= /)) {
-                                rhs = rhs.replace(/^=  */, "").replace(/ .*/, "");
-                            }
-                            if (lhs != rhs) {
-                                html += "<br>test failed: " + line + " interpretation:" + interpretation + "miscompare:" + results.output.toString();
+                            // run the re-interpretation
+                            var results = RunLine(interpretation.replace(/[>]/, ""));
+                            if (! results.success) {
+                                html += "<br>test failed: " + line + " interpretation:" + interpretation + "error:" + results.output.toString();
                                 break;
+                            }
+
+                            if (results.output.length == 2) {
+                                // XXX -- handle length != 2???
+                                var lhs = results.output[1].trim();
+                                if (lhs.match(/^= /)) {
+                                    lhs = lhs.replace(/^=  */, "").replace(/ .*/, "");
+                                }
+                                var rhs = output[j].trim();
+                                if (rhs.match(/^= /)) {
+                                    rhs = rhs.replace(/^=  */, "").replace(/ .*/, "");
+                                }
+                                if (lhs != rhs) {
+                                    html += "<br>test failed: " + line + " interpretation:" + interpretation + "miscompare:" + results.output.toString();
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                if (j >= 0) {
-                    continue;
+                    if (j >= 0) {
+                        continue;
+                    }
                 }
                 
                 // if we have expected output...
