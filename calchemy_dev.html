@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.10h</p>
+v1.10i</p>
 </td>
 </tr>
 </table>
@@ -1250,11 +1250,41 @@ function TestReal()
                 Enter();
                 var output = SnoopAndDelete(lasttag);
 
-                // XXX -- hack for now to ignore interpretations
+                // search for interpretations in the test output
                 for (var j = output.length-1; j >= 0; j--) {
                     if (output[j].match(/[&]gt[;]/)) {
+                        // get the interpretation
+                        var interpretation = output[j].replace(/[&]gt[;]/, ">");
+
+                        // remove the interpretation
                         output.splice(j, 1);
+
+                        // run the re-interpretation
+                        var results = RunLine(interpretation.replace(/[>]/, ""));
+                        if (! results.success) {
+                            html += "<br>test failed: " + line + " interpretation:" + interpretation + "error:" + results.output.toString();
+                            break;
+                        }
+
+                        if (results.output.length == 2) {
+                            // XXX -- handle length != 2???
+                            var lhs = results.output[1].trim();
+                            if (lhs.match(/^= /)) {
+                                lhs = lhs.replace(/^=  */, "").replace(/ .*/, "");
+                            }
+                            var rhs = output[j].trim();
+                            if (rhs.match(/^= /)) {
+                                rhs = rhs.replace(/^=  */, "").replace(/ .*/, "");
+                            }
+                            if (lhs != rhs) {
+                                html += "<br>test failed: " + line + " interpretation:" + interpretation + "miscompare:" + results.output.toString();
+                                break;
+                            }
+                        }
                     }
+                }
+                if (j >= 0) {
+                    continue;
                 }
                 
                 // if we have expected output...
