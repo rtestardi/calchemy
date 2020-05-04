@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.10e</p>
+v1.11</p>
 </td>
 </tr>
 </table>
@@ -442,7 +442,7 @@ Common,Torque:ftlb*=1 ft lbf
 
 #Power
 Common:va,VA =1 W
-Common:hp,HP,horsepower=550 ft lbf/s
+Common:hp,horsepower,HP=550 ft lbf/s
 Common:ton_refrig=200 Btu/min #cooling equipment capacity
 
 #Flow
@@ -817,16 +817,18 @@ TEST e_nicd_9v? | = 2419 joule, = 2419 newton meter
 
 // regular expressions for string identification
 // XXX -- use typeof for value; anything for operator?
-const value_regexp_ch =     /[0-9.]/;
-const value_regexp =        /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_head =  /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_tail =   /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-const unit_regexp_ch =      /[_A-Za-z$%]/;
-const unit_regexp =         /[_A-Za-z$%][_A-Za-z0-9$%]*/;
-const unit_regexp_head =   /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
-const unit_regexp_tail =    /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const unit_regexp_all =    /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const operator_regexp_ch =  /[-+*/^;?()\[\]{},:=~|]/;
+const value_regexp_ch =       /[0-9.]/;
+const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)]/g;
+const unit_regexp_ch =        /[_A-Za-z$%]/;
+const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)]/g;
+const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
 const opens = "([{";
 const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
@@ -936,6 +938,104 @@ class Unit {
         }
         for (i = rhs.exponents.length; i < maxbaseunits; i++) {
             rhs.exponents[i] = 0;
+        }
+
+        if (! loading) {
+            var display = null;
+            var dividing = false;
+            var multiplying = false;
+            var adding = false;
+            switch (op) {
+                case '~':
+                    display = "";
+                    break;
+                case '>':
+                    display = '+';
+                    adding = true;
+                    break;
+                case '<':
+                    display = '-';
+                    adding = true;
+                    break;
+                case '^':
+                    display = op;
+                    break;
+                case ' ':
+                    display = op;
+                    multiplying = true;
+                    break;
+                case '*':
+                    display = ' ' + op + ' ';
+                    multiplying = true;
+                    break;
+                case "per":
+                case '/':
+                    display = ' ' + op + ' ';
+                    dividing = true;
+                    break;
+                case '+':
+                case '-':
+                    display = ' ' + op + ' ';
+                    adding = true;
+                    break;
+                case '@':
+                    display = " * ";
+                    multiplying = true;
+                    break;
+                case '&':
+                    display = " / ";
+                    dividing = true;
+                    break;
+            }
+
+            if (this.multiplying == true && (multiplying || dividing)) {
+                // continue multiplication or a single division without parenthesis; we'll add them later
+                assert(display != null);
+                if ((rhs.multiplying && ! multiplying) || rhs.dividing) {
+                    // add the deferred parenthesis now
+                    rhs.interpretation = "(" + rhs.interpretation + ")";
+                }
+                unit.interpretation = this.interpretation + display + rhs.interpretation;
+            } else {
+                if (op == '?') {
+                    unit.interpretation = this.interpretation + " ? " + rhs.interpretation;
+                } else {
+                    var interpretation = this.interpretation;
+                    if (this.multiplying || this.dividing || op == '^') {
+                        // add the deferred or required parenthesis now
+                        interpretation = "(" + interpretation + ")";
+                    }
+                    if (rhs.multiplying || rhs.dividing) {
+                        // add the deferred parenthesis now
+                        rhs.interpretation = "(" + rhs.interpretation + ")";
+                    }
+                    if (display != null) {
+                        unit.interpretation = interpretation + display + rhs.interpretation;
+                        if (adding) {
+                            // add required parenthesis now
+                            unit.interpretation = "(" + unit.interpretation + ")";
+                        }
+                    } else if (op == '#') {
+                        // solve by dimensional analysis: r/l
+                        unit.interpretation = interpretation + "^-1 * " + rhs.interpretation;
+                    } else if (op == '!') {
+                        // solve by dimensional analysis: 1/(lr)
+                        unit.interpretation = "(" + interpretation + " * " + rhs.interpretation + ")^-1";
+                    } else {
+                        assert(0);
+                    }
+                }
+            }
+
+            var orig;
+            do {
+                orig = unit.interpretation;
+                unit.interpretation = unit.interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1");
+            } while (orig != unit.interpretation);
+
+            assert(! (multiplying && dividing));
+            unit.multiplying = multiplying;
+            unit.dividing = dividing;
         }
 
         switch (op) {
@@ -1052,10 +1152,13 @@ class Unit {
     // format a unit as a dimension string
     Dimension(question)
     {
+        var strings = [];
+
         // look for single dimension matches, possibly inverted
         var i;
         var cont = false;
-        var string = "[";
+        var string = (question?"Dimensional Mismatch ":"") + "[";
+
         // for uninverted and then inverted...
         for (var invert = 0; invert < 2; invert++) {
             // report ^-1 if the number of inversions is odd
@@ -1073,7 +1176,7 @@ class Unit {
                         }
                         string += units[i].names[0] + (invert?"^-1":"");
                         cont = true;
-                    }
+                     }
                 }
             }
         }
@@ -1082,7 +1185,9 @@ class Unit {
         if (cont) {
             // return it
             string += "]";
-            return string;
+            strings.push("> " + Simplify(this.interpretation));
+            strings.push(string);
+            return strings;
         }
 
         // otherwise, we have to match individual base dimensions and powers
@@ -1102,9 +1207,12 @@ class Unit {
             }
         }
 
-        // return the individual base dimensions and powers
         string += "]";
-        return string;
+
+        // return the individual base dimensions and powers
+        strings.push("> " + Simplify(this.interpretation));
+        strings.push(string);
+        return strings;
     }
 
     // format a unit as an SI result string
@@ -1125,6 +1233,7 @@ class Unit {
                         // format the SI result
                         var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
                         string += (invert?"(":"") + units[i].definition.replace(/.*= */, "") + (invert?")^-1":"");
+                        strings.push("> " + Simplify(this.interpretation) + " ?");
                         strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
                     }
                 }
@@ -1179,7 +1288,9 @@ class Unit {
 
         // return the overall coefficient and individual base dimensions and powers
         var string1 = ((coefficient).toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision()
-        return ["= " + string1 + " " + string2];  // XXX -- seems weird these are passed up as mismatch string with "= "...
+        strings.push("> " + Simplify(this.interpretation) + " ?");
+        strings.push("= " + string1 + " " + string2);  // XXX -- seems weird these are passed up as mismatch string with "= "...
+        return strings;
     }
 }
 
@@ -1196,6 +1307,7 @@ function DefineBaseUnit(name, pluralizable)
     bases[nextbaseunit] = unit;
     nextbaseunit++;
     // make the unit (mostly) immutable
+    unit.interpretation = name;
     Object.freeze(unit);
     units.push(unit);
     // return the unit
@@ -1239,6 +1351,7 @@ function LookupPrefixedUnit(name)
     for (var ii = 0; ii < units.length; ii++) {
         // if this is a prefix...
         if (units[ii].type == "PREFIX") {
+            // N.B. we use index 1 for PREFIX solo
             var storage = units[ii].names[1].slice(2) == "bi";  // storage prefix
             // for all prefix names...
             for (var jj = 0; jj < units[ii].names.length; jj++) {
@@ -1291,6 +1404,7 @@ function Value(token)
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;
     }
+    unit.interpretation = token;
     return unit;
 }
 
@@ -1395,23 +1509,25 @@ function EvaluateTokens(tokens)
                 // unit division
                 result = CleanAndPush(stack, result, token, null);
             } else {
+                var unit;
                 if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
                     // power, trig, log, etc. followed by parenthetical expression
                     j = MatchParen(tokens, i+1);
                     subtokens = tokens.slice(i+2, j);
-                    result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
+                    unit = EvaluateTokens(subtokens);
                     i = j;
                 } else if (tokens.length > i+3 && tokens[i+2] == '~') {
                     // power, trig, log, etc. followed by prefixed unit
-                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1], '~', tokens[i+3]]));
+                    unit = EvaluateTokens([tokens[i+1], '~', tokens[i+3]]);
                     i = i+3;
                 } else if (tokens.length > i+1) {
                     // power, trig, log, etc. followed by unit or number
-                    result = CleanAndPush(stack, result, ' ', EvaluateTokens([tokens[i+1]]));
+                    unit = EvaluateTokens([tokens[i+1]]);
                     i = i+1;
                 } else {
                     throw "missing argument " + tokens[i];
                 }
+                result = CleanAndPush(stack, result, ' ', unit);
                 if (token == "square") {
                     result = CleanAndPush(stack, result, '^', Value("2"));
                 } else if (token == "cubic") {
@@ -1419,6 +1535,7 @@ function EvaluateTokens(tokens)
                 } else if (token == "sqrt") {
                     result = CleanAndPush(stack, result, '^', Value("0.5"));
                 } else {
+                    var interpretation = token + "{" + result.interpretation + "}";
                     for (j = 0; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
                             throw "non-dimensionless exponent";
@@ -1447,6 +1564,7 @@ function EvaluateTokens(tokens)
                     } else {
                         throw "bad function " + token;
                     }
+                    result.interpretation = interpretation;
                 }
             }
 
@@ -1514,6 +1632,13 @@ function EvaluateTokens(tokens)
     assert(! stack.length);
 
     return result;
+}
+
+// simplify an equation interpretation
+function Simplify(interpretation)
+{
+    // XXX -- alternate parens; remove redundant parens
+    return interpretation.replace(/[{]/g, "(").replace(/[}]/g, ")");
 }
 
 // *** expression alternation *********************************************************************
@@ -1609,6 +1734,7 @@ function LookupUnits(name, prefixable, search)
             unit = units[ii];
             // if this is a prefix...
             if (unit.type == "PREFIX") {
+                // N.B. we use index 1 for PREFIX solo
                 var storage = unit.names[1].slice(2) == "bi";  // storage prefix
                 // for all prefix names...
                 for (var jj = 0; jj < unit.names.length; jj++) {
@@ -1742,7 +1868,7 @@ function AlternateTokens(tokens, n)
             // if "expression ? unit" was entered...
             if (question) {
                 // the user requested a unit and we mismatched; show what was missing as "1/dimension"
-                strings = ["Dimensional Mismatch " + result.Dimension(question)];
+                strings = result.Dimension(question);
 
             // otherwise, if "expression ?" was entered...
             } else if (si) {
@@ -1752,7 +1878,7 @@ function AlternateTokens(tokens, n)
             // "expression" was entered...
             } else {
                 // the user requested a dimension; show what was evaluated as "dimension"
-                strings = [result.Dimension(question)];
+                strings = result.Dimension(question);
             }
 
             // record the result as a mismatch
@@ -1904,7 +2030,7 @@ function ParseTokens(tokens, line)
                 document.getElementById("equation").value = tokens[2];
                 Details();
             } else if (tokens[1] == "throw") {
-                throw "unknown test throw"
+                throw "unknown test throw";
             } else {
                 // remember this entire database test for later
                 database_tests += line.replace(/^TEST */, "") + '\n';
@@ -2022,6 +2148,8 @@ function ParseTokens(tokens, line)
                     if (results[j].Compatible(filter, false)) {
                         // define a new unit!
                         unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
+                        // N.B. we prefer index 1 for name
+                        unit.interpretation = names.length > 1 ? names[1] : names[0];
                         Object.freeze(unit);
                         units.push(unit);
                         defines = true;
@@ -2152,6 +2280,7 @@ function RunLine(line)
         for (var j = 0; j < results.length; j++) {
             var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
             if (! output.includes(string)) {
+                output.push("> " + Simplify(results[j].interpretation));
                 output.push(string);
             }
         }
@@ -2346,7 +2475,7 @@ function Body()
             number = units.length - number;
             document.getElementById("status").innerHTML += what + " loaded " + number + " units";
             what = "custom";
-            var number = units.length;
+            number = units.length;
             document.getElementById("status").innerHTML += "<br>loading custom ... ";
             LoadDatabase(custom);
         }
@@ -2442,6 +2571,8 @@ function Enter()
             for (var i = 0; i < output.length; i++) {
                 if (output[i].match(/^= /)) {
                     html += "<br>" + History(output[i]);
+                } else if (output[i].match(/^[>] /)) {
+                    html += "<br><i>" + output[i] + "</i>";
                 } else {
                     html += "<br>" + output[i];
                 }
@@ -2587,7 +2718,8 @@ function ShowUnitsDetails(name)
         // append the dimension of the unit to the unit details
         var tokens = TokenizeLine(more[i]);
         var filter = EvaluateTokens(tokens);
-        html += " " + filter.Dimension(false);
+        // XXX -- hack for now to ignore interpretations
+        html += " " + filter.Dimension(false)[1];
     }
 
     // append a deletable chunk to the results list with the unit details
@@ -2773,7 +2905,7 @@ function Paste()
         // for each equation line in the clipboard...
         var lines = text.split(/[\r\n]+/);
         for (var i = 0; i < lines.length; i++) {
-            if (! lines[i].match(/^[[=]/) && ! lines[i].match(/^(un)?defined/) && ! lines[i].match(/^Caution/) && ! lines[i].match(/^Delete/) && ! lines[i].match(/^Mismatch/)) {
+            if (! lines[i].match(/^[[>=]/) && ! lines[i].match(/^(un)?defined/) && ! lines[i].match(/^Caution/) && ! lines[i].match(/^Delete/) && ! lines[i].match(/^Mismatch/)) {
                 // evaluate the equation line
                 document.getElementById("equation").value = lines[i];
                 // if the evaluation failed...
@@ -3277,6 +3409,43 @@ function TestReal()
                 document.getElementById("equation").value = sides[0];
                 Enter();
                 var output = SnoopAndDelete(lasttag);
+
+                // search for interpretations in the test output
+                for (var j = output.length-1; j >= 0; j--) {
+                    if (output[j].match(/[&]gt[;]/)) {
+                        // get the interpretation
+                        var interpretation = output[j].replace(/[&]gt[;]/, ">");
+
+                        // remove the interpretation
+                        output.splice(j, 1);
+
+                        // run the re-interpretation
+                        var results = RunLine(interpretation.replace(/[>]/, ""));
+                        if (! results.success) {
+                            html += "<br>test failed: " + line + " interpretation:" + interpretation + "error:" + results.output.toString();
+                            break;
+                        }
+
+                        if (results.output.length == 2) {
+                            // XXX -- handle length != 2???
+                            var lhs = results.output[1].trim();
+                            if (lhs.match(/^= /)) {
+                                lhs = lhs.replace(/^=  */, "").replace(/ .*/, "");
+                            }
+                            var rhs = output[j].trim();
+                            if (rhs.match(/^= /)) {
+                                rhs = rhs.replace(/^=  */, "").replace(/ .*/, "");
+                            }
+                            if (lhs != rhs) {
+                                html += "<br>test failed: " + line + " interpretation:" + interpretation + "miscompare:" + results.output.toString();
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (j >= 0) {
+                    continue;
+                }
                 
                 // if we have expected output...
                 if (sides.length == 2) {
@@ -3341,11 +3510,12 @@ var help =`
 </ul>
 </li>
 <li><a href=#examples>Examples</a></li>
-<li><a href=#database>Database Notes</a></li>
+<li><a href=#database>Database Notes</a>
 <ul>
     <li><a href=#custom>Custom Database</a></li>
     <li><a href=#runtime>Runtime Database</a></li>
 </ul>
+</li>
 <li><a href=#cautions>Cautions</a></li>
 <li><a href=#info>For More Information</a></li>
 </ul>
@@ -3376,13 +3546,16 @@ Calchemy would respond:
 <p><a href="javascript:Hyperlink('2+3*5')">2+3*5</a>
 <p>Calchemy would respond with the algebraically correct answer:
 <p>= 17
+
 <h2 id='advanced'>Advanced Features</h2>
 <p>You could also enter the original equation in the following less explicit form:
 <p><a href="javascript:Hyperlink('2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower')">2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower</a>
 <p>Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct,
 and then express the final result in horsepower.
 Calchemy would again respond:
-<p>= 7.27273 horsepower
+<p>&gt; 2000 poundf * 10 story * (12 foot / story) / (1 minute) ? horsepower
+<br>= 7.27273 horsepower
+<p>Notice above that Calchemy will always show you how it is interpreting your equations, with a line that begins with "&gt;".
 <p>This example illustrates the following features:
 <h3 id='solve'>Solve By Dimensional Analysis</h3>
 <p>The "<b>;</b>" operator tells Calchemy to use dimensional analysis to determine whether its operands should be in the numerator or the denominator of the equation.
