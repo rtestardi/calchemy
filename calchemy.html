@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.11j</p>
+v1.11k</p>
 </td>
 </tr>
 </table>
@@ -2163,8 +2163,12 @@ function ParseTokens(tokens, line)
                             // N.B. we use index 1 for PREFIX solo
                             unit.interpretation = names[1];
                         } else {
-                            // XXX -- for now we use the longer of names[0, 1, 2], with a preference for names[1] if they are equal and don't only differ by case
-                            if (unit.names.length > 1 && unit.names[1].length >= unit.names[0].length && unit.names[1].toLowerCase() != unit.names[0].toLowerCase()) {
+                            // XXX -- for now we use the longer of names[0, 1, 2], with a preference for names[1] if names[0] does not have upper case
+                            if (unit.names.length > 1 && unit.names[1].length == unit.names[0].length) {
+                                if (! unit.names[0].match(/[A-Z]/)) {
+                                    unit.interpretation = names[1];
+                                }
+                            } else if (unit.names.length > 1 && unit.names[1].length > unit.names[0].length) {
                                 unit.interpretation = names[1];
                                 if (unit.names.length > 2 && unit.names[2].length > unit.names[1].length) {
                                     unit.interpretation = names[2];
@@ -3324,11 +3328,11 @@ var tests =`
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
     1/2 feet * 2 meters ? | > (1 / (2 foot)) * 2 meter, = 3.28084
     1/sqrt(23mH * 10uF)? | > 1 / (23 milli~henry * 10 micro~farad)^0.5 ?, = 331.861 hertz, = 2085.14 radian per second
-    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
+    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
     2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
     --3 | > (0-(0-3)), = 3
-    cal per gm deltaK | > calorie per (gramm deltak), [Specific_heat_m]
-    1/cal per gm deltaK | > 1 / (calorie per (gramm deltak)), [Specific_heat_m^-1]
+    cal per gm deltaK | > calorie per (gramm deltaK), [Specific_heat_m]
+    1/cal per gm deltaK | > 1 / (calorie per (gramm deltaK)), [Specific_heat_m^-1]
     (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
 
     # unit help
