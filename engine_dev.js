@@ -1346,8 +1346,9 @@ function ParseTokens(tokens, line)
                     if (results[j].Compatible(filter, false)) {
                         // define a new unit!
                         unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
-                        // N.B. we prefer index 1 for name
-                        unit.interpretation = names.length > 1 ? names[1] : names[0];
+                        // N.B. we use index 1 for PREFIX solo
+                        // XXX -- for now we use the longer of names[1] and names[0], with a preference for names[1] if they are equal
+                        unit.interpretation = unit.type == "PREFIX" ? names[1] : ((names.length > 1 && names[1].length >= names[0].length) ? names[1] : names[0]);
                         Object.freeze(unit);
                         units.push(unit);
                         defines = true;
