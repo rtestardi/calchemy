@@ -1351,8 +1351,8 @@ function ParseTokens(tokens, line)
                             // N.B. we use index 1 for PREFIX solo
                             unit.interpretation = names[1];
                         } else {
-                            // XXX -- for now we use the longer of names[0, 1, 2], with a preference for names[1] if they are equal
-                            if (unit.names.length > 1 && unit.names[1].length >= unit.names[0].length) {
+                            // XXX -- for now we use the longer of names[0, 1, 2], with a preference for names[1] if they are equal and don't only differ by case
+                            if (unit.names.length > 1 && unit.names[1].length >= unit.names[0].length && unit.names[1].toLowerCase() != unit.names[0].toLowerCase()) {
                                 unit.interpretation = names[1];
                                 if (unit.names.length > 2 && unit.names[2].length > unit.names[1].length) {
                                     unit.interpretation = names[2];
