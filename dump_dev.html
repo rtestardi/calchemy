@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<title>Dump</title>
+</head>
+
+<body onload='Body()'>
+
+<h1>Dump</h1>
+<p id='status'>loading database ...</p>
+<p id='results'></p>
+
+<script type="text/javascript" src="database_dev.js">
+// import the database
+// var database=...
+</script>
+
+<script type="text/javascript" src="engine_dev.js">
+// import the engine
+</script>
+
+<script>
+
+// sort, stably folding upper/lower case
+function Sort(array)
+{
+    array.sort(function(a, b) {
+        var compare = a.toLowerCase().localeCompare(b.toLowerCase());
+        return compare ? compare : a.localeCompare(b);
+    });
+}
+
+function Body()
+{
+    try {
+        // load the database
+        LoadDatabase(database);
+
+        document.getElementById("status").innerHTML = "database loaded";
+
+        output = [];
+
+        // for each unit...
+        for (var i = 0; i < units.length; i++) {
+            // for each name...
+            for (var j = 0; j < units[i].names.length; j++) {
+                // record the SI result of the name
+                var results = RunLine(units[i].names[j] + "?");
+                output.push("<br>" + units[i].names[j] + " = " + results.output.join(' '));
+            }
+        }
+
+        Sort(output);
+
+        // display results
+        document.getElementById("results").innerHTML = output.join(' ');
+    } catch (error) {
+        document.getElementById("status").innerHTML = error;
+        return;
+    }
+}
+
+</script>
+
+</body>
+
+</html>
