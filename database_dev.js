@@ -140,7 +140,7 @@ AMBIGUOUS Stiffness=newton per meter
 AMBIGUOUS Radius=meter
 AMBIGUOUS Height=meter
 
-Physical_constant:speed_of_light,c=2.99792458E+08 m/s #speed of light in vacuum
+Physical_constant:c,speed_of_light=2.99792458E+08 m/s #speed of light in vacuum
 Physical_constant:grav,gravity=9.80665 m/s^2 #standard acceleration of gravity
 
 Number:percent*,%=1/100
@@ -197,8 +197,8 @@ Common:pole*,perch*,rod*=5.5 yd
 Common:fathom*=6 ft
 Common:league*=3 mi
 Common:furlong*=220 yd
-Common:lyr*,lightyear*=1 speed_of_light*365.25 day
-Common:lightsecond*=1 speed_of_light*s
+Common:lyr*,lightyear*=1 c*365.25 day
+Common:lightsecond*=1 c*s
 
 #Mass
 Common:lbm,poundm,lb*,pound*=453.592 gm
