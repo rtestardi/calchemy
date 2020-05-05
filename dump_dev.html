@@ -48,7 +48,12 @@ function Body()
             for (var j = 0; j < units[i].names.length; j++) {
                 // record the SI result of the name
                 var results = RunLine(units[i].names[j] + "?");
-                output.push("<br>" + units[i].names[j] + " = " + results.output.join(' '));
+                var unit = LookupUnit(units[i].names[j]);
+                var details = "";
+                if (unit && unit.definition.match(/.*#/)) {
+                    details = unit.definition.replace(/.*#/, "#");
+                }
+                output.push("<br>" + units[i].names[j] + " = " + results.output.join(' ') + " " + details);
             }
         }
 
