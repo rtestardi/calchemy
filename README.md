@@ -5,6 +5,8 @@ Calchemy™ is an exciting not-so-new units calculator which allows you to perfo
 
 **Calchemy now runs as javascript, entirely in your web browser -- just open [calchemy.html](https://rtestardi.github.io/calchemy/calchemy.html) and start having fun!  You can verify Calchemy's operation by clicking the "Test" button.**  (For the latest and greatest development bits that may still have bugs, you can open [calchemy_dev.html](https://rtestardi.github.io/calchemy/calchemy_dev.html).)
 
+Always double-check your answers!
+
 ## Files in the Repository
 
 * calchemy.html -- released bits, single file, including merged html, database, and engine
@@ -16,6 +18,8 @@ Calchemy™ is an exciting not-so-new units calculator which allows you to perfo
 * flexcase.js -- optional runtime database to relax SI upper case abbreviation requirements
 * publish.ps1 -- script to merge calchemy_dev.html, database_dev.js, and engine_dev.js into calchemy.html
 * solarsys.js -- optional runtime database with solar system units
+
+The following examples provide a brief introduction to some of Calchemy's features.
 
 ## Basic Features
 
