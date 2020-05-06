@@ -1542,8 +1542,17 @@ function RunLine(line)
         }
         // generate merged answers and interpretations
         for (j = 0; j < answers.length; j++) {
+            var quality = false;
             for (var k = 0; k < interpretations[j].length; k++) {
-                output.push("> " + interpretations[j][k]);
+                if (! interpretations[j][k].match(/[^][-]1/)) {
+                    // if we have an interpretation without ^-1, don't show interpretations with ^-1
+                    quality = true;
+                }
+            }
+            for (var k = 0; k < interpretations[j].length; k++) {
+                if (! quality || ! interpretations[j][k].match(/[^][-]1/)) {
+                    output.push("> " + interpretations[j][k]);
+                }
             }
             output.push(answers[j]);
         }

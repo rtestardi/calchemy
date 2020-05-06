@@ -2354,8 +2354,17 @@ function RunLine(line)
         }
         // generate merged answers and interpretations
         for (j = 0; j < answers.length; j++) {
+            var quality = false;
             for (var k = 0; k < interpretations[j].length; k++) {
-                output.push("> " + interpretations[j][k]);
+                if (! interpretations[j][k].match(/[^][-]1/)) {
+                    // if we have an interpretation without ^-1, don't show interpretations with ^-1
+                    quality = true;
+                }
+            }
+            for (var k = 0; k < interpretations[j].length; k++) {
+                if (! quality || ! interpretations[j][k].match(/[^][-]1/)) {
+                    output.push("> " + interpretations[j][k]);
+                }
             }
             output.push(answers[j]);
         }
@@ -3307,6 +3316,8 @@ var tests =`
     abc = 2
     abc | = 1, = 2
     abc=2lb
+    TEST details abc | === unit details abc ===, abc=1 [], abc=2 [], abc=2lb [Mass], abc=2lb [Force]
+    abc | > abc, = 1, > abc, = 2
     abc=?Force
     abc | = 1, = 2
     abc= ?1
@@ -3389,7 +3400,7 @@ var tests =`
     foo=lb ? Force | > poundf, defined
     foo= | undefined
     g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
-    lb;lb?1 | > poundm / poundm ? 1, > (poundm)^-1 * poundm ? 1, > poundf / poundf ? 1, > (poundf)^-1 * poundf ? 1, = 1 1
+    lb;lb?1 | > poundm / poundm ? 1, > poundf / poundf ? 1, = 1 1
 
     # unit help
     TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
