@@ -30,8 +30,9 @@ var bases = [];  // Unit
 var all_categories = [];  // string
 var loading = false;  // while loading the units database, all ambiguities are turned off and primary names must be used
 var deriving = false;  // while deriving units, secondary names may also be used
+var defining = false;  // while defining, don't record mismatches
 var evaluating = false;  // while evaluating units, free units may be used
-var testing = false;  // while testing, don't put equation line into results
+var testing = false;  // while testing, don't prompt for equation values
 var si = false;  // request to display mismatch result in SI format
 var massbase;  // may be undefined
 var storagebase;  // may be undefined
@@ -128,6 +129,7 @@ class Unit {
             rhs.exponents[i] = 0;
         }
 
+        // if we are not loading the database...
         if (! loading) {
             var display = null;
             var dividing = false;
@@ -177,7 +179,7 @@ class Unit {
                     break;
             }
 
-            // format interpretations
+            // format interpretations to display with results
             if ((this.multiplying == true || rhs.multiplying == true) && (multiplying || dividing)) {
                 if (this.dividing) {
                     // add the deferred parenthesis for the lhs now, if it differs from the current operation
@@ -1082,7 +1084,9 @@ function AlternateTokens(tokens, n)
             // record the result as a mismatch
             for (var k = 0; k < strings.length; k++) {
                 if (! mismatches.includes(strings[k])) {
-                    mismatches.push(strings[k]);
+                    if (! defining) {
+                        mismatches.push(strings[k]);
+                    }
                 }
             }
 
@@ -1179,6 +1183,7 @@ function ParseTokens(tokens, line)
     var j;
     var unit;
     if (tokens.length) {
+        // if we are not loading the database and not running tests...
         if (! loading && ! testing) {
             // if we have [Derived] then ask for a value before we proceed...
             for (i = 0; i < tokens.length; i++) {
@@ -1237,6 +1242,7 @@ function ParseTokens(tokens, line)
         // otherwise, if we are defining or undefining a unit...
         } else if (tokens.includes('=')) {
             var filter = null;
+            // if we are not loading the database...
             if (! loading) {
                 // if a filtering dimension is specified...
                 i = tokens.indexOf('?');
@@ -1336,8 +1342,13 @@ function ParseTokens(tokens, line)
                         deriving = false;
                     }
                 } else {
-                    // evaluate all interpretations to be thorough
-                    AlternateTokens(subtokens, 0);
+                    defining = true;
+                    try {
+                        // evaluate all interpretations to be thorough
+                        AlternateTokens(subtokens, 0);
+                    } finally {
+                        defining = false;
+                    }
                 }
 
                 // for all results...
@@ -1346,6 +1357,13 @@ function ParseTokens(tokens, line)
                     if (results[j].Compatible(filter, false)) {
                         // define a new unit!
                         unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
+                        // if we are loading the database...
+                        if (! loading) {
+                            if (! mismatches.includes("> " + results[j].interpretation)) {
+                                // record the interpretation of the definition
+                                mismatches.push("> " + results[j].interpretation);
+                            }
+                        }
                         unit.interpretation = names[0];
                         if (unit.type == "PREFIX") {
                             // N.B. we use index 1 for PREFIX solo
@@ -1500,7 +1518,11 @@ function RunLine(line)
 
     // otherwise, if we defined units...
     } else if (defines) {
-        output = ["defined"];
+        if (mismatches.length) {
+            output = mismatches;
+        } else {
+            output = ["defined"];
+        }
 
     // otherwise, if we undefined units...
     } else if (undefines) {
