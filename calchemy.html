@@ -869,6 +869,36 @@ function assert(bool)
     }
 }
 
+// return the index of the matching parenthesis in an array of tokens
+function MatchParen(tokens, i)
+{
+    var stack = [];
+    var k = opens.indexOf(tokens[i]);
+    assert(k != -1);
+    stack.push(k);
+    for (var j = i+1; j < tokens.length; j++) {
+        k = opens.indexOf(tokens[j]);
+        if (k != -1) {
+            stack.push(k);
+        } else if (tokens[j] == closes[stack[stack.length-1]]) {
+            stack.pop();
+            if (! stack.length) {
+                return j;
+            }
+        }
+    }
+    throw "unmatched parenthesis " + opens[stack[stack.length-1]];
+}
+
+// add parenthesis around an interpretation if they are not already there
+function Parenthesize(interpretation)
+{
+    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
+        return interpretation;
+    }
+    return "(" + interpretation + ")";
+}
+
 // *** unit functions *****************************************************************************
 
 class Unit {
@@ -995,11 +1025,11 @@ class Unit {
             if ((this.multiplying == true || rhs.multiplying == true) && (multiplying || dividing)) {
                 if (this.dividing) {
                     // add the deferred parenthesis for the lhs now, if it differs from the current operation
-                    this.interpretation = "(" + this.interpretation + ")";
+                    this.interpretation = Parenthesize(this.interpretation);
                 }
                 if ((rhs.multiplying && ! multiplying) || rhs.dividing) {
                     // add the deferred parenthesis for the rhs now, if it differs from the current operation
-                    rhs.interpretation = "(" + rhs.interpretation + ")";
+                    rhs.interpretation = Parenthesize(rhs.interpretation);
                 }
                 // continue multiplication or a single division without parenthesis; we'll add them later
                 assert(display != null);
@@ -1012,25 +1042,25 @@ class Unit {
                     var interpretation = this.interpretation;
                     if (this.multiplying || this.dividing || op == '^') {
                         // add the deferred or required parenthesis for the lhs now
-                        interpretation = "(" + interpretation + ")";
+                        interpretation = Parenthesize(interpretation);
                     }
                     if (rhs.multiplying || rhs.dividing) {
                         // add the deferred parenthesis for the rhs now
-                        rhs.interpretation = "(" + rhs.interpretation + ")";
+                        rhs.interpretation = Parenthesize(rhs.interpretation);
                     }
                     if (display != null) {
                         // normal infix operations
                         unit.interpretation = interpretation + display + rhs.interpretation;
                         if (adding) {
                             // add required parenthesis now
-                            unit.interpretation = "(" + unit.interpretation + ")";
+                            unit.interpretation = Parenthesize(unit.interpretation);
                         }
                     } else if (op == '#') {
                         // solve by dimensional analysis: r/l
-                        unit.interpretation = interpretation + "^-1 * " + rhs.interpretation;
+                        unit.interpretation = Parenthesize(interpretation) + "^-1 * " + rhs.interpretation;
                     } else if (op == '!') {
                         // solve by dimensional analysis: 1/(lr)
-                        unit.interpretation = "(" + interpretation + " * " + rhs.interpretation + ")^-1";
+                        unit.interpretation = Parenthesize(interpretation + " * " + rhs.interpretation) + "^-1";
                     } else {
                         assert(0);
                     }
@@ -1443,27 +1473,6 @@ var prec = {
 // operator associativities
 var right = "<>^";
 
-// return the index of the matching parenthesis in an array of tokens
-function MatchParen(tokens, i)
-{
-    var stack = [];
-    var k = opens.indexOf(tokens[i]);
-    assert(k != -1);
-    stack.push(k);
-    for (var j = i+1; j < tokens.length; j++) {
-        k = opens.indexOf(tokens[j]);
-        if (k != -1) {
-            stack.push(k);
-        } else if (tokens[j] == closes[stack[stack.length-1]]) {
-            stack.pop();
-            if (! stack.length) {
-                return j;
-            }
-        }
-    }
-    throw "unmatched parenthesis " + opens[stack[stack.length-1]];
-}
-
 // clean low precedence operators off the stack and push a new operator on the stack if needed and set the next result
 function CleanAndPush(stack, result, op, next)
 {
@@ -1871,7 +1880,7 @@ function AlternateTokens(tokens, n)
         // otherwise, if the evaluation resulted in a mismatch of non-free units...
         } else if (j < freebaseunit) {
             // second priority are mismatches or SI or dimension calculations
-            
+
             // else if "?" was entered: coefficient dim [SI]
             // else: dim
             var strings;
@@ -2149,7 +2158,7 @@ function ParseTokens(tokens, line)
                     } catch (error) {
                         if (! errors.includes(error)) {
                             errors.push(error);
-                        }                                        
+                        }
                     } finally {
                         deriving = false;
                     }
@@ -2326,31 +2335,42 @@ function RunLine(line)
 
     // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
     if (results.length) {
+        var answers = [];
+        var interpretations = [];
+
         // format the results we will output, appending the captured dimension we parsed from the command line
         for (var j = 0; j < results.length; j++) {
             var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
-            if (! output.includes(string)) {
-                output.push("> " + Simplify(results[j].interpretation));
-                output.push(string);
+            var answer = answers.indexOf(string);
+            if (answer == -1) {
+                interpretations[answers.length] = [results[j].interpretation];
+                answers.push(string);
+            } else {
+                // sort interpretations by answer
+                if (! interpretations[answer].includes(results[j].interpretation)) {
+                    interpretations[answer].push(results[j].interpretation);
+                }
             }
         }
+        // generate merged answers and interpretations
+        for (j = 0; j < answers.length; j++) {
+            for (var k = 0; k < interpretations[j].length; k++) {
+                output.push("> " + interpretations[j][k]);
+            }
+            output.push(answers[j]);
+        }
 
-    // otherwise, if we defined units...
-    } else if (defines) {
-        if (mismatches.length) {
-            output = mismatches;
-        } else {
-            output = ["defined"];
+    // otherwise, if we defined a unit or got one or more dimensional mismatches (or SI results)...
+    } else if (defines || mismatches.length) {
+        // use the mismatches (or SI results) as the results we will output
+        output = mismatches;
+        if (defines) {
+            output.push("defined");
         }
 
     // otherwise, if we undefined units...
     } else if (undefines) {
         output = ["undefined"];
-
-    // otherwise, if we got one or more dimensional mismatches (or SI results)...
-    } else if (mismatches.length) {
-        // use the mismatches (or SI results) as the results we will output
-        output = mismatches;
 
     // otherwise, if we caught one or more exceptions as errors...
     } else if (errors.length) {
@@ -2543,7 +2563,7 @@ function Body()
         if (index != -1) {
             offset_warn = false;
             cycle_warn = false;
-            
+
             // pretend the user entered the query string thru the UI
             document.getElementById("equation").value = window.unescape(document.URL.slice(index+1));
             Enter();
@@ -3040,7 +3060,7 @@ var equations =`
     1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
     0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
     1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 0.159155 [Frequency]
-    
+
     # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
     [Mass] grav [Height] ? [Energy]  # potential energy | = 9.80665 [Energy]
@@ -3363,11 +3383,13 @@ var tests =`
     cal per gm deltaK | > calorie per (gramm deltaK), [Specific_heat_m]
     1/cal per gm deltaK | > 1 / (calorie per (gramm deltaK)), [Specific_heat_m^-1]
     (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
-    foo=lb | > poundm, > poundf
-    foo=2;3 | > 2 * 3, > 2 / 3, > 2^-1 * 3, > (2 * 3)^-1
-    foo=lb ? MASS | > poundm
-    foo=lb ? Force | > poundf    
+    foo=lb | > poundm, > poundf, defined
+    foo=2;3 | > 2 * 3, > 2 / 3, > (2)^-1 * 3, > (2 * 3)^-1, defined
+    foo=lb ? MASS | > poundm, defined
+    foo=lb ? Force | > poundf, defined
     foo= | undefined
+    g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
+    lb;lb?1 | > poundm / poundm ? 1, > (poundm)^-1 * poundm ? 1, > poundf / poundf ? 1, > (poundf)^-1 * poundf ? 1, = 1 1
 
     # unit help
     TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
@@ -3523,7 +3545,7 @@ function TestReal()
                         continue;
                     }
                 }
-                
+
                 // if we have expected output...
                 if (sides.length == 2) {
                     // verify that the expected output matches
@@ -3548,7 +3570,7 @@ function TestReal()
 
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
-        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " + 
+        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " +
                                                                      passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
@@ -3669,7 +3691,7 @@ This, again, allows you to enter equations in a more natural format.
 <tr><td>* /</td><td>multiplication, division</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
-</table>  
+</table>
 <p>All operators except "^" are left-associative; "^" is right-associative.
 <p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
 <p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
@@ -3803,7 +3825,7 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 
 <h1 id='database'>Database Notes</h1>
 <p>Units in the Calchemy database are case sensitive, and must be used with their proper case in equations.
-<p>The &lt;Find Units&gt; button allows you to also find units that differ by case, since some units have proper definitions whose case may be surprising (like Hz and Btu).
+The &lt;Find Units&gt; button allows you to also find units that differ by case, since some units have proper definitions whose case may be surprising (like Hz and Btu).
 <p>Prefixable units in the database may be prefixed with a standard SI prefix (like mega or micro) or its abbreviation (like M or u);
 storage units (like bit or Byte) may also be prefixed with a standard SI binary prefix (like mebi or gibi) or its abbreviation (like Mi or Gi).
 <p>The Calchemy database contains a number of physical properties grouped by a short prefix, as follows:
@@ -3856,7 +3878,7 @@ selecting the javascript database in the list.
 <h1 id='cautions'>Cautions</h1>
 <p>Calchemy makes problem solving so easy that it is tempting to assume that any answer it gives you is correct.
 However, as with all calculators, the answer it gives you is only as good as the data you give it.
-<p>Calchemy ensures that the data you give it is dimensionally consistent. 
+<p>Calchemy ensures that the data you give it is dimensionally consistent.
 <p>However, there are more aspects to good data than simple dimensional consistency.
 Many physical equations also include dimensionless factors like 2 pi, an efficiency, or 1/2, or involve temperature offsets.
 Beware that Calchemy cannot tell if you have left out (or inadvertently included) one of these factors.
