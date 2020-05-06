@@ -329,7 +329,7 @@ function Body()
         if (index != -1) {
             offset_warn = false;
             cycle_warn = false;
-            
+
             // pretend the user entered the query string thru the UI
             document.getElementById("equation").value = window.unescape(document.URL.slice(index+1));
             Enter();
@@ -826,7 +826,7 @@ var equations =`
     1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
     0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
     1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 0.159155 [Frequency]
-    
+
     # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
     [Mass] grav [Height] ? [Energy]  # potential energy | = 9.80665 [Energy]
@@ -1149,11 +1149,13 @@ var tests =`
     cal per gm deltaK | > calorie per (gramm deltaK), [Specific_heat_m]
     1/cal per gm deltaK | > 1 / (calorie per (gramm deltaK)), [Specific_heat_m^-1]
     (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
-    foo=lb | > poundm, > poundf
-    foo=2;3 | > 2 * 3, > 2 / 3, > 2^-1 * 3, > (2 * 3)^-1
-    foo=lb ? MASS | > poundm
-    foo=lb ? Force | > poundf    
+    foo=lb | > poundm, > poundf, defined
+    foo=2;3 | > 2 * 3, > 2 / 3, > (2)^-1 * 3, > (2 * 3)^-1, defined
+    foo=lb ? MASS | > poundm, defined
+    foo=lb ? Force | > poundf, defined
     foo= | undefined
+    g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
+    lb;lb?1 | > poundm / poundm ? 1, > (poundm)^-1 * poundm ? 1, > poundf / poundf ? 1, > (poundf)^-1 * poundf ? 1, = 1 1
 
     # unit help
     TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
@@ -1309,7 +1311,7 @@ function TestReal()
                         continue;
                     }
                 }
-                
+
                 // if we have expected output...
                 if (sides.length == 2) {
                     // verify that the expected output matches
@@ -1334,7 +1336,7 @@ function TestReal()
 
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
-        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " + 
+        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " +
                                                                      passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
     } catch (error) {
         document.getElementById("results").innerHTML += Chunk(error);
@@ -1455,7 +1457,7 @@ This, again, allows you to enter equations in a more natural format.
 <tr><td>* /</td><td>multiplication, division</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
-</table>  
+</table>
 <p>All operators except "^" are left-associative; "^" is right-associative.
 <p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
 <p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
@@ -1642,7 +1644,7 @@ selecting the javascript database in the list.
 <h1 id='cautions'>Cautions</h1>
 <p>Calchemy makes problem solving so easy that it is tempting to assume that any answer it gives you is correct.
 However, as with all calculators, the answer it gives you is only as good as the data you give it.
-<p>Calchemy ensures that the data you give it is dimensionally consistent. 
+<p>Calchemy ensures that the data you give it is dimensionally consistent.
 <p>However, there are more aspects to good data than simple dimensional consistency.
 Many physical equations also include dimensionless factors like 2 pi, an efficiency, or 1/2, or involve temperature offsets.
 Beware that Calchemy cannot tell if you have left out (or inadvertently included) one of these factors.
