@@ -1463,7 +1463,14 @@ function LoadDatabase(database)
             throw "unexpected result: " + lines[i] + " : " + (results[0].coefficient.toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision();
         }
         if (mismatches.length) {
-            throw "unexpected mismatch: " + lines[i] + " : " + mismatches.toString();
+            for (var j = mismatches.length-1; j >= 0; j--) {
+                if (mismatches[j].match(/^[>] /)) {
+                    mismatches.splice(j, 1);
+                }
+            }
+            if (mismatches.length) {
+                throw "unexpected mismatch: " + lines[i] + " : " + mismatches.toString();
+            }
         }
         if (errors.length) {
             throw "unexpected error: " + lines[i] + " : " + errors.toString();
