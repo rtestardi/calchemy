@@ -7,7 +7,7 @@ Calchemy™ is an exciting not-so-new units calculator which allows you to perfo
 
 Always double-check your answers!
 
-## Files in the Repository
+## Files in the [Repository](https://github.com/rtestardi/calchemy)
 
 * calchemy.html -- released bits, single file, including merged html, database, and engine
 * calchemy_dev.html -- bits under development, html only
