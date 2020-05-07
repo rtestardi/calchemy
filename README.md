@@ -65,7 +65,10 @@ You could also enter the original equation in the following less explicit form:
 
 Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct, and then express the final result in horsepower. Calchemy would again respond:
 
+*&gt; 2000 poundf * 10 story * (12 foot / story) / (1 minute) ? horsepower*
 **= 7.27273 horsepower**
+
+Notice above that Calchemy will always show you how it is interpreting your equations, with a line that begins with "&gt;".
 
 This example illustrates the following features:
 
