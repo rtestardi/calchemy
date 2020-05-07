@@ -57,6 +57,36 @@ function assert(bool)
     }
 }
 
+// return the index of the matching parenthesis in an array of tokens
+function MatchParen(tokens, i)
+{
+    var stack = [];
+    var k = opens.indexOf(tokens[i]);
+    assert(k != -1);
+    stack.push(k);
+    for (var j = i+1; j < tokens.length; j++) {
+        k = opens.indexOf(tokens[j]);
+        if (k != -1) {
+            stack.push(k);
+        } else if (tokens[j] == closes[stack[stack.length-1]]) {
+            stack.pop();
+            if (! stack.length) {
+                return j;
+            }
+        }
+    }
+    throw "unmatched parenthesis " + opens[stack[stack.length-1]];
+}
+
+// add parenthesis around an interpretation if they are not already there
+function Parenthesize(interpretation)
+{
+    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
+        return interpretation;
+    }
+    return "(" + interpretation + ")";
+}
+
 // *** unit functions *****************************************************************************
 
 class Unit {
@@ -183,11 +213,11 @@ class Unit {
             if ((this.multiplying == true || rhs.multiplying == true) && (multiplying || dividing)) {
                 if (this.dividing) {
                     // add the deferred parenthesis for the lhs now, if it differs from the current operation
-                    this.interpretation = "(" + this.interpretation + ")";
+                    this.interpretation = Parenthesize(this.interpretation);
                 }
                 if ((rhs.multiplying && ! multiplying) || rhs.dividing) {
                     // add the deferred parenthesis for the rhs now, if it differs from the current operation
-                    rhs.interpretation = "(" + rhs.interpretation + ")";
+                    rhs.interpretation = Parenthesize(rhs.interpretation);
                 }
                 // continue multiplication or a single division without parenthesis; we'll add them later
                 assert(display != null);
@@ -200,25 +230,25 @@ class Unit {
                     var interpretation = this.interpretation;
                     if (this.multiplying || this.dividing || op == '^') {
                         // add the deferred or required parenthesis for the lhs now
-                        interpretation = "(" + interpretation + ")";
+                        interpretation = Parenthesize(interpretation);
                     }
                     if (rhs.multiplying || rhs.dividing) {
                         // add the deferred parenthesis for the rhs now
-                        rhs.interpretation = "(" + rhs.interpretation + ")";
+                        rhs.interpretation = Parenthesize(rhs.interpretation);
                     }
                     if (display != null) {
                         // normal infix operations
                         unit.interpretation = interpretation + display + rhs.interpretation;
                         if (adding) {
                             // add required parenthesis now
-                            unit.interpretation = "(" + unit.interpretation + ")";
+                            unit.interpretation = Parenthesize(unit.interpretation);
                         }
                     } else if (op == '#') {
                         // solve by dimensional analysis: r/l
-                        unit.interpretation = interpretation + "^-1 * " + rhs.interpretation;
+                        unit.interpretation = Parenthesize(interpretation) + "^-1 * " + rhs.interpretation;
                     } else if (op == '!') {
                         // solve by dimensional analysis: 1/(lr)
-                        unit.interpretation = "(" + interpretation + " * " + rhs.interpretation + ")^-1";
+                        unit.interpretation = Parenthesize(interpretation + " * " + rhs.interpretation) + "^-1";
                     } else {
                         assert(0);
                     }
@@ -631,27 +661,6 @@ var prec = {
 // operator associativities
 var right = "<>^";
 
-// return the index of the matching parenthesis in an array of tokens
-function MatchParen(tokens, i)
-{
-    var stack = [];
-    var k = opens.indexOf(tokens[i]);
-    assert(k != -1);
-    stack.push(k);
-    for (var j = i+1; j < tokens.length; j++) {
-        k = opens.indexOf(tokens[j]);
-        if (k != -1) {
-            stack.push(k);
-        } else if (tokens[j] == closes[stack[stack.length-1]]) {
-            stack.pop();
-            if (! stack.length) {
-                return j;
-            }
-        }
-    }
-    throw "unmatched parenthesis " + opens[stack[stack.length-1]];
-}
-
 // clean low precedence operators off the stack and push a new operator on the stack if needed and set the next result
 function CleanAndPush(stack, result, op, next)
 {
@@ -1059,7 +1068,7 @@ function AlternateTokens(tokens, n)
         // otherwise, if the evaluation resulted in a mismatch of non-free units...
         } else if (j < freebaseunit) {
             // second priority are mismatches or SI or dimension calculations
-            
+
             // else if "?" was entered: coefficient dim [SI]
             // else: dim
             var strings;
@@ -1337,7 +1346,7 @@ function ParseTokens(tokens, line)
                     } catch (error) {
                         if (! errors.includes(error)) {
                             errors.push(error);
-                        }                                        
+                        }
                     } finally {
                         deriving = false;
                     }
@@ -1514,31 +1523,51 @@ function RunLine(line)
 
     // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
     if (results.length) {
+        var answers = [];
+        var interpretations = [];
+
         // format the results we will output, appending the captured dimension we parsed from the command line
         for (var j = 0; j < results.length; j++) {
             var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
-            if (! output.includes(string)) {
-                output.push("> " + Simplify(results[j].interpretation));
-                output.push(string);
+            var answer = answers.indexOf(string);
+            if (answer == -1) {
+                interpretations[answers.length] = [results[j].interpretation];
+                answers.push(string);
+            } else {
+                // sort interpretations by answer
+                if (! interpretations[answer].includes(results[j].interpretation)) {
+                    interpretations[answer].push(results[j].interpretation);
+                }
             }
         }
+        // generate merged answers and interpretations
+        for (j = 0; j < answers.length; j++) {
+            var quality = false;
+            for (var k = 0; k < interpretations[j].length; k++) {
+                if (! interpretations[j][k].match(/[^][-]1/)) {
+                    // if we have an interpretation without ^-1, don't show interpretations with ^-1
+                    quality = true;
+                }
+            }
+            for (var k = 0; k < interpretations[j].length; k++) {
+                if (! quality || ! interpretations[j][k].match(/[^][-]1/)) {
+                    output.push("> " + interpretations[j][k]);
+                }
+            }
+            output.push(answers[j]);
+        }
 
-    // otherwise, if we defined units...
-    } else if (defines) {
-        if (mismatches.length) {
-            output = mismatches;
-        } else {
-            output = ["defined"];
+    // otherwise, if we defined a unit or got one or more dimensional mismatches (or SI results)...
+    } else if (defines || mismatches.length) {
+        // use the mismatches (or SI results) as the results we will output
+        output = mismatches;
+        if (defines) {
+            output.push("defined");
         }
 
     // otherwise, if we undefined units...
     } else if (undefines) {
         output = ["undefined"];
-
-    // otherwise, if we got one or more dimensional mismatches (or SI results)...
-    } else if (mismatches.length) {
-        // use the mismatches (or SI results) as the results we will output
-        output = mismatches;
 
     // otherwise, if we caught one or more exceptions as errors...
     } else if (errors.length) {
