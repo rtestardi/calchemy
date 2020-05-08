@@ -12,7 +12,7 @@ You can verify Calchemy's operation by clicking the "Test" button.**
 
 Always double-check your answers!
 
-## Files in the [Github Repository](https://github.com/rtestardi/calchemy)
+## Files in the [GitHub Repository](https://github.com/rtestardi/calchemy)
 
 * calchemy.html -- released bits, single file, including merged html, database, and engine
 * calchemy_dev.html -- bits under development, html only
