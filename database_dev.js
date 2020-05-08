@@ -283,7 +283,7 @@ Common:H2O=inwc/in #density of water for pressure calculations
 #Energy
 *Common,SI,Energy:eV,electronvolt*=1.60218E-19 J
 *Common,Energy:cal,calorie*=4.184 J
-*Common,Energy:Wh,wh=3600 J #watt hour
+*Common,Energy:Wh,watthour,wh=3600 J #watt hour
 Common,Energy:cal_food,foodcal,Cal,Calorie*=1 kcal #food package label energy
 Common,Energy:Btu*,btu*=1055.06 J #international table
 Common,Energy:therm*=1.05480E+08 J #CNG industry
