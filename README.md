@@ -1,7 +1,8 @@
 Calchemy™ -- Math Magic
 =======================
 
-Calchemy™ is an exciting not-so-new units calculator which allows you to perform dimensional arithmetic, analysis, and conversions using any standard units.
+Calchemy™ is an exciting [not-so-new](https://github.com/rtestardi/calchemy/wiki/The-History-of-Calchemy%E2%84%A2%2C-1988-to-Present)
+units calculator which allows you to perform dimensional arithmetic, analysis, and conversions using any standard units.
 Calchemy "understands" the relationships between these units and performs conversions for you automatically as needed.
 It also checks your equations to ensure that they are always dimensionally correct.
 
@@ -11,7 +12,7 @@ You can verify Calchemy's operation by clicking the "Test" button.**
 
 Always double-check your answers!
 
-## Files in the [Repository](https://github.com/rtestardi/calchemy)
+## Files in the [Github Repository](https://github.com/rtestardi/calchemy)
 
 * calchemy.html -- released bits, single file, including merged html, database, and engine
 * calchemy_dev.html -- bits under development, html only
