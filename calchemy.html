@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.11s</p>
+v1.11t</p>
 </td>
 </tr>
 </table>
@@ -428,7 +428,7 @@ Common:H2O=inwc/in #density of water for pressure calculations
 #Energy
 *Common,SI,Energy:eV,electronvolt*=1.60218E-19 J
 *Common,Energy:cal,calorie*=4.184 J
-*Common,Energy:Wh,wh=3600 J #watt hour
+*Common,Energy:watthour,Wh,wh=3600 J #watt hour
 Common,Energy:cal_food,foodcal,Cal,Calorie*=1 kcal #food package label energy
 Common,Energy:Btu*,btu*=1055.06 J #international table
 Common,Energy:therm*=1.05480E+08 J #CNG industry
@@ -3427,7 +3427,7 @@ var tests =`
     TEST byname lb | === units by name lb ===,lb,lbf,lbm
     TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_explosive, fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
-    TEST byname W | === units by name W ===,W,watt,Wb,weber,week,wh,Wh,wk
+    TEST byname W | === units by name W ===,W,watt,watthour,Wb,weber,week,wh,Wh,wk
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb
     TEST bycategory Angle | === units in category Angle ===, arcmin, arcsec, cycle, deg, degree, grad, grade, rad, radian, rev, revolution
     TEST bycategory abc | === units in category abc ===
