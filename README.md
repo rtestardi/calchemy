@@ -1,9 +1,13 @@
 Calchemy™ -- Math Magic
 =======================
 
-Calchemy™ is an exciting not-so-new units calculator which allows you to perform dimensional arithmetic, analysis, and conversions using any standard units. Calchemy "understands" the relationships between these units and performs conversions for you automatically as needed. It also checks your equations to ensure that they are always dimensionally correct.
+Calchemy™ is an exciting not-so-new units calculator which allows you to perform dimensional arithmetic, analysis, and conversions using any standard units.
+Calchemy "understands" the relationships between these units and performs conversions for you automatically as needed.
+It also checks your equations to ensure that they are always dimensionally correct.
 
-**Calchemy now runs as javascript, entirely in your web browser -- just open [calchemy.html](https://rtestardi.github.io/calchemy/calchemy.html) and start having fun!  You can verify Calchemy's operation by clicking the "Test" button.**  (For the latest and greatest development bits that may still have significant bugs, you can open [calchemy_dev.html](https://rtestardi.github.io/calchemy/calchemy_dev.html).)
+**Calchemy now runs as javascript, entirely in your web browser -- just open [calchemy.html](https://rtestardi.github.io/calchemy/calchemy.html) and start having fun!
+You can verify Calchemy's operation by clicking the "Test" button.**
+(For the latest and greatest development bits that may still have significant bugs, you can open [calchemy_dev.html](https://rtestardi.github.io/calchemy/calchemy_dev.html).)
 
 Always double-check your answers!
 
@@ -31,11 +35,13 @@ Calchemy would respond:
 
 **= 118.110 inch**
 
-To calculate the required horsepower for a motor which could raise a 2000 lbf elevator to the top of a 10 story building (assuming 12 feet per story) in 1 minute, you could enter the equation:
+To calculate the required horsepower for a motor which could raise a 2000 lbf elevator to the top of a 10 story building (assuming 12 feet per story) in 1 minute,
+you could enter the equation:
 
 **2000 lbf * (10 * 12 feet) / 1 minute ? horsepower**
 
-Indicating that you want to multiply 2000 pounds force by 10 times 12 feet, divide that by 1 minute, and then express the final result in horsepower. Calchemy would respond:
+Indicating that you want to multiply 2000 pounds force by 10 times 12 feet, divide that by 1 minute, and then express the final result in horsepower.
+Calchemy would respond:
 
 **= 7.27273 horsepower**
 
@@ -63,7 +69,8 @@ You could also enter the original equation in the following less explicit form:
 
 **2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower**
 
-Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct, and then express the final result in horsepower. Calchemy would again respond:
+Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct,
+and then express the final result in horsepower. Calchemy would again respond:
 
 *&gt; 2000 poundf * 10 story * (12 foot / story) / (1 minute) ? horsepower*
 <br>**= 7.27273 horsepower**
@@ -73,13 +80,20 @@ Notice above that Calchemy will always show you how it is interpreting your equa
 This example illustrates the following features:
 
 ### Solve By Dimensional Analysis
-The ";" operator tells Calchemy to use dimensional analysis to determine whether its operands should be in the numerator or the denominator of the equation. In this example, Calchemy placed the first three operands in the numerator and the last operand in the denominator. This allows you to be less involved with the actual mechanics of the equations.
+The ";" operator tells Calchemy to use dimensional analysis to determine whether its operands should be in the numerator or the denominator of the equation.
+In this example, Calchemy placed the first three operands in the numerator and the last operand in the denominator.
+This allows you to be less involved with the actual mechanics of the equations.
 
 ### Overloaded Units
-The "lb" unit is an overloaded unit, meaning that it has more than one common definition. It is primarily defined as "lbm" (pounds mass) and secondarily defined as "lbf" (pounds force). Calchemy automatically uses the appropriate definition, again based on dimensional analysis. In this example, Calchemy used "lbf". This allows you to naturally use units with multiple common definitions.
+The "lb" unit is an overloaded unit, meaning that it has more than one common definition.
+It is primarily defined as "lbm" (pounds mass) and secondarily defined as "lbf" (pounds force).
+Calchemy automatically uses the appropriate definition, again based on dimensional analysis.
+In this example, Calchemy used "lbf". This allows you to naturally use units with multiple common definitions.
 
 ### Free Units
-The "stories" and "story" units are called free units. Free units are units which are not actually understood by Calchemy, except in that they are new and unique dimensions which must "cancel out" in the end. This allows you to enter equations in a more natural format.
+The "stories" and "story" units are called free units.
+Free units are units which are not actually understood by Calchemy, except in that they are new and unique dimensions which must "cancel out" in the end.
+This allows you to enter equations in a more natural format.
 
 ### Pluralized Units
 The "stories" and "story" units also illustrate that Calchemy understands basic pluralization rules for units. This, again, allows you to enter equations in a more natural format.
