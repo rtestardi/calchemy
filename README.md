@@ -27,7 +27,7 @@ The following examples provide a brief introduction to some of Calchemy's featur
 
 ## Basic Features
 
-To perform a simple unit conversion, such as 3 meters converted to inches, you could enter the equation (or click/tap on the link):
+To perform a simple unit conversion, such as 3 meters converted to inches, you could enter the equation:
 
 **3 meter ? inch**
 
