@@ -525,10 +525,10 @@ class Unit {
 }
 
 // define a new base unit in the units database
-function DefineBaseUnit(name, pluralizable)
+function DefineBaseUnit(names, pluralizable)
 {
     // pick a new exponent
-    var unit = new Unit([name], [pluralizable], 1, [], "BASE", false, [], "");
+    var unit = new Unit(names, [pluralizable], 1, [], "BASE", false, [], "");
     for (var i = 0; i < nextbaseunit; i++) {
         unit.exponents[i] = 0;
     }
@@ -537,7 +537,7 @@ function DefineBaseUnit(name, pluralizable)
     bases[nextbaseunit] = unit;
     nextbaseunit++;
     // make the unit (mostly) immutable
-    unit.interpretation = name;
+    unit.interpretation = names[0];
     Object.freeze(unit);
     units.push(unit);
     // return the unit
@@ -852,19 +852,23 @@ function Simplify(interpretation)
 
 // *** expression alternation *********************************************************************
 
-// convert a free unit name to singular form
-function Singular(name)
+// expand a free unit to singular form(s)
+function Singulars(name)
 {
+    var names = [name];
     if (name.match(/..s$/)) {
-        if (name.match(/.ies$/)) {
-            name = name.replace(/ies$/, "y");
+        if (name.match(/.ves$/)) {
+            names.push(name.replace(/ves$/, "f"));
+            names.push(name.replace(/ves$/, "fe"));
+        } else if (name.match(/.ies$/)) {
+            names.push(name.replace(/ies$/, "y"));
         } else if (name.match(/.(s|sh|ch|x|z)es$/)) {
-            name = name.replace(/es$/, "");
+            names.push(name.replace(/es$/, ""));
         } else {
-            name = name.replace(/s$/, "");
+            names.push(name.replace(/s$/, ""));
         }
     }
-    return name;
+    return names;
 }
 
 // compare possible prefix of a unit to a singular unit name from the database
@@ -882,6 +886,16 @@ function MatchPlural(name, i, j)
     }
     if (units[i].pluralizables == null || ! units[i].pluralizables[j]) {
         return false;
+    }
+    if (singular.match(/.f$/)) {
+        if (name.replace(/ves$/, "f") == singular) {
+            return true;
+        }
+    }
+    if (singular.match(/.fe$/)) {
+        if (name.replace(/ves$/, "fe") == singular) {
+            return true;
+        }
     }
     if (singular.match(/.y$/)) {
         if (name.replace(/ies$/, "y") == singular) {
@@ -992,7 +1006,7 @@ function LookupUnits(name, prefixable, search)
     }
 
     // define a free unit to use for the remainder of the expression
-    unit = DefineBaseUnit(Singular(name), true);
+    unit = DefineBaseUnit(Singulars(name), true);
     console.log("free " + name);
     return [unit.names[0]];
 }
@@ -1212,7 +1226,7 @@ function ParseTokens(tokens, line)
             if (tokens.length != 2) {
                 throw "missing unit";
             }
-            DefineBaseUnit(tokens[1], false);
+            DefineBaseUnit([tokens[1]], false);
 
         // otherwise, if we are defining a category...
         } else if (tokens[0] == "CATEGORY") {
@@ -1549,7 +1563,7 @@ function RunLine(line)
                     quality = true;
                 }
             }
-            for (var k = 0; k < interpretations[j].length; k++) {
+            for (k = 0; k < interpretations[j].length; k++) {
                 if (! quality || ! interpretations[j][k].match(/[^][-]1/)) {
                     output.push("> " + interpretations[j][k]);
                 }

@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.11p</p>
+v1.11q</p>
 </td>
 </tr>
 </table>
@@ -1041,6 +1041,10 @@ var tests =`
     anch ? anches | = 1 anches
     andies ? andy | = 1 andy
     andy ? andies | = 1 andies
+    3 wolves?wolf | > 3 wolves ? wolves, = 3 wolf
+    3 lives? life | > 3 lives ? lives, = 3 life
+    3 life ? lives | > 3 life ? life, = 3 lives
+    3 wolf ? wolves | > 3 wolf ? wolf, = 3 wolves    
 
     # variables
     foo=
@@ -1187,7 +1191,7 @@ var teststhatmaythrow = `
     TEST byname abc | undefined unit abc
     3/0 | = Infinity
     3**2 | expected a value before *
-    tricycles | uncanceled free unit tricycle
+    tricycles | uncanceled free unit tricycles
     gal^.33 | non-integral exponent
     sqrt(meter) | non-integral exponent
     1^meter | non-dimensionless exponent
