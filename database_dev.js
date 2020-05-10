@@ -65,7 +65,7 @@ Number:e=2.71828182845904523
 *Common,SI:second*,s,sec*=TIME
 Common,SI:deltaK,deltak=TEMP #interval (T-T0) Kelvin
 *Common,Angle:radian*,rad=1
-*Common:bit*,b = STORAGE
+*Common:bit*,b=STORAGE
 Common:dollar*,$=MONEY
 *Common,SI:ampere*,A,amp*=CURRENT
 *Advanced,SI:mole*,mol=SUBSTANCE
@@ -148,16 +148,16 @@ Number:dozen*=12
 Number:gross=144
 Number:karat*=1/24 #purity of gold (24 karat is pure)
 Number:ppm*=1E-06 #parts per million
-Number:million = 1E+06 #multiplier (1 000 000) as used in the U.S.
-Number:billion = 1E+09 #multiplier (1 000 000 000) as used in the U.S.
-Number:trillion = 1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
-Number:quadrillion = 1E+15 #multiplier (1E+15) as used in the U.S.
-Number:quintillion = 1E+18 #multiplier (1E+18) as used in the U.S.
-Number:milliard = 1E+09 #multiplier (1 000 000 000) as used in the U.K.
-Number:billion_long = 1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
-Number:trillion_long = 1E+18 #multiplier (1E+18) as used in the U.K.
-Number:quadrillion_long = 1E+24 #multiplier (1E+24) as used in the U.K.
-Number:quintillion_long = 1E+30 #multiplier (1E+30) as used in the U.K.
+Number:million=1E+06 #multiplier (1 000 000) as used in the U.S.
+Number:billion=1E+09 #multiplier (1 000 000 000) as used in the U.S.
+Number:trillion=1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
+Number:quadrillion=1E+15 #multiplier (1E+15) as used in the U.S.
+Number:quintillion=1E+18 #multiplier (1E+18) as used in the U.S.
+Number:milliard=1E+09 #multiplier (1 000 000 000) as used in the U.K.
+Number:billion_long=1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
+Number:trillion_long=1E+18 #multiplier (1E+18) as used in the U.K.
+Number:quadrillion_long=1E+24 #multiplier (1E+24) as used in the U.K.
+Number:quintillion_long=1E+30 #multiplier (1E+30) as used in the U.K.
 
 Common,Angle:cycle*=2pi
 Common,Angle:revolution*,rev*=2pi
@@ -187,7 +187,7 @@ Common:fermi*=1E-15 meter
 Common:au=1.49598E+11 meter
 Common:mile_nautical=1852 meter
 Common:inch*,in=2.54 centimeter
-Common:mil* =(1/1000)inch
+Common:mil*=(1/1000)inch
 Common:foot,ft,feet=12 inch
 Common:yard*,yd*=3 foot
 Common:mile*,mi=5280 foot #(U.S. statute)
@@ -211,7 +211,7 @@ Common:carat*,ct=200 milligramm #mass of gems
 *Common,Physical_constant:amu=1.66054E-24 gramm #unified atomic mass unit
 Common:tonm,ton*=2000 poundm
 Common:tonm_long,ton_long=2240 poundm #imperial (U.K.)
-*Common,SI:tonnem,tonm_metric,tonne*,ton_metric=1E+06 gramm # metric ton
+*Common,SI:tonnem,tonm_metric,tonne*,ton_metric=1E+06 gramm #metric ton
 
 #Force
 Common:poundal*,pdl=1 foot poundm/second^2
@@ -223,7 +223,7 @@ Common:poundf,lbf,lb*,pound*=1 poundm*gravity
 Common:ouncef,ozf,oz*,ounce*=1 ouncem*gravity
 Common:tonf,ton*=1 tonm*gravity
 Common:tonf_long,ton_long=2240 poundm*gravity #imperial (U.K.)
-*Common,SI:tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gramm*gravity # metric ton
+*Common,SI:tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gramm*gravity #metric ton
 
 #Area
 Common:hectare*,ha=10000 square meter
@@ -296,7 +296,7 @@ Common,Torque:inlb*=1 inch poundf
 Common,Torque:ftlb*=1 foot poundf
 
 #Power
-Common:VA,va =1 watt
+Common:VA,va=1 watt
 Common:horsepower,hp,HP=550 foot poundf/second
 Common:ton_refrig=200 Btu/minute #cooling equipment capacity
 
@@ -388,7 +388,7 @@ Advanced:gal_imp=277.42 cuin #U.K.
 Advanced:quart_imp=(1/4)gal_imp #U.K.
 Advanced:pint_imp=(1/8)gal_imp #U.K.
 Advanced:floz_imp=(1/160)gal_imp #U.K.
-Advanced:gill_imp=5 floz_imp # U.K.
+Advanced:gill_imp=5 floz_imp #U.K.
 Advanced:bushel_imp=2219.36 cuin #U.K.
 Advanced:peck_imp=(1/4)bushel_imp #U.K.
 
@@ -437,14 +437,13 @@ Advanced,Physical_constant:rydberg_const=1.09737E+07/meter
 Advanced,Physical_constant:vol_gas_const,V0,=22.4141 liter/mole
 Advanced,Physical_constant:mol_gas_const,R,r=8.31451 joule/(mole deltaK)
 Advanced,Physical_constant:dVcs=9192631770 hertz #transition freq of caesium 133
-# Advanced,Physical_constant:Kcd=683 lm/watt #luminous efficacy of light at freq = 540E12 hertz
 
 Advanced:year_sidereal=3.15582E+07 second
 Advanced:day_sidereal=8.61641E+04 second
 Advanced:hr_sidereal=(1/24)day_sidereal
 Advanced:min_sidereal=(1/60)hr_sidereal
 Advanced:sec_sidereal=(1/60)min_sidereal
-Advanced:lunour*=3543.67 second # 1/30 of the time between new moons (30 lunour = 1 synodic month)
+Advanced:lunour*=3543.67 second #1/30 of the time between new moons (30 lunour = 1 synodic month)
 Advanced:lune*=24 lunour
 Advanced:blink*=0.864 second
 
@@ -453,7 +452,7 @@ Advanced:chain_naut=4.572 meter
 Advanced:cable_length=120 fathom
 Advanced:link_eng=12 inch #Ramden's
 Advanced:chain_eng=100 link_eng #Ramden's
-Advanced:hank =840 yard #cloth
+Advanced:hank=840 yard #cloth
 Advanced:finger=(7/8) inch
 Advanced:hand=4 inch
 Advanced:pace=0.762 meter #military
