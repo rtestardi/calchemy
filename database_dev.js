@@ -26,35 +26,35 @@ BASE MONEY
 BASE CURRENT
 BASE SUBSTANCE
 
-PREFIX Prefix:Y,yotta=1E+24
-PREFIX Prefix:Z,zetta=1E+21
-PREFIX Prefix:E,exa=1E+18
-PREFIX Prefix:P,peta=1E+15
-PREFIX Prefix:T,tera=1E+12
-PREFIX Prefix:G,giga=1E+09
-PREFIX Prefix:M,mega=1E+06
-PREFIX Prefix:k,kilo=1E+03
-PREFIX Prefix:h,hecto=1E+02
-PREFIX Prefix:da,deka=1E+01
-PREFIX Prefix:d,deci=1E-01
-PREFIX Prefix:c,centi=1E-02
-PREFIX Prefix:m,milli=1E-03
-PREFIX Prefix:u,micro=1E-06
-PREFIX Prefix:n,nano=1E-09
-PREFIX Prefix:p,pico=1E-12
-PREFIX Prefix:f,femto=1E-15
-PREFIX Prefix:a,atto=1E-18
-PREFIX Prefix:z,zepto=1E-21
-PREFIX Prefix:y,yocto=1E-24
+PREFIX Prefix:yotta,Y=1E+24
+PREFIX Prefix:zetta,Z=1E+21
+PREFIX Prefix:exa,E=1E+18
+PREFIX Prefix:peta,P=1E+15
+PREFIX Prefix:tera,T=1E+12
+PREFIX Prefix:giga,G=1E+09
+PREFIX Prefix:mega,M=1E+06
+PREFIX Prefix:kilo,k=1E+03
+PREFIX Prefix:hecto,h=1E+02
+PREFIX Prefix:deka,da=1E+01
+PREFIX Prefix:deci,d=1E-01
+PREFIX Prefix:centi,c=1E-02
+PREFIX Prefix:milli,m=1E-03
+PREFIX Prefix:micro,u=1E-06
+PREFIX Prefix:nano,n=1E-09
+PREFIX Prefix:pico,p=1E-12
+PREFIX Prefix:femto,f=1E-15
+PREFIX Prefix:atto,a=1E-18
+PREFIX Prefix:zepto,z=1E-21
+PREFIX Prefix:yocto,y=1E-24
 
-PREFIX Prefix:Ki,kibi=1024 #storage
-PREFIX Prefix:Mi,mebi=1024^2 #storage
-PREFIX Prefix:Gi,gibi=1024^3 #storage
-PREFIX Prefix:Ti,tebi=1024^4 #storage
-PREFIX Prefix:Pi,pebi=1024^5 #storage
-PREFIX Prefix:Ei,exbi=1024^6 #storage
-PREFIX Prefix:Zi,zebi=1024^7 #storage
-PREFIX Prefix:Yi,yobi=1024^8 #storage
+PREFIX Prefix:kibi,Ki=1024 #storage
+PREFIX Prefix:mebi,Mi=1024^2 #storage
+PREFIX Prefix:gibi,Gi=1024^3 #storage
+PREFIX Prefix:tebi,Ti=1024^4 #storage
+PREFIX Prefix:pebi,Pi=1024^5 #storage
+PREFIX Prefix:exbi,Ei=1024^6 #storage
+PREFIX Prefix:zebi,Zi=1024^7 #storage
+PREFIX Prefix:yobi,Yi=1024^8 #storage
 
 Number:pi=3.14159265358979323
 Number:e=2.71828182845904523
@@ -72,8 +72,8 @@ Common:$,dollar*=MONEY
 *Common,SI,Frequency,Angular_velocity:hertz,Hz=2pi radian/second
 
 #Secondary
-*Common,SI:liter*,L,litre*,l=1 cubic dmeter #was 1.000028 before 1964
-*Common,SI:newton*,N=1 kgramm meter/second^2
+*Common,SI:liter*,L,litre*,l=1 cubic decimeter #was 1.000028 before 1964
+*Common,SI:newton*,N=1 kilogramm meter/second^2
 *Common,SI,Energy:joule*,J=1 newton meter
 *Common,SI:watt*,W=1 joule/second
 *Common,SI:pascal*,Pa,=1 newton/square meter
@@ -186,7 +186,7 @@ Common:fermi*=1E-15 meter
 *Common:parsec*=3.0857E+16 meter
 Common:au=1.49598E+11 meter
 Common:mile_nautical=1852 meter
-Common:inch*,in=2.54 cmeter
+Common:inch*,in=2.54 centimeter
 Common:mil* =(1/1000)inch
 Common:foot,ft,feet=12 inch
 Common:yard*,yd*=3 foot
@@ -207,7 +207,7 @@ Common:slug*=14593.9 gramm
 Common:grain*=(1/7000)poundm
 Common:dwt,pennyweight=24 grain #troy
 Common:cwt,hundredweight=100 poundm #avoirdupois
-Common:carat*,ct=200 mgramm #mass of gems
+Common:carat*,ct=200 milligramm #mass of gems
 *Common,Physical_constant:amu,dalton*=1.66054E-24 gramm #unified atomic mass unit
 Common:tonm,ton*=2000 poundm
 Common:tonm_long,ton_long=2240 poundm #imperial (U.K.)
@@ -237,7 +237,7 @@ Common:section*=1 sqmi #land measure
 Common:acre*,ac=10 square chain #land measure
 
 #Volume
-Common:cc*=1 cubic cmeter
+Common:cc*=1 cubic centimeter
 Common:cuin=1 cubic inch
 Common:cuft=1 cubic foot
 Common:cuyd=1 cubic yard
@@ -262,7 +262,7 @@ Common:ipm=1 inch/minute
 Common:fps=1 foot/second
 Common:fpm=1 foot/minute
 Common:mph=1 mile/hour
-Common:kph=1 kmeter/hour
+Common:kph=1 kilometer/hour
 
 #Acceleration
 Common:galileo*=0.01 meter/second^2
@@ -270,13 +270,13 @@ Common:galileo*=0.01 meter/second^2
 #Pressure
 *Common:torr=(101325/760)pascal
 *Common:bar=100000 pascal
-Common:mb=mbar #pressure in millibar
+Common:mb=millibar #pressure in millibar
 Common:atm,atmosphere*=101325 pascal #standard atmospheric pressure
 Common:psi=1 poundf/square inch
 Common:ksi=1000 poundf/square inch
 Common:mmhg,mmHg=133.3224 pascal #pressure (barometric)
-Common:inhg,inHg=mmhg * inch/mmeter
-Common:Hg=mmhg/mmeter #density of mercury for pressure calculations
+Common:inhg,inHg=mmhg * inch/millimeter
+Common:Hg=mmhg/millimeter #density of mercury for pressure calculations
 Common:inwc,inWc,inH2O=248.84 pascal #inches water column at 60 degF
 Common:H2O=inwc/inch #density of water for pressure calculations
 
@@ -284,7 +284,7 @@ Common:H2O=inwc/inch #density of water for pressure calculations
 *Common,SI,Energy:eV,electronvolt*=1.60218E-19 joule
 *Common,Energy:calorie*,cal=4.184 joule
 *Common,Energy:watthour*,Wh,wh=3600 joule #watt hour
-Common,Energy:foodcal,cal_food,Cal,Calorie*=1 kcalorie #food package label energy
+Common,Energy:foodcal,cal_food,Cal,Calorie*=1 kilocalorie #food package label energy
 Common,Energy:Btu*,btu*=1055.06 joule #international table
 Common,Energy:therm*=1.05480E+08 joule #CNG industry
 Common,Energy:quad*=1.055E+18 joule
@@ -298,7 +298,7 @@ Common,Torque:ftlb*=1 foot poundf
 #Power
 Common:va,VA =1 watt
 Common:hp,horsepower,HP=550 foot poundf/second
-Common:ton_refrig=200 btu/minute #cooling equipment capacity
+Common:ton_refrig=200 Btu/minute #cooling equipment capacity
 
 #Flow
 Common:cfs=1 cuft/second
@@ -325,20 +325,20 @@ Common,Frequency,Angular_velocity:cps=cycle/second
 Common,Frequency,Angular_velocity:rps=rev/second
 
 #Storage
-*Common:byte*,Byte*,B,char*=8 bit #computer storage
+*Common:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Money
 Common:cent*=0.01 $ #U.S.
 
 Common:mpg=1 mile/gallon
-Common:rvalue=1(sqft deltaF)/(btu/hour) #thermal insulation
-Common:uvalue=1(btu/hour)/(sqft deltaF) #inverse of Rvalue
+Common:rvalue=1(sqft deltaF)/(Btu/hour) #thermal insulation
+Common:uvalue=1(Btu/hour)/(sqft deltaF) #inverse of Rvalue
 *Common:baud,bps=1 bit/second #DataComm
 
-Physical_constant:G,grav_const=6.67259E-11 newton meter^2/(kgramm)^2 #gravitational constant
-Physical_constant:rm_e,mass_electron=9.10939E-31 kgramm #rest mass electron
-Physical_constant:rm_p,mass_proton=1.67262E-27 kgramm #rest mass proton
-Physical_constant:rm_n,mass_neutron=1.67493E-27 kgramm #rest mass neutron
+Physical_constant:G,grav_const=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
+Physical_constant:rm_e,mass_electron=9.10939E-31 kilogramm #rest mass electron
+Physical_constant:rm_p,mass_proton=1.67262E-27 kilogramm #rest mass proton
+Physical_constant:rm_n,mass_neutron=1.67493E-27 kilogramm #rest mass neutron
 
 Physical_constant:qe,electron_charge*=1.602176634E-19 ampere second
 Physical_constant:mu0,permeability_vac=4 pi*1E-07 henry/meter
@@ -396,15 +396,15 @@ Advanced:benz=1 meter/second
 Advanced:leo*=10 meter/second^2
 
 Advanced,Pressure:barye*,barie*=0.1 pascal
-Advanced,Pressure:baryl=1 dyne/square cmeter
-Advanced,Pressure:pieze,pz=10000 dyne/square cmeter
+Advanced,Pressure:baryl=1 dyne/square centimeter
+Advanced,Pressure:pieze,pz=10000 dyne/square centimeter
 
 Advanced,Energy:therm_eec=1.05506E+08 joule #European Economic Community
-Advanced,Energy:chu*=1.8 btu #centigrade heat unit
+Advanced,Energy:chu*=1.8 Btu #centigrade heat unit
 Advanced,Energy:thermie*=1E+06 calorie #U.K.
 Advanced,Energy:rydberg*=13.6054 eV
 
-Advanced:frigorie*=50 btu/minute #cooling equipment (Europe)
+Advanced:frigorie*=50 Btu/minute #cooling equipment (Europe)
 
 Advanced:poise=0.1 pascal second #CGS
 Advanced:reyn*=1 (poundf/sqin)second
@@ -462,8 +462,8 @@ Advanced:barleycorn=(1/3)inch
 Advanced:cubit=21.8 inch #biblical, range 17 to 22 inch
 
 Advanced:cental*=100 poundm #U.K.
-Advanced:quintal_imp=45.3592 kgramm #U.K.
-Advanced:quintal*=100 kgramm
+Advanced:quintal_imp=45.3592 kilogramm #U.K.
+Advanced:quintal*=100 kilogramm
 Advanced:dram_apoth=60 grain
 Advanced:ounce_apoth=480 grain
 Advanced:pound_apoth=5760 grain
@@ -502,7 +502,7 @@ Advanced,Energy:btu_mean=1055.87 joule
 Advanced,Energy:btu_thermochem=1054.35 joule
 Advanced,Energy:duty*=1.35582 joule
 
-Advanced:hp_metric=75 kgramf meter/second
+Advanced:hp_metric=75 kilogramf meter/second
 Advanced:hp_boiler=9809.50 watt #bigger that hp
 Advanced:hp_electric=746.0 watt
 Advanced:hp_water=746.043 watt
@@ -513,7 +513,7 @@ Advanced:kine*=0.01 meter/second
 
 Advanced:celo*=0.3048 meter/second^2
 
-Advanced:pli*=17.8580 kgramm/meter
+Advanced:pli*=17.8580 kilogramm/meter
 
 # PHYSPROP.UNI
 
@@ -524,13 +524,13 @@ Water,Viscosity:visc_water=0.001 pascal second #dynamic @ 20 degC
 Water,Speed_sound:ss_water=1497 meter/second #@ 20 degC
 Water,Specific_heat_m:shm_water,sh_water=1 calorie/(gramm deltaK) #mean
 Water,Specific_heat_v:shv_water,sh_water=shm_water*d_water
-Water,Heat_fusion_m:hfm_water,hf_water=144 btu/poundm
+Water,Heat_fusion_m:hfm_water,hf_water=144 Btu/poundm
 Water,Heat_fusion_v:hfv_water,hf_water=hfm_water*d_water
-Water,Heat_vaporization_m:hvm_water,hv_water=956 btu/poundm
+Water,Heat_vaporization_m:hvm_water,hv_water=956 Btu/poundm
 Water,Heat_vaporization_v:hvv_water,hv_water=hvm_water*d_water
 
 Ice:d_ice=0.92 gramm/cc
-Ice,Specific_heat_m:shm_ice,sh_ice=0.47 btu/(poundm deltaF)
+Ice,Specific_heat_m:shm_ice,sh_ice=0.47 Btu/(poundm deltaF)
 Ice,Specific_heat_v:shv_ice,sh_ice=shm_ice*d_ice #by volume
 Ice,Thermal_conductivity:tc_ice=2.18 watt/(meter deltaC)
 
@@ -563,25 +563,25 @@ Physical_property,Specific_heat_m:shm_iron=0.108 calorie/(gramm deltaC)
 Physical_property,Specific_heat_m:shm_lead=0.03 calorie/(gramm deltaC)
 Physical_property,Specific_heat_m:shm_mercury=0.140 joule/(gramm deltaC)
 Physical_property,Specific_heat_m:shm_silver=0.235 joule/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_brick=0.22 btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_concrete=0.156 btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_glass=0.199 btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_sand=0.195 btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_wood=0.65 btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_gasoline=0.53 btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_kerosene=0.48 btu/(poundm deltaF)
+Physical_property,Specific_heat_m:shm_brick=0.22 Btu/(poundm deltaF)
+Physical_property,Specific_heat_m:shm_concrete=0.156 Btu/(poundm deltaF)
+Physical_property,Specific_heat_m:shm_glass=0.199 Btu/(poundm deltaF)
+Physical_property,Specific_heat_m:shm_sand=0.195 Btu/(poundm deltaF)
+Physical_property,Specific_heat_m:shm_wood=0.65 Btu/(poundm deltaF)
+Physical_property,Specific_heat_m:shm_gasoline=0.53 Btu/(poundm deltaF)
+Physical_property,Specific_heat_m:shm_kerosene=0.48 Btu/(poundm deltaF)
 
-Physical_property,Heat_vaporization_m:hvm_gasoline,hv_gasoline=116 btu/poundm
-Physical_property,Heat_vaporization_m:hvm_kerosene,hv_kerosene=86 btu/poundm
-Physical_property,Heat_vaporization_m:hvm_ethanol,hv_ethanol=367 btu/poundm
-Physical_property,Heat_vaporization_m:hvm_methanol,hv_methanol=482 btu/poundm
+Physical_property,Heat_vaporization_m:hvm_gasoline,hv_gasoline=116 Btu/poundm
+Physical_property,Heat_vaporization_m:hvm_kerosene,hv_kerosene=86 Btu/poundm
+Physical_property,Heat_vaporization_m:hvm_ethanol,hv_ethanol=367 Btu/poundm
+Physical_property,Heat_vaporization_m:hvm_methanol,hv_methanol=482 Btu/poundm
 
-Physical_property,Heat_fusion_m:hfm_aluminum=171 btu/poundm
-Physical_property,Heat_fusion_m:hfm_copper=88.2 btu/poundm
-Physical_property,Heat_fusion_m:hfm_gold=28.7 btu/poundm
-Physical_property,Heat_fusion_m:hfm_iron=117 btu/poundm
-Physical_property,Heat_fusion_m:hfm_lead=10 btu/poundm
-Physical_property,Heat_fusion_m:hfm_mercury=5.0 btu/poundm
+Physical_property,Heat_fusion_m:hfm_aluminum=171 Btu/poundm
+Physical_property,Heat_fusion_m:hfm_copper=88.2 Btu/poundm
+Physical_property,Heat_fusion_m:hfm_gold=28.7 Btu/poundm
+Physical_property,Heat_fusion_m:hfm_iron=117 Btu/poundm
+Physical_property,Heat_fusion_m:hfm_lead=10 Btu/poundm
+Physical_property,Heat_fusion_m:hfm_mercury=5.0 Btu/poundm
 
 Physical_property,Thermal_conductivity:tc_aluminum=238 watt/(meter deltaC)
 Physical_property,Thermal_conductivity:tc_copper=397 watt/(meter deltaC)
@@ -614,23 +614,23 @@ Physical_property:d_methanol=0.810 gramm/cc #liquid
 Physical_property:d_ethanol=0.791 gramm/cc #liquid
 Physical_property:d_wood=0.55 gramm/cc #solid (pine)
 
-Physical_property,Heat_combustion_m:hcm_gasoline=20750 btu/poundm
+Physical_property,Heat_combustion_m:hcm_gasoline=20750 Btu/poundm
 Physical_property,Heat_combustion_v:hcv_gasoline=d_gasoline*hcm_gasoline
-Physical_property,Heat_combustion_m:hcm_kerosene=19810 btu/poundm
+Physical_property,Heat_combustion_m:hcm_kerosene=19810 Btu/poundm
 Physical_property,Heat_combustion_v:hcv_kerosene=d_kerosene*hcm_kerosene
-Physical_property,Heat_combustion_m:hcm_propane_liq=21249 btu/poundm
+Physical_property,Heat_combustion_m:hcm_propane_liq=21249 Btu/poundm
 Physical_property,Heat_combustion_v:hcv_propane_liq=d_propane_liq*hcm_propane_liq
 Physical_property,Heat_combustion_v:hcv_propane_gas=d_propane_gas*hcm_propane_liq
-Physical_property,Heat_combustion_v:hcv_natural_gas=1000 btu/cubic foot
-Physical_property,Heat_combustion_m:hcm_oil=18500 btu/poundm #crude oil
+Physical_property,Heat_combustion_v:hcv_natural_gas=1000 Btu/cubic foot
+Physical_property,Heat_combustion_m:hcm_oil=18500 Btu/poundm #crude oil
 Physical_property,Heat_combustion_v:hcv_oil=d_oil*hcm_oil #crude oil
-Physical_property,Heat_combustion_m:hcm_coal=13000 btu/poundm
+Physical_property,Heat_combustion_m:hcm_coal=13000 Btu/poundm
 Physical_property,Heat_combustion_v:hcv_coal=d_coal*hcm_coal
-Physical_property,Heat_combustion_m:hcm_methanol=9600 btu/poundm
+Physical_property,Heat_combustion_m:hcm_methanol=9600 Btu/poundm
 Physical_property,Heat_combustion_v:hcv_methanol=d_methanol*hcm_methanol
-Physical_property,Heat_combustion_m:hcm_ethanol=12800 btu/poundm
+Physical_property,Heat_combustion_m:hcm_ethanol=12800 Btu/poundm
 Physical_property,Heat_combustion_v:hcv_ethanol=d_ethanol*hcm_ethanol
-Physical_property,Heat_combustion_m:hcm_wood=8750 btu/poundm #most kinds (dry)
+Physical_property,Heat_combustion_m:hcm_wood=8750 Btu/poundm #most kinds (dry)
 Physical_property,Heat_combustion_v:hcv_wood=d_wood*hcm_wood #pine
 
 # CAPACITY OF BATTERIES
