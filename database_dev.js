@@ -66,7 +66,7 @@ Number:e=2.71828182845904523
 Common,SI:deltaK,deltak=TEMP #interval (T-T0) Kelvin
 *Common,Angle:radian*,rad=1
 *Common:bit*,b = STORAGE
-Common:$,dollar*=MONEY
+Common:dollar*,$=MONEY
 *Common,SI:ampere*,A,amp*=CURRENT
 *Advanced,SI:mole*,mol=SUBSTANCE
 *Common,SI,Frequency,Angular_velocity:hertz,Hz=2pi radian/second
@@ -140,7 +140,7 @@ AMBIGUOUS Stiffness=newton per meter
 AMBIGUOUS Radius=meter
 AMBIGUOUS Height=meter
 
-Physical_constant:c,speed_of_light=2.99792458E+08 meter/second #speed of light in vacuum
+Physical_constant:speed_of_light,c=2.99792458E+08 meter/second #speed of light in vacuum
 Physical_constant:gravity,grav=9.80665 meter/second^2 #standard acceleration of gravity
 
 Number:percent*,%=1/100
@@ -160,10 +160,10 @@ Number:quadrillion_long = 1E+24 #multiplier (1E+24) as used in the U.K.
 Number:quintillion_long = 1E+30 #multiplier (1E+30) as used in the U.K.
 
 Common,Angle:cycle*=2pi
-Common,Angle:rev*,revolution*=2pi
-Common,Angle:deg,degree*=(1/180) pi radian
-Common,Angle:grad,grade=0.9 deg
-Common,Angle:arcmin=(1/60)deg
+Common,Angle:revolution*,rev*=2pi
+Common,Angle:degree*,deg=(1/180) pi radian
+Common,Angle:grade,grad=0.9 degree
+Common,Angle:arcmin=(1/60)degree
 Common,Angle:arcsec=(1/60)arcmin
 
 #Time
@@ -197,24 +197,24 @@ Common:pole*,perch*,rod*=5.5 yard
 Common:fathom*=6 foot
 Common:league*=3 mile
 Common:furlong*=220 yard
-Common:lightyear*,lyr*=1 c*365.25 day
-Common:lightsecond*=1 c*second
+Common:lightyear*,lyr*=1 speed_of_light*365.25 day
+Common:lightsecond*=1 speed_of_light*second
 
 #Mass
 Common:poundm,lbm,lb*,pound*=453.592 gramm
 Common:ouncem,ozm,oz*,ounce*=(1/16) poundm
 Common:slug*=14593.9 gramm
 Common:grain*=(1/7000)poundm
-Common:dwt,pennyweight=24 grain #troy
-Common:cwt,hundredweight=100 poundm #avoirdupois
+Common:pennyweight,dwt=24 grain #troy
+Common:hundredweight,cwt=100 poundm #avoirdupois
 Common:carat*,ct=200 milligramm #mass of gems
-*Common,Physical_constant:amu,dalton*=1.66054E-24 gramm #unified atomic mass unit
+*Common,Physical_constant:amu=1.66054E-24 gramm #unified atomic mass unit
 Common:tonm,ton*=2000 poundm
 Common:tonm_long,ton_long=2240 poundm #imperial (U.K.)
 *Common,SI:tonnem,tonm_metric,tonne*,ton_metric=1E+06 gramm # metric ton
 
 #Force
-Common:pdl,poundal*=1 foot poundm/second^2
+Common:poundal*,pdl=1 foot poundm/second^2
 Common:kip*=1000 poundm*gravity
 Common:dyne*=1E-05 newton
 Common:pond*=1 gramm*gravity
@@ -245,15 +245,15 @@ Common:stere=1 cubic meter #volume of wood
 Common:gallon*,gal*=231 cubic inch
 Common:quart*,qt*=(1/4)gallon
 Common:pint*,pt*=(1/8) gallon
-Common:floz,ouncefl,oz*,ounce*=(1/128)gallon
+Common:ouncefl,ozfl,floz,oz*,ounce*=(1/128)gallon
 Common:bushel*,bu=2150.42 cuin
 Common:peck*=(1/4)bushel
 Common:cord*=128 cuft #volume of wood
-Common:bdft,bd_foot,bd_feet=144 cuin #wood
-Common:bbl,barrel_oil=42 gallon #crude oil
+Common:bd_foot,bdft,bd_feet=144 cuin #wood
+Common:barrel_oil,bbl=42 gallon #crude oil
 Common:cup*=(1/4)quart
-Common:tbsp,tablespoon*=(1/2)floz
-Common:tsp,teaspoon*=(1/6)floz
+Common:tablespoon*,tbsp=(1/2)ouncefl
+Common:teaspoon*,tsp*=(1/6)ouncefl
 
 #Speed
 Common:knot*,kt=1 mile_nautical/hour
@@ -271,17 +271,17 @@ Common:galileo*=0.01 meter/second^2
 *Common:torr=(101325/760)pascal
 *Common:bar=100000 pascal
 Common:mb=millibar #pressure in millibar
-Common:atm,atmosphere*=101325 pascal #standard atmospheric pressure
+Common:atmosphere*,atm=101325 pascal #standard atmospheric pressure
 Common:psi=1 poundf/square inch
 Common:ksi=1000 poundf/square inch
-Common:mmhg,mmHg=133.3224 pascal #pressure (barometric)
-Common:inhg,inHg=mmhg * inch/millimeter
-Common:Hg=mmhg/millimeter #density of mercury for pressure calculations
-Common:inwc,inWc,inH2O=248.84 pascal #inches water column at 60 degF
-Common:H2O=inwc/inch #density of water for pressure calculations
+Common:mmHg,mmhg=133.3224 pascal #pressure (barometric)
+Common:inHg,inhg=mmHg * inch/millimeter
+Common:Hg,hg=mmHg/millimeter #density of mercury for pressure calculations
+Common:inWc,inwc,inH2O=248.84 pascal #inches water column at 60 degF
+Common:H2O=inWc/inch #density of water for pressure calculations
 
 #Energy
-*Common,SI,Energy:eV,electronvolt*=1.60218E-19 joule
+*Common,SI,Energy:electronvolt*,eV=1.60218E-19 joule
 *Common,Energy:calorie*,cal=4.184 joule
 *Common,Energy:watthour*,Wh,wh=3600 joule #watt hour
 Common,Energy:foodcal,cal_food,Cal,Calorie*=1 kilocalorie #food package label energy
@@ -296,8 +296,8 @@ Common,Torque:inlb*=1 inch poundf
 Common,Torque:ftlb*=1 foot poundf
 
 #Power
-Common:va,VA =1 watt
-Common:hp,horsepower,HP=550 foot poundf/second
+Common:VA,va =1 watt
+Common:horsepower,hp,HP=550 foot poundf/second
 Common:ton_refrig=200 Btu/minute #cooling equipment capacity
 
 #Flow
@@ -320,29 +320,29 @@ Common:absC,absc=1 deltaC #absolute Celsius, without caution
 Common:absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Frequency
-Common,Frequency,Angular_velocity:rpm*=rev/minute
+Common,Frequency,Angular_velocity:rpm*=revolution/minute
 Common,Frequency,Angular_velocity:cps=cycle/second
-Common,Frequency,Angular_velocity:rps=rev/second
+Common,Frequency,Angular_velocity:rps=revolution/second
 
 #Storage
 *Common:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Money
-Common:cent*=0.01 $ #U.S.
+Common:cent*=0.01 dollar #U.S.
 
 Common:mpg=1 mile/gallon
 Common:rvalue=1(sqft deltaF)/(Btu/hour) #thermal insulation
 Common:uvalue=1(Btu/hour)/(sqft deltaF) #inverse of Rvalue
 *Common:baud,bps=1 bit/second #DataComm
 
-Physical_constant:G,grav_const=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
-Physical_constant:rm_e,mass_electron=9.10939E-31 kilogramm #rest mass electron
-Physical_constant:rm_p,mass_proton=1.67262E-27 kilogramm #rest mass proton
-Physical_constant:rm_n,mass_neutron=1.67493E-27 kilogramm #rest mass neutron
+Physical_constant:grav_const,G=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
+Physical_constant:mass_electron,rm_e=9.10939E-31 kilogramm #rest mass electron
+Physical_constant:mass_proton,rm_p=1.67262E-27 kilogramm #rest mass proton
+Physical_constant:mass_neutron,rm_n=1.67493E-27 kilogramm #rest mass neutron
 
-Physical_constant:qe,electron_charge*=1.602176634E-19 ampere second
-Physical_constant:mu0,permeability_vac=4 pi*1E-07 henry/meter
-Physical_constant:e0,permittivity_vac=8.85419E-12 farad/meter
+Physical_constant:electron_charge*,qe=1.602176634E-19 ampere second
+Physical_constant:permeability_vac,mu0=4 pi*1E-07 henry/meter
+Physical_constant:permittivity_vac,e0=8.85419E-12 farad/meter
 
 # ADVANCED.UNI
 
@@ -402,7 +402,7 @@ Advanced,Pressure:pieze,pz=10000 dyne/square centimeter
 Advanced,Energy:therm_eec=1.05506E+08 joule #European Economic Community
 Advanced,Energy:chu*=1.8 Btu #centigrade heat unit
 Advanced,Energy:thermie*=1E+06 calorie #U.K.
-Advanced,Energy:rydberg*=13.6054 eV
+Advanced,Energy:rydberg*=13.6054 electronvolt
 
 Advanced:frigorie*=50 Btu/minute #cooling equipment (Europe)
 
@@ -411,7 +411,7 @@ Advanced:reyn*=1 (poundf/sqin)second
 Advanced:stokes=0.0001 meter^2/second
 
 *Advanced,Frequency:curie*,Ci,ci=3.7E+10/second #of radioactivity
-Advanced,Frequency:Bq,becquerel*,bq=1/second #of radioactivity
+Advanced,Frequency:becquerel*,Bq=1/second #of radioactivity
 
 Advanced:denier=1 gramm/(9000 meter) #textiles
 Advanced:drex=1E-04 gramm/meter #textiles
@@ -426,7 +426,7 @@ Advanced:clausius=1 joule/(mole deltaK)
 Advanced:entropy_unit=1 calorie/(mole deltaK)
 
 Advanced:rhe*=10/(pascal second) #inverse dynamic viscosity
-Advanced:diopter*,dioptre*=1/meter
+Advanced:dioptre*,diopter*=1/meter
 Advanced:kayser*=100/meter
 
 Advanced,Physical_constant:plancks_const=6.626070E-34 joule second
@@ -506,7 +506,7 @@ Advanced:hp_metric=75 kilogramf meter/second
 Advanced:hp_boiler=9809.50 watt #bigger that hp
 Advanced:hp_electric=746.0 watt
 Advanced:hp_water=746.043 watt
-Advanced:manpower=(1/10)hp
+Advanced:manpower=(1/10)horsepower
 
 Advanced:admiralty_knot*=6080 foot/hour
 Advanced:kine*=0.01 meter/second
