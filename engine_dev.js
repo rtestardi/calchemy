@@ -557,8 +557,7 @@ function LookupUnit(name)
     for (var i = 0; i < units.length; i++) {
         var unit = units[i];
         // for all appropriate unit names...
-        // N.B. we use index 1 for PREFIX solo
-        for (var j = (unit.type == "PREFIX" ? 1 : 0); j < unit.names.length; j++) {
+        for (var j = 0; j < unit.names.length; j++) {
             // if the name matches...
             if (name == unit.names[j]) {
                 // return the unit
@@ -566,6 +565,9 @@ function LookupUnit(name)
             }
             if (loading && ! deriving) {
                 // be quick
+                break;
+            }
+            if (unit.type == "PREFIX") {
                 break;
             }
         }
@@ -581,8 +583,7 @@ function LookupPrefixedUnit(name)
     for (var ii = 0; ii < units.length; ii++) {
         // if this is a prefix...
         if (units[ii].type == "PREFIX") {
-            // N.B. we use index 1 for PREFIX solo
-            var storage = units[ii].names[1].slice(2) == "bi";  // storage prefix
+            var storage = units[ii].names[0].slice(2) == "bi";  // storage prefix
             // for all prefix names...
             for (var jj = 0; jj < units[ii].names.length; jj++) {
                 var prefix = units[ii].names[jj];
@@ -934,8 +935,7 @@ function LookupUnits(name, prefixable, search)
             // if we are not looking only for prefixable units or the unit actually is prefixable...
             if (! prefixable || unit.prefixable) {
                 // for all appropriate unit names...
-                // N.B. we use index 1 for PREFIX solo
-                for (j = (unit.type == "PREFIX" ? 1 : 0); j < unit.names.length; j++) {
+                for (j = 0; j < unit.names.length; j++) {
                     // if the unit name matches, by search or by plural...
                     if (search ? MatchSearch(name, i, j) : name[0] == unit.names[j][0] && MatchPlural(name, i, j)) {
                         // record a matching unit
@@ -945,6 +945,9 @@ function LookupUnits(name, prefixable, search)
                             // use a precomputed unit to make subsequent searching faster
                             more.push("index"+i);
                         }
+                    }
+                    if (unit.type == "PREFIX") {
+                        break;
                     }
                 }
             }
@@ -957,8 +960,7 @@ function LookupUnits(name, prefixable, search)
             unit = units[ii];
             // if this is a prefix...
             if (unit.type == "PREFIX") {
-                // N.B. we use index 1 for PREFIX solo
-                var storage = unit.names[1].slice(2) == "bi";  // storage prefix
+                var storage = unit.names[0].slice(2) == "bi";  // storage prefix
                 // for all prefix names...
                 for (var jj = 0; jj < unit.names.length; jj++) {
                     var prefix = unit.names[jj];
@@ -1388,22 +1390,6 @@ function ParseTokens(tokens, line)
                             }
                         }
                         unit.interpretation = names[0];
-                        if (unit.type == "PREFIX") {
-                            // N.B. we use index 1 for PREFIX solo
-                            unit.interpretation = names[1];
-                        } else {
-                            // XXX -- for now we use the longer of names[0, 1, 2], with a preference for names[1] if names[0] does not have upper case
-                            if (unit.names.length > 1 && unit.names[1].length == unit.names[0].length) {
-                                if (! unit.names[0].match(/[A-Z]/)) {
-                                    unit.interpretation = names[1];
-                                }
-                            } else if (unit.names.length > 1 && unit.names[1].length > unit.names[0].length) {
-                                unit.interpretation = names[1];
-                                if (unit.names.length > 2 && unit.names[2].length > unit.names[1].length) {
-                                    unit.interpretation = names[2];
-                                }
-                            }
-                        }
                         Object.freeze(unit);
                         units.push(unit);
                         defines = true;

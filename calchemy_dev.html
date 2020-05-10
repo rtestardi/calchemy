@@ -1164,9 +1164,9 @@ var tests =`
     lb;lb?1 | > poundm / poundm ? 1, > poundf / poundf ? 1, = 1 1
 
     # unit help
-    TEST details lb | === unit details lb ===,Common:lbm,poundm,lb*,pound*=453.592 gm [Mass], Common:lbf,poundf,lb*,pound*=1 lbm*grav [Force]
-    TEST details ft | === unit details ft ===,Common:ft,foot,feet=12 in [Length or Radius or Height]
-    TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix:k,kilo=1E+03*Common:byte*,Byte*,B,char*=8 bit #computer storage [Storage]
+    TEST details lb | === unit details lb ===,Common:poundm,lbm,lb*,pound*=453.592 gramm [Mass], Common:poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
+    TEST details ft | === unit details ft ===,Common:foot,ft,feet=12 inch [Length or Radius or Height]
+    TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix:kilo,k=1E+03*Common:Byte*,byte*,B,char*=8 bit #computer storage [Storage]
     TEST byname lb | === units by name lb ===,lb,lbf,lbm
     TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_explosive, fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
