@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.12</p>
+v1.12a</p>
 </td>
 </tr>
 </table>
@@ -1163,6 +1163,44 @@ var tests =`
     g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
     lb;lb?1 | > poundm / poundm ? 1, > poundf / poundf ? 1, = 1 1
 
+    # help examples
+
+    3 meter ? inch | = 118.11 inch
+    2000 lbf * (10 * 12 feet) / 1 minute ? horsepower |= 7.27273 horsepower
+    2000 lbf * (10 * 12 feet) ? horsepower | Dimensional Mismatch [Frequency or Angular_velocity or Time^-1]
+    2+3*5 | = 17
+    2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower | > 2000 poundf * 10 stories * (12 foot / stories) / (1 minute) ? horsepower, = 7.27273 horsepower
+    2*3^4 - (2*(3^4)) ? | = 0
+    2*3*4 - ((2*3)*4) ? | = 0
+    2^3^4 - (2^(3^4)) ? | = 0
+    1/2pi - (1 / (2*pi)) ? | = 0
+    3 meter / 2 seconds - ((3 * meter) / (2 * seconds)) ? | = 0 meter per second
+    1/2 foot - (1 / (2 * foot)) ? | = 0 (meter)^-1
+    1/2*foot - ((1/2) * foot) ? | = 0 meter
+    (1/2) foot - ((1/2) * foot) ? | = 0 meter
+    1/2 foot/sec - ((1 / (2 * foot)) / sec) ? | = 0 meter^-1*second^-1
+    1/2 foot per sec - (1 / ((2 * foot)/sec)) ? | = 0 (meter per second)^-1
+    1/2 foot per sec^2 - (1 / ((2 * foot)/(sec^2))) ? | = 0 (meter per second^2)^-1
+    1/3 cal per gm deltaK - (1 / ((3 * cal) / (gm * deltaK))) ? | = 0 (joule per (kilogramm*deltaK))^-1
+    1/2 foot pound - (1 / ((2 * foot) * pound)) ? | = 0 kilogramm^-1*meter^-1, = 0 (joule)^-1, = 0 (newton meter)^-1
+    1/2 foot*3 pound - ((1 / (2 foot)) * (3 pound)) ? | = 0 kilogramm per meter, = 0 joule per meter^2, = 0 newton per meter
+    3 meter^2 - (3 * (meter^2)) ? | = 0 meter^2
+    3 lbm meter^2 - ((3 * lbm) * (meter^2)) ? | = 0 kilogramm*meter^2
+    pi (3 foot)^2 - (pi * ((3 foot)^2)) ? | = 0 meter^2
+    1 / (4 foot)(3 foot) - (1/((4 foot) * (3 foot))) ? | = 0 kilometer per liter
+    2000 lbm * grav * 60 mph ? hp | = 320 hp
+    10 mph * 30 feet * 10 gal/acre ? gal/min | = 6.06061 gal/min
+    43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec | = 8.77198 sec
+    40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour | = 0.79228 hour
+    40 knot / (2500 rpm * 90%) ? inch/rev | = 21.604 inch/rev
+    1/sqrt(23mH; 10uF)?Hz | = 331.861 Hz
+    20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2 | = 486.71 ft^2
+    (3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt | = 532.196 watt
+    asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
+    speed = 60 mph & force = 20 lb
+    speed*force ? hp | = 3.2 hp
+    speed = & force =
+
     # unit help
     TEST details lb | === unit details lb ===,Common:poundm,lbm,lb*,pound*=453.592 gramm [Mass], Common:poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
     TEST details ft | === unit details ft ===,Common:foot,ft,feet=12 inch [Length or Radius or Height]
@@ -1403,7 +1441,7 @@ It also checks your equations to ensure that they are always dimensionally corre
 <p>To perform a simple unit conversion, such as 3 meters converted to inches, you could enter the equation (or click/tap on the link):
 <p><a href="javascript:Hyperlink('3 meter ? inch')">3 meter ? inch</a>
 <p>Calchemy would respond:
-<p>= 118.110 inch
+<p>= 118.11 inch
 <p>To calculate the required horsepower for a motor which could raise a 2000 lbf elevator to the top of a 10 story building (assuming 12 feet per story) in 1 minute,
 you could enter the equation:
 <p><a href="javascript:Hyperlink('2000 lbf * (10 * 12 feet) / 1 minute ? horsepower')">2000 lbf * (10 * 12 feet) / 1 minute ? horsepower</a>
@@ -1426,7 +1464,7 @@ Calchemy would respond:
 <p>Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct,
 and then express the final result in horsepower.
 Calchemy would again respond:
-<p><i>&gt; 2000 poundf * 10 story * (12 foot / story) / (1 minute) ? horsepower</i>
+<p><i>&gt; 2000 poundf * 10 stories * (12 foot / stories) / (1 minute) ? horsepower</i>
 <br>= 7.27273 horsepower
 <p>Notice above that Calchemy will always show you how it is interpreting your equations, with a line that begins with "&gt;".
 <p>This example illustrates the following features:
@@ -1579,7 +1617,7 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <br>= 8.77198 sec
 <p>How long will it take a 40,000 Btu/hr water heater to heat 40 gallons of water from 45 degrees F to 140 degrees F?
 <p><a href="javascript:Hyperlink('40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour')">40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour</a>
-<br>= 0.792813 hour
+<br>= 0.79228 hour
 <p>What prop pitch is required for a boat to do 40 knots at 2500 rpm, assuming 10% slip?
 <p><a href="javascript:Hyperlink('40 knot / (2500 rpm * 90%25) ? inch/rev')">40 knot / (2500 rpm * 90%) ? inch/rev</a>
 <br>= 21.604 inch/rev
@@ -1589,10 +1627,10 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <p>How large of a solar collector do you need to heat a house with 20,000 Btu/hr assuming 80% efficiency?
 (Solar insolation for Denver in February is 14 megajoules/day/square meter.)
 <p><a href="javascript:Hyperlink('20000 btu/hour; 80%25 * 14 megajoules/day/square meter ? ft^2')">20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2</a>
-<br>= 486.708 ft^2
+<br>= 486.71 ft^2
 <p>How many watts is a microwave oven putting out if it can bring 3/4 cup of water from 52 degrees F to a boil in 2 minutes and 4 seconds?
 <p><a href="javascript:Hyperlink('(3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt')">(3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt</a>
-<br>= 532.552 watt
+<br>= 532.196 watt
 <p>What is the maximum angle a 2000 lb car with a 65 hp engine can climb at 55 mph, assuming 12 hp of drag at that speed:
 <p><a href="javascript:Hyperlink('asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees')">asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees</a>
 <br>= 10.4095 degrees
