@@ -6,9 +6,14 @@ units calculator which allows you to perform dimensional arithmetic, analysis, a
 Calchemy "understands" the relationships between these units and performs conversions for you automatically as needed.
 It also checks your equations to ensure that they are always dimensionally correct.
 
-**Calchemy now runs as javascript, entirely in your web browser -- just open [calchemy.html](https://rtestardi.github.io/calchemy/calchemy.html) and start having fun!
-You can verify Calchemy's operation by clicking the "Test" button.**
+**Calchemy now runs as javascript, entirely in your web browser -- just open [calchemy.html](https://rtestardi.github.io/calchemy/calchemy.html) and start having fun!**
 (For the latest and greatest development bits that may still have significant bugs, you can open [calchemy_dev.html](https://rtestardi.github.io/calchemy/calchemy_dev.html).)
+
+Calchemy does not send any of your information or equations or results over the Internet. Calchemy does not use cookies, though it does use "other site data" in your browser for persistence of the History List.
+
+N.B. The history list is cleared when you clear your browser cookies and other site data.
+
+You can verify Calchemy's operation by clicking the "Test" button.
 
 Always double-check your answers!
 
