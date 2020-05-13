@@ -1382,11 +1382,11 @@ function ParseTokens(tokens, line)
                     if (results[j].Compatible(filter, false)) {
                         // define a new unit!
                         unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
-                        // if we are loading the database...
+                        // if we are not loading the database...
                         if (! loading) {
-                            if (! mismatches.includes("> " + results[j].interpretation)) {
+                            if (! mismatches.includes("> " + Simplify(results[j].interpretation))) {
                                 // record the interpretation of the definition
-                                mismatches.push("> " + results[j].interpretation);
+                                mismatches.push("> " + Simplify(results[j].interpretation));
                             }
                         }
                         unit.interpretation = names[0];
@@ -1531,12 +1531,12 @@ function RunLine(line)
             var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
             var answer = answers.indexOf(string);
             if (answer == -1) {
-                interpretations[answers.length] = [results[j].interpretation];
+                interpretations[answers.length] = [Simplify(results[j].interpretation)];
                 answers.push(string);
             } else {
                 // sort interpretations by answer
-                if (! interpretations[answer].includes(results[j].interpretation)) {
-                    interpretations[answer].push(results[j].interpretation);
+                if (! interpretations[answer].includes(Simplify(results[j].interpretation))) {
+                    interpretations[answer].push(Simplify(results[j].interpretation));
                 }
             }
         }

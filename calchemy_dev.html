@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.12b</p>
+v1.12c</p>
 </td>
 </tr>
 </table>
@@ -1162,6 +1162,9 @@ var tests =`
     foo= | undefined
     g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
     lb;lb?1 | > poundm / poundm ? 1, > poundf / poundf ? 1, = 1 1
+    asn 1 | > asn(1), = 1.5708
+    q=asn 1 | > asn(1), defined
+    q=
 
     # help examples
 
@@ -1541,6 +1544,64 @@ The following table illustrates these rules:
 </table>
 <p>Parentheses can be used to explicitly override the default precedences and associativities, and group operations.
 <p>When in doubt, it is always best to parenthesize!
+
+<p>Calchemy also supports the following high-precedence functions:
+<table border=1>
+<tr><td>Function...</td><td>Meaning...</td></tr>
+<tr><td>sqrt(x)</td><td>square root of x</td></tr>
+<tr><td>log(x)</td><td>log base 10 of x</td></tr>
+<tr><td>exp(x)</td><td>e to the x</td></tr>
+<tr><td>ln(x)</td><td>natural log of x</td></tr>
+<tr><td>sin(x)</td><td>sine of x (radians)</td></tr>
+<tr><td>cos(x)</td><td>cosine of x (radians)</td></tr>
+<tr><td>tan(x)</td><td>tangent of x (radians)</td></tr>
+<tr><td>asn(x)</td><td>arc-sine (radians) of x</td></tr>
+<tr><td>acs(x)</td><td>arc-cosine (radians) of x</td></tr>
+<tr><td>atn(x)</td><td>arc-tangent (radians) of x</td></tr>
+</table>
+<p>Note that the arguments to these functions should always be parenthesized to avoid precedence confusion.
+<p>The default base unit for trigonometric and inverse-trigonometric functions is the radian.
+To enter arguments in or convert results to any other unit (e.g., degrees), you must explicitly specify the unit.
+Explicitly specifying radians is recommended, but not required.
+The following examples illustrate this:
+<p><a href="javascript:Hyperlink('sin(pi/2)')">sin(pi/2)</a>
+<br>= 1
+<p><a href="javascript:Hyperlink('atn(1)')">atn(1)</a>
+<br>= 0.785398
+<p><a href="javascript:Hyperlink('sin(90 degrees)')">sin(90 degrees)</a>
+<br>= 1
+<p><a href="javascript:Hyperlink('atn(1) ? degrees')">atn(1) ? degrees</a>
+<br>= 45 degrees
+ 
+<p>The square root function can work on arguments with any dimensions with even exponents. 
+Note also that "square root" is the same as exponentiation to the 1/2 power; similarly, "cube root" is the same as exponentiation to the 1/3 power.
+The following examples illustrate this:
+<p><a href="javascript:Hyperlink('sqrt(2 acres) ? meters')">sqrt(2 acres) ? meters</a>
+<br>= 89.9651 meters
+<p><a href="javascript:Hyperlink('(2 acres)^(1/2) ? meters')">(2 acres)^(1/2) ? meters</a>
+<br>= 89.9651 meters
+<p><a href="javascript:Hyperlink('(10000 gallons)^(1/3) ? feet')">(10000 gallons)^(1/3) ? feet</a>
+<br>= 11.016 feet
+
+<p>All other functions work only on dimensionless arguments and return dimensionless results.
+The following examples illustrate this:
+<p><a href="javascript:Hyperlink('exp(1)')">exp(1)</a>
+<br>= 2.71828
+<p><a href="javascript:Hyperlink('ln(2.71828)')">ln(2.71828)</a>
+<br>= 0.999999
+<p><a href="javascript:Hyperlink('log(100)')">log(100)</a>
+<br>= 2
+ 
+<p>Calchemy also understands the following modifiers to allow you to enter units in a more natural format.
+<table border=1>
+<tr><td>This...</td><td>Is the same as ...</td></tr>
+<tr><td>square u</td><td>u^2</td></tr>
+<tr><td>cubic u</td><td>u^3</td></tr>
+</table>
+<p>For example, the following are both equivalent:
+<p><a href="javascript:Hyperlink('3 meters^2')">3 meters^2</a>
+<p><a href="javascript:Hyperlink('3 square meters')">3 square meters</a>
+
 <p>You can enter a comment into your result history by preceding it with a pound sign, like:
 <p><b># comment ...</b>
 <p>You can enter multiple equations on the same line by separating then with an ampersand, like:
