@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.12b</p>
+v1.12c</p>
 </td>
 </tr>
 </table>
@@ -1162,6 +1162,9 @@ var tests =`
     foo= | undefined
     g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
     lb;lb?1 | > poundm / poundm ? 1, > poundf / poundf ? 1, = 1 1
+    asn 1 | > asn(1), = 1.5708
+    q=asn 1 | > asn(1), defined
+    q=
 
     # help examples
 
