@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.12d</p>
+v1.13</p>
 </td>
 </tr>
 </table>
@@ -340,6 +340,8 @@ function Body()
 
         number = units.length - number;
         document.getElementById("status").innerHTML += what + " loaded " + number + " units";
+
+        document.getElementById("results").innerHTML += Chunk("N.B. New simplified precedence rules are in effect!");
     } catch (error) {
         document.getElementById("status").innerHTML += "<br>" + error;
     } finally {
@@ -768,7 +770,7 @@ var examples =`
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2  # solar collector size | = 486.71 ft^2
     2 packs; 30 rolls/pack; 425 sheets/roll; 40 sheets/poop; 1 poops/person/day; 3 persons ? months | = 6.9863 months
     pi * (0.25 inch)^2; 60 ft; 5 gal/min ? sec  # time for hot water to flow thru 1/2 inch pipe | = 7.34398 sec
-    40 gal; 120 degF - 45 degF; 1 cal/cc deltaC; 40000 btu/hr ? min  # water heater recovery time | = 37.5291 min
+    40 gal; 120 degF - 45 degF; 1 cal/(cc deltaC); 40000 btu/hr ? min  # water heater recovery time | = 37.5291 min
     2000 lbm * grav * 60 mph ? hp  # power to decelerate car at 1G | = 320 hp
     10 mph * 30 feet * 10 gal/acre ? gal/min  # fertilizer flow rate on tractor swath | = 6.06061 gal/min
     40 knot / (2500 rpm * 90%) ? inch/rev  # propeller pitch | = 21.604 inch/rev
@@ -777,8 +779,8 @@ var examples =`
     (3/(4 pi) * 1 gal)^(1/3) ? inches  # radius of a gallon sphere | = 3.80634 inches
     (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
     40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
-    1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / 10 sec ? hp  # measured power drag on car | = 6.98976 hp
-    3.4 mega byte / 1200 baud ? hour  # slow network time | = 6.2963 hour
+    1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / (10 sec) ? hp  # measured power drag on car | = 6.98976 hp
+    3.4 mega byte / (1200 baud) ? hour  # slow network time | = 6.2963 hour
     6.98976 hp; 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
     (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
 `;
@@ -973,7 +975,7 @@ var tests =`
     1/2?4 | = 0.125 4
     1?2/4 | = 2 2/4
     1 2/4 | = 0.5
-    1/2 4 | = 0.125
+    1/2 4 | = 2
     ({2})[(4)] | = 8
     (1+(2+3)*(1+2)) | = 16
     -3 | = -3
@@ -987,10 +989,11 @@ var tests =`
     -foot*2 ? foot | = -2 foot
     0+foot | [Length or Radius or Height]
     0-foot | [Length or Radius or Height]
-    cal per gm deltaK | [Specific_heat_m]
-    1/3 cal per gm deltaK | [Specific_heat_m^-1]
+    cal per (gm deltaK) | [Specific_heat_m]
+    1/3 cal per (gm deltaK) | [Specific_heat_m]
+    1/(3 cal per (gm deltaK)) | [Specific_heat_m^-1]
     m per sec per sec | [Acceleration]
-    1/m per sec per sec | [Acceleration^-1]
+    1/(m per sec per sec) | [Acceleration^-1]
 
     # functions
     3 3 | = 9
@@ -1089,16 +1092,16 @@ var tests =`
     # multi-line examples
     volume=
     volume = 8 feet * 7 feet * 8 inch ? gal
-    volume; (1 cal/cc deltac) (90 - 50) deltaf / 400 watt ? day | = 2.84411 day
+    volume; (1 cal/(cc deltac)) (90 - 50) deltaf / (400 watt) ? day | = 2.84411 day
     volume=
     seed=
     seed=2cc
     1 seed/square foot; 200 acre ? bushels | = 494.451 bushels
     seed=
     flow,power=
-    flow = 1 acre * 2 inches / 1 day ? cfm
+    flow = 1 acre * 2 inches / (1 day) ? cfm
     power = (flow * 1 gram/cc) * (9.81 m/s^2) * (100 feet) ? hp
-    power / 110 volts ? amps | = 6.46784 amps
+    power / (110 volts) ? amps | = 6.46784 amps
     1 acre; 2 inches; 1 day; d_water; grav; 100 feet; 110 volts ? amps | = 6.46563 amps
     flow,power=
     scalecm=
@@ -1114,19 +1117,19 @@ var tests =`
     # si  -- XXX seems weird these are passed up as mismatch string with "= "...
     lb? | = 0.453592 kilogramm,= 4.44822 newton
     1? | = 1
-    3 foot/2 second | [Speed]
-    3 foot/2 second ? | = 0.4572 meter per second
+    3 foot/(2 second) | [Speed]
+    3 foot/(2 second) ? | = 0.4572 meter/second
     3 lbf * 3 foot ? | = 12.2024 joule, = 12.2024 newton meter
     joule*meter | [MASS*LENGTH^3*TIME^-2]
     joule*meter?|= 1 kilogramm*meter^3*second^-2
-    shm_water?|= 4184 joule per (kilogramm*deltaK)
+    shm_water?|= 4184 joule/(kilogramm*deltaK)
     $?|= 1 MONEY
     1kgm^4 | [MASS^4]
     1kgm^4? | = 1 kilogramm^4
     1m^4 | [LENGTH^4]
     1m^4? | = 1 meter^4
-    1/grav? | = 0.101972 (meter per second^2)^-1
-    1/sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 2085.14 radian per second
+    1/grav? | = 0.101972 (meter/second^2)^-1
+    1/sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 2085.14 radian/second
 
     # dimensions
     Length | [Length or Radius or Height]
@@ -1147,13 +1150,14 @@ var tests =`
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
-    1/2 feet * 2 meters ? | > (1 / (2 foot)) * 2 meter, = 3.28084
-    1/sqrt(23mH * 10uF)? | > 1 / (23 milli~henry * 10 micro~farad)^0.5 ?, = 331.861 hertz, = 2085.14 radian per second
+    1/2 feet * 2 meters ? | > (1 / 2) foot * 2 meter ?, = 0.3048 meter^2
+    1/sqrt(23mH * 10uF)? | > 1 / (23 milli~henry * 10 micro~farad)^0.5 ?, = 331.861 hertz, = 2085.14 radian/second
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
     2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
     --3 | > (0-(0-3)), = 3
-    cal per gm deltaK | > calorie per (gramm deltaK), [Specific_heat_m]
-    1/cal per gm deltaK | > 1 / (calorie per (gramm deltaK)), [Specific_heat_m^-1]
+    cal/(gm deltaK) | > calorie/(gramm deltaK), [Specific_heat_m]
+    1/cal/(gm deltaK) |> (1 / calorie) / (gramm deltaK), [MASS^-2*LENGTH^-2*TIME^2*TEMP^-1]
+    1/(cal/(gm deltaK)) | > 1 / (calorie/(gramm deltaK)), [Specific_heat_m^-1]
     (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
     foo=lb | > poundm, > poundf, defined
     foo=2;3 | > 2 * 3, > 2 / 3, > (2)^-1 * 3, > (2 * 3)^-1, defined
@@ -1167,30 +1171,11 @@ var tests =`
     q=
 
     # help examples
-
     3 meter ? inch | = 118.11 inch
-    2000 lbf * (10 * 12 feet) / 1 minute ? horsepower |= 7.27273 horsepower
+    2000 lbf * (10 * 12 feet) / (1 minute) ? horsepower |= 7.27273 horsepower
     2000 lbf * (10 * 12 feet) ? horsepower | Dimensional Mismatch [Frequency or Angular_velocity or Time^-1]
     2+3*5 | = 17
     2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower | > 2000 poundf * 10 stories * (12 foot / stories) / (1 minute) ? horsepower, = 7.27273 horsepower
-    2*3^4 - (2*(3^4)) ? | = 0
-    2*3*4 - ((2*3)*4) ? | = 0
-    2^3^4 - (2^(3^4)) ? | = 0
-    1/2pi - (1 / (2*pi)) ? | = 0
-    3 meter / 2 seconds - ((3 * meter) / (2 * seconds)) ? | = 0 meter per second
-    1/2 foot - (1 / (2 * foot)) ? | = 0 (meter)^-1
-    1/2*foot - ((1/2) * foot) ? | = 0 meter
-    (1/2) foot - ((1/2) * foot) ? | = 0 meter
-    1/2 foot/sec - ((1 / (2 * foot)) / sec) ? | = 0 meter^-1*second^-1
-    1/2 foot per sec - (1 / ((2 * foot)/sec)) ? | = 0 (meter per second)^-1
-    1/2 foot per sec^2 - (1 / ((2 * foot)/(sec^2))) ? | = 0 (meter per second^2)^-1
-    1/3 cal per gm deltaK - (1 / ((3 * cal) / (gm * deltaK))) ? | = 0 (joule per (kilogramm*deltaK))^-1
-    1/2 foot pound - (1 / ((2 * foot) * pound)) ? | = 0 kilogramm^-1*meter^-1, = 0 (joule)^-1, = 0 (newton meter)^-1
-    1/2 foot*3 pound - ((1 / (2 foot)) * (3 pound)) ? | = 0 kilogramm per meter, = 0 joule per meter^2, = 0 newton per meter
-    3 meter^2 - (3 * (meter^2)) ? | = 0 meter^2
-    3 lbm meter^2 - ((3 * lbm) * (meter^2)) ? | = 0 kilogramm*meter^2
-    pi (3 foot)^2 - (pi * ((3 foot)^2)) ? | = 0 meter^2
-    1 / (4 foot)(3 foot) - (1/((4 foot) * (3 foot))) ? | = 0 kilometer per liter
     2000 lbm * grav * 60 mph ? hp | = 320 hp
     10 mph * 30 feet * 10 gal/acre ? gal/min | = 6.06061 gal/min
     43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec | = 8.77198 sec
@@ -1203,6 +1188,8 @@ var tests =`
     speed = 60 mph & force = 20 lb
     speed*force ? hp | = 3.2 hp
     speed = & force =
+
+    # help precedence
 
     # unit help
     TEST details lb | === unit details lb ===,Common:poundm,lbm,lb*,pound*=453.592 gramm [Mass], Common:poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
@@ -1263,7 +1250,7 @@ var teststhatmaythrow = `
     # multi-line examples
     area,power=
     area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) ? Area
-    power=area * (30 deltaf) / 11 rvalue ? Power
+    power=area * (30 deltaf) / (11 rvalue) ? Power
     (20 lb * 37e6 btu/ton) / power ? day | = 7.93929 day
     area,power=
 `;
@@ -1452,11 +1439,11 @@ Calchemy does not use cookies, though it does use "other site data" in your brow
 <p>= 118.11 inch
 <p>To calculate the required horsepower for a motor which could raise a 2000 lbf elevator to the top of a 10 story building (assuming 12 feet per story) in 1 minute,
 you could enter the equation:
-<p><a href="javascript:Hyperlink('2000 lbf * (10 * 12 feet) / 1 minute ? horsepower')">2000 lbf * (10 * 12 feet) / 1 minute ? horsepower</a>
+<p><a href="javascript:Hyperlink('2000 lbf * (10 * 12 feet) / (1 minute) ? horsepower')">2000 lbf * (10 * 12 feet) / (1 minute) ? horsepower</a>
 <p>Indicating that you want to multiply 2000 pounds force by 10 times 12 feet, divide that by 1 minute, and then express the final result in horsepower.
 Calchemy would respond:
 <p>= 7.27273 horsepower
-<p>If, on the other hand, you had made a mistake in the original equation and left out the "/ 1 minute":
+<p>If, on the other hand, you had made a mistake in the original equation and left out the "/ (1 minute)":
 <p><a href="javascript:Hyperlink('2000 lbf * (10 * 12 feet) ? horsepower')">2000 lbf * (10 * 12 feet) ? horsepower</a>
 <p>Calchemy would have responded with a Dimensional Mismatch indication containing:
 <p>Time^-1
@@ -1506,41 +1493,20 @@ This, again, allows you to enter equations in a more natural format.
 <tr><td>Operator...</td><td>Meaning...</td></tr>
 <tr><td>~</td><td>prefix multiplication</td></tr>
 <tr><td>^</td><td>exponentiation</td></tr>
-<tr><td></td><td>implied multiplication</td></tr>
-<tr><td>per</td><td>unit division</td></tr>
-<tr><td>* /</td><td>multiplication, division</td></tr>
+<tr><td>* / per</td><td>implied multiplication, multiplication, division</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
 </table>
 <p>All operators except "^" are left-associative; "^" is right-associative.
 <p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
 <p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
-The precedence of implied multiplication is just lower than that of "^".
-<p>The "per" operator performs a higher-precedence unit division, with a precedence that is just lower than that of implied multiplication.
-Like implied multiplication, this can be used within a unit to keep the unit terms grouped together, like: "cal per gm deltaK".
+The precedence of implied multiplication is equal to that of multiplication.
+<p>The "per" operator performs a division, with a precedence equal to that of division.
 <p>Calchemy evaluates higher precedence operators before lower precedence operators.
 Left-associative operators of the same precedence are evaluated from left to right; right-associative operators of the same precedence are evaluated from right to left.
 The following table illustrates these rules:
 <table border=1>
 <tr><td>This...</td><td>Is evaluated as...</td></tr>
-<tr><td>2*3^4</td><td>2*(3^4)</td></tr>
-<tr><td>2*3*4</td><td>(2*3)*4</td></tr>
-<tr><td>2^3^4</td><td>2^(3^4)</td></tr>
-<tr><td>1/2pi</td><td>1 / (2*pi)</td></tr>
-<tr><td>3 meter / 2 seconds</td><td>(3 * meter) / (2 * seconds)</td></tr>
-<tr><td>1/2 foot</td><td>1 / (2 * foot)</td></tr>
-<tr><td>1/2*foot</td><td>(1/2) * foot</td></tr>
-<tr><td>(1/2) foot</td><td>(1/2) * foot</td></tr>
-<tr><td>1/2 foot/sec</td><td>(1 / (2 * foot)) / sec</td></tr>
-<tr><td>1/2 foot per sec</td><td>1 / ((2 * foot)/sec)</td></tr>
-<tr><td>1/2 foot per sec^2</td><td>1 / ((2 * foot)/(sec^2))</td></tr>
-<tr><td>1/3 cal per gm deltaK</td><td>1 / ((3 * cal) / (gm * deltaK))</td></tr>
-<tr><td>1/2 foot pound</td><td>1 / ((2 * foot) * pound)</td></tr>
-<tr><td>1/2 foot*3 pound</td><td>(1 / (2 foot)) * (3 pound)</td></tr>
-<tr><td>3 meter^2</td><td>3 * (meter^2)</td></tr>
-<tr><td>3 lbm meter^2</td><td>(3 * lbm) * (meter^2)</td></tr>
-<tr><td>pi (3 foot)^2</td><td>pi * ((3 foot)^2)</td></tr>
-<tr><td>1 / (4 foot)(3 foot)</td><td>1/((4 foot) * (3 foot))</td></tr>
 </table>
 <p>Parentheses can be used to explicitly override the default precedences and associativities, and group operations.
 <p>When in doubt, it is always best to parenthesize!
