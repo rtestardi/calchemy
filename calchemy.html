@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.13</p>
+v1.13a</p>
 </td>
 </tr>
 </table>
@@ -3418,6 +3418,10 @@ var tests =`
     2000 lbf * (10 * 12 feet) ? horsepower | Dimensional Mismatch [Frequency or Angular_velocity or Time^-1]
     2+3*5 | = 17
     2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower | > 2000 poundf * 10 stories * (12 foot / stories) / (1 minute) ? horsepower, = 7.27273 horsepower
+    sin(pi/2) | = 1
+    atn(1) | = 0.785398
+    sin(90 degrees) | = 1
+    atn(1) ? degrees | = 45 degrees
     2000 lbm * grav * 60 mph ? hp | = 320 hp
     10 mph * 30 feet * 10 gal/acre ? gal/min | = 6.06061 gal/min
     43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec | = 8.77198 sec
@@ -3432,6 +3436,20 @@ var tests =`
     speed = & force =
 
     # help precedence
+    2*3^4 - 2*(3^4) | = 0
+    2*3*4 - (2*3)*4 | = 0
+    2^3^4 - 2^(3^4) | = 0
+    1/2*3 - (1/2)*3 | = 0
+    1/2 3 - (1/2)*3 | = 0
+    1/(2)(3) - (1/2)*3 | = 0
+    1*2/3 - (1*2)/3 | = 0
+    1*2 per 3 - (1*2)/3 | = 0
+    1/2 foot - (1/2)*foot ? | = 0 meter
+    3 kgm meter/s^2 - ((3 * kgm) * meter)/(s^2) ? | = 0 newton
+    3 cal/gm deltaK - ((3 * cal)/gm) * deltaK ? | = 0 meter^2*second^-2*deltaK
+    3 cal per gm deltaK - ((3 * cal)/gm) * deltaK ? | = 0 meter^2*second^-2*deltaK
+    3 cal/(gm deltaK) - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
+    3 cal per (gm deltaK) - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
 
     # unit help
     TEST details lb | === unit details lb ===,Common:poundm,lbm,lb*,pound*=453.592 gramm [Mass], Common:poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
@@ -3749,6 +3767,20 @@ Left-associative operators of the same precedence are evaluated from left to rig
 The following table illustrates these rules:
 <table border=1>
 <tr><td>This...</td><td>Is evaluated as...</td></tr>
+<tr><td>2*3^4</td><td>2*(3^4)</td></tr>
+<tr><td>2*3*4</td><td>(2*3)*4</td></tr>
+<tr><td>2^3^4</td><td>2^(3^4)</td></tr>
+<tr><td>1/2*3</td><td>(1/2)*3</td></tr>
+<tr><td>1/2 3</td><td>(1/2)*3</td></tr>
+<tr><td>1/(2)(3)</td><td>(1/2)*3</td></tr>
+<tr><td>1*2/3</td><td>(1*2)/3</td></tr>
+<tr><td>1*2 per 3</td><td>(1*2)/3</td></tr>
+<tr><td>1/2 foot</td><td>(1/2)*foot</td></tr>
+<tr><td>3 kgm meter/s^2</td><td>((3 * kgm) * meter)/(s^2)</td></tr>
+<tr><td>3 cal/gm deltaK</td><td>((3 * cal)/gm) * deltaK</td></tr>
+<tr><td>3 cal per gm deltaK</td><td>((3 * cal)/gm) * deltaK</td></tr>
+<tr><td>3 cal/(gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
+<tr><td>3 cal per (gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 </table>
 <p>Parentheses can be used to explicitly override the default precedences and associativities, and group operations.
 <p>When in doubt, it is always best to parenthesize!
@@ -3978,11 +4010,11 @@ If your equation demands that parameters be entered in specific units, it is not
 As such, the units for rpm, cps, and Hz are defined in terms of radians per unit time.
 Calchemy cannot tell if you have left out or accidentally included a factor of 2 pi in your physical equation.
 <h2>Units of Offset Temperature</h2>
-<p>In Calchemy, the degC and degF units are defined as offsets into the Celsius and Fahrenheit temperature scales.
+<p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.
 As such, every time you enter one of these, you can and should think of it as being instantly converted to absolute Kelvin and Rankine temperatures.
 Likewise, when you ask for a result in degC or degF, the evaluated (absolute) Kelvin or Rankine temperature result is then converted back to Celsius or Fahrenheit.
 Calchemy cannot tell if you have accidentally converted a temperature offset into an absolute temperature or not.
-<p>Conversely, the deltaC and deltaF units are defined as the "interval" of 1 degree in the Celsius and Fahrenheit temperature scales,
+<p>Conversely, the deltaC (and deltaK) and deltaF (and deltaR) units are defined as the "interval" of 1 degree in the Celsius and Fahrenheit temperature scales,
 much like the "interval" of a pound or a watt, where 2 times one interval equals 2 intervals...
 <h2>Ambiguous Dimensions</h2>
 <p>Dimensions such as Torque and Energy are identical, only differing in an unspecified vector component.
