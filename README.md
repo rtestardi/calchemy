@@ -44,14 +44,14 @@ Calchemy would respond:
 To calculate the required horsepower for a motor which could raise a 2000 lbf elevator to the top of a 10 story building (assuming 12 feet per story) in 1 minute,
 you could enter the equation:
 
-**2000 lbf * (10 * 12 feet) / 1 minute ? horsepower**
+**2000 lbf * (10 * 12 feet) / (1 minute) ? horsepower**
 
 Indicating that you want to multiply 2000 pounds force by 10 times 12 feet, divide that by 1 minute, and then express the final result in horsepower.
 Calchemy would respond:
 
 **= 7.27273 horsepower**
 
-If, on the other hand, you had made a mistake in the original equation and left out the "/ 1 minute":
+If, on the other hand, you had made a mistake in the original equation and left out the "/ (1 minute)":
 
 **2000 lbf * (10 * 12 feet) ? horsepower**
 
