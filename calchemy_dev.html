@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.13a</p>
+v1.13b</p>
 </td>
 </tr>
 </table>
@@ -1203,6 +1203,7 @@ var tests =`
     1*2/3 - (1*2)/3 | = 0
     1*2 per 3 - (1*2)/3 | = 0
     1/2 foot - (1/2)*foot ? | = 0 meter
+    3 meter / 2 seconds - ((3 meter)/2) * seconds ? | = 0 meter*second
     3 kgm meter/s^2 - ((3 * kgm) * meter)/(s^2) ? | = 0 newton
     3 cal/gm deltaK - ((3 * cal)/gm) * deltaK ? | = 0 meter^2*second^-2*deltaK
     3 cal per gm deltaK - ((3 * cal)/gm) * deltaK ? | = 0 meter^2*second^-2*deltaK
@@ -1516,7 +1517,6 @@ This, again, allows you to enter equations in a more natural format.
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
 </table>
 <p>All operators except "^" are left-associative; "^" is right-associative.
-<p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
 <p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
 The precedence of implied multiplication is equal to that of multiplication.
 <p>The "per" operator performs a division, with a precedence equal to that of division.
@@ -1534,12 +1534,14 @@ The following table illustrates these rules:
 <tr><td>1*2/3</td><td>(1*2)/3</td></tr>
 <tr><td>1*2 per 3</td><td>(1*2)/3</td></tr>
 <tr><td>1/2 foot</td><td>(1/2)*foot</td></tr>
+<tr><td>3 meter / 2 seconds</td><td>((3 meter)/2) * seconds</td></tr>
 <tr><td>3 kgm meter/s^2</td><td>((3 * kgm) * meter)/(s^2)</td></tr>
 <tr><td>3 cal/gm deltaK</td><td>((3 * cal)/gm) * deltaK</td></tr>
 <tr><td>3 cal per gm deltaK</td><td>((3 * cal)/gm) * deltaK</td></tr>
 <tr><td>3 cal/(gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 <tr><td>3 cal per (gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 </table>
+<p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
 <p>Parentheses can be used to explicitly override the default precedences and associativities, and group operations.
 <p>When in doubt, it is always best to parenthesize!
 
