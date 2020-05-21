@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.13d</p>
+v1.13e</p>
 </td>
 </tr>
 </table>
@@ -1273,7 +1273,7 @@ class Unit {
                     if (this.Compatible(units[i], invert)) {
                         // format the SI result
                         var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
-                        string += (invert?"(":"") + units[i].definition.replace(/.*= */, "") + (invert?")^-1":"");
+                        string += (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "") + (invert?")^-1":"");
                         strings.push("> " + Simplify(this.interpretation) + " ?");
                         strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
                     }
@@ -3383,6 +3383,7 @@ var tests =`
     1m^4? | = 1 meter^4
     1/grav? | = 0.101972 (meter/second^2)^-1
     1/sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 2085.14 radian/second
+    visc_air? | > visc_air ?, = 0.0000178 pascal*second
 
     # dimensions
     Length | [Length or Radius or Height]
