@@ -42,7 +42,7 @@ body,html { margin: 0px; }
 <button type='button' onclick="Details()">Unit Details</button>
 <button type='button' onclick="Copy()">Copy</button>
 <button type='button' onclick="Paste()">Paste</button>
-<button type='button' onclick="Example()">Example</button>
+<button type='button' onclick="Examples()">Examples</button>
 <button type='button' onclick="Equations()">Equations</button>
 <button type='button' onclick="Load()">Load</button>
 <button type='button' onclick="Test()">Test</button>
@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.13c</p>
+v1.13d</p>
 </td>
 </tr>
 </table>
@@ -120,7 +120,7 @@ var custom = null;
 //   <Up-arrow>, <Up-arrow>, <Up-arrow>, <Up-arrow>, <Enter>
 //   <Down-arrow>, <Enter>
 //   <Copy>, <Paste>
-//   <Example>, <Enter>
+//   <Examples>, 1 cup, <Enter>
 //   <Help>, 3 meter ? inch, <Enter>, <Delete>, <Delete>
 //   1&2, <Enter>, Recall 1&2, <Enter>
 // 97.7%
@@ -2435,23 +2435,34 @@ function History(text)
 
 var lasttag = "";
 
-// return a tagged html chunk to allow results to be deleted
-function Chunk(result, tag)
+// append a tagged html chunk to allow results to be deleted
+function Chunk(label, result)
 {
-    // create a random tag if one was not specified explicitly
-    first = true;
-    if (tag == undefined) {
+    // create a random tag if a label was not specified explicitly
+    var tag;
+    if (label == null) {
         tag = window.crypto.getRandomValues(new Uint32Array(4)).join('-');
+        label = "";
+    } else {
+        tag = label.replace(/ /g, "");
+        label = label + " ";
     }
-    if (lasttag == "") {
-        lasttag = tag;
+    Delete(tag);
+    if (result == undefined) {
+        result = "";
     }
+
     // create the chunk as a searchable comment preceded by a horizontal line and followed by a table with a delete button to the right
     var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated below
     var head = "<table><tr><td>";
     var button = "</td><td style='width: 4%; vertical-align: bottom;'><button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
     var tail = "</td></tr></table>";
-    return  hrtag + head + result + button + tail;
+
+    document.getElementById("results").innerHTML += hrtag + head + label + result + button + tail;
+    first = true;
+    if (lasttag == "") {
+        lasttag = tag;
+    }
 }
 
 // the user clicked a Delete button; delete tagged html results
@@ -2481,13 +2492,12 @@ function Delete(tag)
             }
             // update the results
             document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
+            cursor = 0;
         }
     }
 
     // reset url
     window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
-
-    cursor = 0;
     Scroll(true);
 }
 
@@ -2529,10 +2539,10 @@ function LoadRuntimeDatabase(name, text)
         var number = units.length;
         LoadDatabase(text);
         number = units.length - number;
-        document.getElementById("results").innerHTML += Chunk(name + " loaded " + number + " units");
+        Chunk(name + " loaded ", number + " units");
     } catch (error) {
         // append a deletable chunk with any errors
-        document.getElementById("results").innerHTML += Chunk(error);
+        Chunk(null, error);
     } finally {
         offset_warn = false;
         cycle_warn = false;
@@ -2583,7 +2593,7 @@ function Body()
         number = units.length - number;
         document.getElementById("status").innerHTML += what + " loaded " + number + " units";
 
-        document.getElementById("results").innerHTML += Chunk("N.B. New simplified precedence rules are in effect!");
+        Chunk("N.B. New simplified precedence rules are in effect!");
     } catch (error) {
         document.getElementById("status").innerHTML += "<br>" + error;
     } finally {
@@ -2620,7 +2630,7 @@ function Body()
                 LoadRuntimeDatabase(file.name, text);
             } catch (error) {
                 // append a deletable chunk with any errors
-                document.getElementById("results").innerHTML += Chunk(error);
+                Chunk(null, error);
             }
         });
         reader.readAsText(file);
@@ -2693,14 +2703,14 @@ function Enter()
 
         // append a deletable chunk to the results list with the results
         if (equation.length && success && ! testing) {
-            document.getElementById("results").innerHTML += Chunk(History(equation) + htmls.join(' '));
+            Chunk(null, History(equation) + htmls.join(' '));
             window.history.pushState("", "", window.location.href.replace(/[?#].*/, "") + '?' + urls.join('&'));
         } else if (htmls.length) {
             // N.B. if there is no new output we leave output from before TEST available
-            document.getElementById("results").innerHTML += Chunk(htmls.join(' '));
+            Chunk(null, htmls.join(' '));
         }
     } catch (error) {
-        document.getElementById("results").innerHTML += Chunk(error);
+        Chunk(null, error);
     }
     Scroll();
 
@@ -2807,7 +2817,7 @@ function ShowUnitsDetails(name)
     }
 
     // append a deletable chunk to the results list with the unit details
-    document.getElementById("results").innerHTML += Chunk("=== unit details " + name + " ===" + html);
+    Chunk("=== unit details " + name + " ===", html);
     Scroll();
 }
 
@@ -2866,7 +2876,7 @@ function ShowUnitsByCategory(category, bydimension)  // or "All Units"
     }
 
     // append a deletable chunk to the results list with the units list
-    document.getElementById("results").innerHTML += Chunk("=== units in category " + category + " ===" + html);
+    Chunk("=== units in category " + category + " ===", html);
     Scroll();
 }
 
@@ -2891,7 +2901,7 @@ function ShowUnitsByName(name)
     }
 
     // append a deletable chunk to the results list with the units list
-    document.getElementById("results").innerHTML += Chunk("=== units by name " + name + " ===" + html);
+    Chunk("=== units by name " + name + " ===", html);
     Scroll();
 }
 
@@ -2921,7 +2931,7 @@ function ShowCategories()
     }
 
     // append a deletable chunk to the results list with the categories list
-    document.getElementById("results").innerHTML += Chunk("=== unit categories ===" + html);
+    Chunk("=== unit categories ===", html);
     Scroll();
 }
 
@@ -3027,21 +3037,22 @@ var examples =`
     (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
 `;
 
-var example = 0;
-
-// the user clicked the Example button; copy an example equation to the equation line
-function Example()
+// the user clicked the Examples button; show examples
+function Examples()
 {
     // get all the example lines, including blanks
     var lines = examples.split(/[\r\n]+/);
-    var line;
-    // recall the next non-blank example line, without comments
-    do {
-        line = lines[example%lines.length].replace(/[|].*/, "").trim();
-        example++;
-    } while (! line);
-    document.getElementById("equation").value = line;
-    Scroll();
+    var html = "";
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].replace(/[|].*/, "").trim();
+        if (line.length) {
+            html += "<br>" + History(line);
+        }
+    }
+
+    // append a deletable chunk to the results list with the examples, replacing any existing examples chunk
+    Chunk("=== examples ===", html);
+    Scroll(true);
 }
 
 var equations =`
@@ -3121,7 +3132,7 @@ function EquationsByGroup(group)  // or "All Equations"
     }
 
     // append a deletable chunk to the results list with the equations list
-    document.getElementById("results").innerHTML += Chunk("=== equations in group " + group + " ===" + html);
+    Chunk("=== equations in group " + group + " ===", html);
     Scroll();
 }
 
@@ -3143,7 +3154,7 @@ function Equations()
     }
 
     // append a deletable chunk to the results list with the equation groups list
-    document.getElementById("results").innerHTML += Chunk("=== equation groups ===" + html);
+    Chunk("=== equation groups ===", html);
     Scroll();
 }
 
@@ -3175,7 +3186,7 @@ function Load()
     }
 
     // append a deletable chunk to the results list with the categories list
-    document.getElementById("results").innerHTML += Chunk("=== unit databases ===" + html);
+    Chunk("=== unit databases ===", html);
     Scroll();
 }
 
@@ -3521,7 +3532,7 @@ function Test()
 {
     // append a temporary deletable chunk to the results list with the test in progress
     lasttag = "";
-    document.getElementById("results").innerHTML += Chunk("tests started ...");
+    Chunk("tests started ...");
     Scroll();
     setTimeout(TestReal, 100);  // XXX -- why does 0 not work?
 }
@@ -3631,10 +3642,9 @@ function TestReal()
 
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
-        document.getElementById("results").innerHTML += Chunk(html + "<br>tests started ... tests complete " +
-                                                                     passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
+        Chunk("tests started ...", html + "<br>... tests complete " + passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
     } catch (error) {
-        document.getElementById("results").innerHTML += Chunk(error);
+        Chunk(null, error);
     } finally {
         offset_warn = false;
         offset_warned = false;
@@ -4045,8 +4055,7 @@ Similarly, dimensions such as Pressure and Latent Heat by Volume are surprisingl
 function Help()
 {
     // append a deletable chunk to the results list with the help, replacing any existing chunk so TOC hyperlinks work
-    Delete("help");
-    document.getElementById("results").innerHTML += Chunk(help, "help");
+    Chunk("=== help ===", help);
     document.getElementById('toc').scrollIntoView();
     Scroll(true);
 }
