@@ -462,7 +462,7 @@ class Unit {
                     if (this.Compatible(units[i], invert)) {
                         // format the SI result
                         var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
-                        string += (invert?"(":"") + units[i].definition.replace(/.*= */, "") + (invert?")^-1":"");
+                        string += (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "") + (invert?")^-1":"");
                         strings.push("> " + Simplify(this.interpretation) + " ?");
                         strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
                     }
