@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.13f</p>
+v1.14</p>
 </td>
 </tr>
 </table>
@@ -350,8 +350,6 @@ function Body()
 
         number = units.length - number;
         document.getElementById("status").innerHTML += what + " loaded " + number + " units";
-
-        Chunk("N.B. New simplified precedence rules are in effect!");
     } catch (error) {
         document.getElementById("status").innerHTML += "<br>" + error;
     } finally {
@@ -986,7 +984,7 @@ var tests =`
     1/2?4 | = 0.125 4
     1?2/4 | = 2 2/4
     1 2/4 | = 0.5
-    1/2 4 | = 2
+    1/2 4 | = 0.125
     ({2})[(4)] | = 8
     (1+(2+3)*(1+2)) | = 16
     -3 | = -3
@@ -1001,7 +999,7 @@ var tests =`
     0+foot | [Length or Radius or Height]
     0-foot | [Length or Radius or Height]
     cal per (gm deltaK) | [Specific_heat_m]
-    1/3 cal per (gm deltaK) | [Specific_heat_m]
+    1/3*cal per (gm deltaK) | [Specific_heat_m]
     1/(3 cal per (gm deltaK)) | [Specific_heat_m^-1]
     m per sec per sec | [Acceleration]
     1/(m per sec per sec) | [Acceleration^-1]
@@ -1162,7 +1160,7 @@ var tests =`
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
-    1/2 feet * 2 meters ? | > (1 / 2) foot * 2 meter ?, = 0.3048 meter^2
+    1/2*feet * 2 meters ? | > (1 / 2) * foot * 2 meter ? , = 0.3048 meter^2
     1/sqrt(23mH * 10uF)? | > 1 / (23 milli~henry * 10 micro~farad)^0.5 ?, = 331.861 hertz, = 2085.14 radian/second
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
     2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
@@ -1210,15 +1208,15 @@ var tests =`
     2*3*4 - (2*3)*4 | = 0
     2^3^4 - 2^(3^4) | = 0
     1/2*3 - (1/2)*3 | = 0
-    1/2 3 - (1/2)*3 | = 0
-    1/(2)(3) - (1/2)*3 | = 0
+    1/2 3 - 1/(2*3) | = 0
+    1/(2)(3) - 1/(2*3) | = 0
     1*2/3 - (1*2)/3 | = 0
     1*2 per 3 - (1*2)/3 | = 0
-    1/2 foot - (1/2)*foot ? | = 0 meter
-    3 meter / 2 seconds - ((3 meter)/2) * seconds ? | = 0 meter*second
+    1/2 foot - 1/(2*foot) ? | = 0 (meter)^-1
+    3 meter / 2 seconds - (3 meter)/(2 seconds) ? | = 0 meter/second
     3 kgm meter/s^2 - ((3 * kgm) * meter)/(s^2) ? | = 0 newton
-    3 cal/gm deltaK - ((3 * cal)/gm) * deltaK ? | = 0 meter^2*second^-2*deltaK
-    3 cal per gm deltaK - ((3 * cal)/gm) * deltaK ? | = 0 meter^2*second^-2*deltaK
+    3 cal/gm deltaK - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
+    3 cal per gm deltaK - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
     3 cal/(gm deltaK) - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
     3 cal per (gm deltaK) - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
 
@@ -1524,14 +1522,15 @@ This, again, allows you to enter equations in a more natural format.
 <tr><td>Operator...</td><td>Meaning...</td></tr>
 <tr><td>~</td><td>prefix multiplication</td></tr>
 <tr><td>^</td><td>exponentiation</td></tr>
-<tr><td>* / per</td><td>implied multiplication, multiplication, division</td></tr>
+<tr><td></td><td>implied multiplication</td></tr>
+<tr><td>* / per</td><td>multiplication, division</td></tr>
 <tr><td>:</td><td>dimensional filter</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
 </table>
 <p>All operators except "^" are left-associative; "^" is right-associative.
 <p>Side-by-side operands (with no intervening punctuation) are evaluated with an implied multiplication.
-The precedence of implied multiplication is equal to that of multiplication.
+The precedence of implied multiplication is just above that of multiplication.
 <p>The "per" operator performs a division, with a precedence equal to that of division.
 <p>Calchemy evaluates higher precedence operators before lower precedence operators.
 Left-associative operators of the same precedence are evaluated from left to right; right-associative operators of the same precedence are evaluated from right to left.
@@ -1542,15 +1541,15 @@ The following table illustrates these rules:
 <tr><td>2*3*4</td><td>(2*3)*4</td></tr>
 <tr><td>2^3^4</td><td>2^(3^4)</td></tr>
 <tr><td>1/2*3</td><td>(1/2)*3</td></tr>
-<tr><td>1/2 3</td><td>(1/2)*3</td></tr>
-<tr><td>1/(2)(3)</td><td>(1/2)*3</td></tr>
+<tr><td>1/2 3</td><td>1/(2*3)</td></tr>
+<tr><td>1/(2)(3)</td><td>1/(2*3)</td></tr>
 <tr><td>1*2/3</td><td>(1*2)/3</td></tr>
 <tr><td>1*2 per 3</td><td>(1*2)/3</td></tr>
-<tr><td>1/2 foot</td><td>(1/2)*foot</td></tr>
-<tr><td>3 meter / 2 seconds</td><td>((3 meter)/2) * seconds</td></tr>
+<tr><td>1/2 foot</td><td>1/(2*foot)</td></tr>
+<tr><td>3 meter / 2 seconds</td><td>(3 meter)/(2 seconds)</td></tr>
 <tr><td>3 kgm meter/s^2</td><td>((3 * kgm) * meter)/(s^2)</td></tr>
-<tr><td>3 cal/gm deltaK</td><td>((3 * cal)/gm) * deltaK</td></tr>
-<tr><td>3 cal per gm deltaK</td><td>((3 * cal)/gm) * deltaK</td></tr>
+<tr><td>3 cal/gm deltaK</td><td>(3 * cal)/(gm * deltaK)</td></tr>
+<tr><td>3 cal per gm deltaK</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 <tr><td>3 cal/(gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 <tr><td>3 cal per (gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 </table>

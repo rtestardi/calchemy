@@ -660,9 +660,9 @@ var prec = {
     '<':    2,  // right-to-left associativity  (unary -)
     '^':    1,  // right-to-left associativity
     ' ':    0,  // left-to-right associativity  (implied multiplication)
-    "per":  0,  // left-to-right associativity  (unit division)
-    '*':    0,  // left-to-right associativity
-    '/':    0,  // left-to-right associativity
+    "per": -1,  // left-to-right associativity  (unit division)
+    '*':   -1,  // left-to-right associativity
+    '/':   -1,  // left-to-right associativity
     ':':   -2,  // left-to-right associativity  (dimensional filter)
     '+':   -3,  // left-to-right associativity
     '-':   -3,  // left-to-right associativity
