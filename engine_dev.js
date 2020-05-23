@@ -194,6 +194,8 @@ class Unit {
                     display = ' ' + op + ' ';
                     dividing = true;
                     break;
+                case ':':
+                    break;
                 case '+':
                 case '-':
                     display = ' ' + op + ' ';
@@ -226,6 +228,9 @@ class Unit {
                 if (op == '?') {
                     // no need for deferred parenthesis at the outermost operation
                     unit.interpretation = this.interpretation + " ? " + rhs.interpretation;
+                } else if (op == ':') {
+                    // dimensional filter
+                    unit.interpretation = this.interpretation;
                 } else {
                     var interpretation = this.interpretation;
                     if (this.multiplying || this.dividing || op == '^') {
@@ -336,6 +341,15 @@ class Unit {
                 for (i = 0; i < maxbaseunits; i++) {
                     unit.exponents[i] = - this.exponents[i] - rhs.exponents[i];
                 }
+                break;
+
+            case ':':
+                // filter out different dimensions
+                if (! this.Compatible(rhs, false)) {
+                    throw "incompatible units";
+                }
+                unit.coefficient = this.coefficient;
+                unit.exponents = this.exponents;
                 break;
 
             case '>':  // unary
@@ -649,6 +663,7 @@ var prec = {
     "per":  0,  // left-to-right associativity  (unit division)
     '*':    0,  // left-to-right associativity
     '/':    0,  // left-to-right associativity
+    ':':   -2,  // left-to-right associativity  (dimensional filter)
     '+':   -3,  // left-to-right associativity
     '-':   -3,  // left-to-right associativity
     '@':   -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
@@ -1165,12 +1180,6 @@ function TokenizeLine(input)
         } else if (ch.match(operator_regexp_ch)) {
             // operator
             token = ch;
-            if (ch == ':') {
-                if (colon) {
-                    throw ": may only occur once";
-                }
-                colon = true;
-            }
             if (ch == '=') {
                 if (equal && ! test) {
                     throw "= may only occur once";
@@ -1206,6 +1215,7 @@ function ParseTokens(tokens, line)
 {
     var i;
     var j;
+    var k;
     var unit;
     if (tokens.length) {
         // if we are not loading the database and not running tests...
@@ -1265,24 +1275,7 @@ function ParseTokens(tokens, line)
             }
 
         // otherwise, if we are defining or undefining a unit...
-        } else if (tokens.includes('=')) {
-            var filter = null;
-            // if we are not loading the database...
-            if (! loading) {
-                // if a filtering dimension is specified...
-                i = tokens.indexOf('?');
-                if (i != -1) {
-                    // evaluate the dimension
-                    var dimtokens = tokens.slice(i+1);
-                    try {
-                        filter = EvaluateTokens(dimtokens);
-                    } catch (error) {
-                        throw "bad unit filter";
-                    }
-                    // remove the filtering dimension tokens from the command line
-                    tokens.splice(i, tokens.length-i);
-                }
-            }
+        } else if ((k = tokens.indexOf('=')) != -1) {
             var type = null;
             var definition = line;
             var unambiguous = false;
@@ -1342,7 +1335,7 @@ function ParseTokens(tokens, line)
             var subtokens = tokens.slice(i+1);
 
             // if we have an expression...
-            if (subtokens.length) {
+            if (k+1 < tokens.length && tokens[k+1] != ':') {
                 // define unit names
                 // if we are loading the database...
                 if (loading) {
@@ -1378,28 +1371,37 @@ function ParseTokens(tokens, line)
 
                 // for all results...
                 for (j = 0; j < results.length; j++) {
-                    // if the result is compatible with the filter...
-                    if (results[j].Compatible(filter, false)) {
-                        // define a new unit!
-                        unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
-                        // if we are not loading the database...
-                        if (! loading) {
-                            if (! mismatches.includes("> " + Simplify(results[j].interpretation))) {
-                                // record the interpretation of the definition
-                                mismatches.push("> " + Simplify(results[j].interpretation));
-                            }
+                    // define a new unit!
+                    unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
+                    // if we are not loading the database...
+                    if (! loading) {
+                        if (! mismatches.includes("> " + Simplify(results[j].interpretation))) {
+                            // record the interpretation of the definition
+                            mismatches.push("> " + Simplify(results[j].interpretation));
                         }
-                        unit.interpretation = names[0];
-                        Object.freeze(unit);
-                        units.push(unit);
-                        defines = true;
                     }
+                    unit.interpretation = names[0];
+                    Object.freeze(unit);
+                    units.push(unit);
+                    defines = true;
                 }
                 if (defines) {
                     results = [];
                 }
             } else {
                 // undefine unit names
+                var filter = null;
+                // if a filtering dimension is specified...
+                if (k+1 < tokens.length && tokens[k+1] == ':') {
+                    // evaluate the dimension
+                    var dimtokens = tokens.slice(k+2);
+                    try {
+                        filter = EvaluateTokens(dimtokens);
+                    } catch (error) {
+                        throw "bad unit filter";
+                    }
+                }
+
                 undefines = true;
                 // for all units...
                 // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
@@ -1409,7 +1411,7 @@ function ParseTokens(tokens, line)
                         // for all unit names...
                         for (j = units[i].names.length-1; j >= 0; j--) {
                             // for all names being undefined...
-                            for (var k = 0; k < names.length; k++) {
+                            for (k = 0; k < names.length; k++) {
                                 // if the unit name matches...
                                 if (units[i].names[j] == names[k]) {
                                     // delete the unit name!
