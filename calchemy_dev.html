@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.13e</p>
+v1.13f</p>
 </td>
 </tr>
 </table>
@@ -1071,7 +1071,7 @@ var tests =`
     boo | [MASS*LENGTH], [Energy or Torque]
     boo=
     boo | uncanceled free unit boo
-    boo = ft lb ? Torque
+    boo = ft lb : Torque
     boo | [Energy or Torque]
     boo=
     boo | uncanceled free unit boo
@@ -1093,16 +1093,16 @@ var tests =`
     abc=2lb
     TEST details abc | === unit details abc ===, abc=1 [], abc=2 [], abc=2lb [Mass], abc=2lb [Force]
     abc | > abc, = 1, > abc, = 2
-    abc=?Force
+    abc=:Force
     abc | = 1, = 2
-    abc= ?1
+    abc= :1
     abc | [Mass]
     abc=
     person; person; person | uncanceled free unit person
 
     # multi-line examples
     volume=
-    volume = 8 feet * 7 feet * 8 inch ? gal
+    volume = 8 feet * 7 feet * 8 inch : gal
     volume; (1 cal/(cc deltac)) (90 - 50) deltaf / (400 watt) ? day | = 2.84411 day
     volume=
     seed=
@@ -1110,8 +1110,8 @@ var tests =`
     1 seed/square foot; 200 acre ? bushels | = 494.451 bushels
     seed=
     flow,power=
-    flow = 1 acre * 2 inches / (1 day) ? cfm
-    power = (flow * 1 gram/cc) * (9.81 m/s^2) * (100 feet) ? hp
+    flow = 1 acre * 2 inches / (1 day) : cfm
+    power = (flow * 1 gram/cc) * (9.81 m/s^2) * (100 feet) : hp
     power / (110 volts) ? amps | = 6.46784 amps
     1 acre; 2 inches; 1 day; d_water; grav; 100 feet; 110 volts ? amps | = 6.46563 amps
     flow,power=
@@ -1173,8 +1173,8 @@ var tests =`
     (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
     foo=lb | > poundm, > poundf, defined
     foo=2;3 | > 2 * 3, > 2 / 3, > (2)^-1 * 3, > (2 * 3)^-1, defined
-    foo=lb ? MASS | > poundm, defined
-    foo=lb ? Force | > poundf, defined
+    foo=lb : MASS | > poundm, defined
+    foo=lb : Force | > poundf, defined
     foo= | undefined
     g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
     lb;lb?1 | > poundm / poundm ? 1, > poundf / poundf ? 1, = 1 1
@@ -1269,19 +1269,20 @@ var teststhatmaythrow = `
     [(0]) | unmatched parenthesis [
     ([0)] | unmatched parenthesis (
     ?? | ? may only occur once
-    :: | : may only occur once
+    :: | expected a value before :
     == | = may only occur once
     ww:q=1 | undefined category ww
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
-    1/sqrt(23 mi:li) | bad token :
-    q=1?xyz | bad unit filter
+    1/sqrt(23 mi:li) | incompatible units
+    1/sqrt(23 mi,li) | bad token ,
+    q=:** | bad unit filter
     foot+0 | addition of dissimilar units
     foot-0 | subtraction of dissimilar units
 
     # multi-line examples
     area,power=
-    area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) ? Area
-    power=area * (30 deltaf) / (11 rvalue) ? Power
+    area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) : Area
+    power=area * (30 deltaf) / (11 rvalue) : Power
     (20 lb * 37e6 btu/ton) / power ? day | = 7.93929 day
     area,power=
 `;
@@ -1524,6 +1525,7 @@ This, again, allows you to enter equations in a more natural format.
 <tr><td>~</td><td>prefix multiplication</td></tr>
 <tr><td>^</td><td>exponentiation</td></tr>
 <tr><td>* / per</td><td>implied multiplication, multiplication, division</td></tr>
+<tr><td>:</td><td>dimensional filter</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
 </table>
@@ -1625,11 +1627,11 @@ The following examples illustrate this:
 <p><b>name = expression</b>
 <p>Where <b>name</b> is the name of the unit whose definition is to be added and <b>expression</b> is the arithmetic expression you want evaluated.
 <p>To limit definitions using a dimensional filter, use the form:
-<p><b>name = expression ? filter</b>
+<p><b>name = expression : filter</b>
 <p>To undefine all definitions of a unit name, use the form:
 <p><b>name =</b>
 <p>To limit undefinitions using a dimensional filter, use the form:
-<p><b>name = ? filter</b>
+<p><b>name = : filter</b>
 <p>Note when using unit definitions:
 <ul>
 <li>units may have multiple definitions,</li>

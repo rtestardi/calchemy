@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.13e</p>
+v1.13f</p>
 </td>
 </tr>
 </table>
@@ -1005,6 +1005,8 @@ class Unit {
                     display = ' ' + op + ' ';
                     dividing = true;
                     break;
+                case ':':
+                    break;
                 case '+':
                 case '-':
                     display = ' ' + op + ' ';
@@ -1037,6 +1039,9 @@ class Unit {
                 if (op == '?') {
                     // no need for deferred parenthesis at the outermost operation
                     unit.interpretation = this.interpretation + " ? " + rhs.interpretation;
+                } else if (op == ':') {
+                    // dimensional filter
+                    unit.interpretation = this.interpretation;
                 } else {
                     var interpretation = this.interpretation;
                     if (this.multiplying || this.dividing || op == '^') {
@@ -1147,6 +1152,15 @@ class Unit {
                 for (i = 0; i < maxbaseunits; i++) {
                     unit.exponents[i] = - this.exponents[i] - rhs.exponents[i];
                 }
+                break;
+
+            case ':':
+                // filter out different dimensions
+                if (! this.Compatible(rhs, false)) {
+                    throw "incompatible units";
+                }
+                unit.coefficient = this.coefficient;
+                unit.exponents = this.exponents;
                 break;
 
             case '>':  // unary
@@ -1460,6 +1474,7 @@ var prec = {
     "per":  0,  // left-to-right associativity  (unit division)
     '*':    0,  // left-to-right associativity
     '/':    0,  // left-to-right associativity
+    ':':   -2,  // left-to-right associativity  (dimensional filter)
     '+':   -3,  // left-to-right associativity
     '-':   -3,  // left-to-right associativity
     '@':   -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
@@ -1976,12 +1991,6 @@ function TokenizeLine(input)
         } else if (ch.match(operator_regexp_ch)) {
             // operator
             token = ch;
-            if (ch == ':') {
-                if (colon) {
-                    throw ": may only occur once";
-                }
-                colon = true;
-            }
             if (ch == '=') {
                 if (equal && ! test) {
                     throw "= may only occur once";
@@ -2017,6 +2026,7 @@ function ParseTokens(tokens, line)
 {
     var i;
     var j;
+    var k;
     var unit;
     if (tokens.length) {
         // if we are not loading the database and not running tests...
@@ -2076,24 +2086,7 @@ function ParseTokens(tokens, line)
             }
 
         // otherwise, if we are defining or undefining a unit...
-        } else if (tokens.includes('=')) {
-            var filter = null;
-            // if we are not loading the database...
-            if (! loading) {
-                // if a filtering dimension is specified...
-                i = tokens.indexOf('?');
-                if (i != -1) {
-                    // evaluate the dimension
-                    var dimtokens = tokens.slice(i+1);
-                    try {
-                        filter = EvaluateTokens(dimtokens);
-                    } catch (error) {
-                        throw "bad unit filter";
-                    }
-                    // remove the filtering dimension tokens from the command line
-                    tokens.splice(i, tokens.length-i);
-                }
-            }
+        } else if ((k = tokens.indexOf('=')) != -1) {
             var type = null;
             var definition = line;
             var unambiguous = false;
@@ -2153,7 +2146,7 @@ function ParseTokens(tokens, line)
             var subtokens = tokens.slice(i+1);
 
             // if we have an expression...
-            if (subtokens.length) {
+            if (k+1 < tokens.length && tokens[k+1] != ':') {
                 // define unit names
                 // if we are loading the database...
                 if (loading) {
@@ -2189,28 +2182,37 @@ function ParseTokens(tokens, line)
 
                 // for all results...
                 for (j = 0; j < results.length; j++) {
-                    // if the result is compatible with the filter...
-                    if (results[j].Compatible(filter, false)) {
-                        // define a new unit!
-                        unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
-                        // if we are not loading the database...
-                        if (! loading) {
-                            if (! mismatches.includes("> " + Simplify(results[j].interpretation))) {
-                                // record the interpretation of the definition
-                                mismatches.push("> " + Simplify(results[j].interpretation));
-                            }
+                    // define a new unit!
+                    unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
+                    // if we are not loading the database...
+                    if (! loading) {
+                        if (! mismatches.includes("> " + Simplify(results[j].interpretation))) {
+                            // record the interpretation of the definition
+                            mismatches.push("> " + Simplify(results[j].interpretation));
                         }
-                        unit.interpretation = names[0];
-                        Object.freeze(unit);
-                        units.push(unit);
-                        defines = true;
                     }
+                    unit.interpretation = names[0];
+                    Object.freeze(unit);
+                    units.push(unit);
+                    defines = true;
                 }
                 if (defines) {
                     results = [];
                 }
             } else {
                 // undefine unit names
+                var filter = null;
+                // if a filtering dimension is specified...
+                if (k+1 < tokens.length && tokens[k+1] == ':') {
+                    // evaluate the dimension
+                    var dimtokens = tokens.slice(k+2);
+                    try {
+                        filter = EvaluateTokens(dimtokens);
+                    } catch (error) {
+                        throw "bad unit filter";
+                    }
+                }
+
                 undefines = true;
                 // for all units...
                 // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
@@ -2220,7 +2222,7 @@ function ParseTokens(tokens, line)
                         // for all unit names...
                         for (j = units[i].names.length-1; j >= 0; j--) {
                             // for all names being undefined...
-                            for (var k = 0; k < names.length; k++) {
+                            for (k = 0; k < names.length; k++) {
                                 // if the unit name matches...
                                 if (units[i].names[j] == names[k]) {
                                     // delete the unit name!
@@ -3313,7 +3315,7 @@ var tests =`
     boo | [MASS*LENGTH], [Energy or Torque]
     boo=
     boo | uncanceled free unit boo
-    boo = ft lb ? Torque
+    boo = ft lb : Torque
     boo | [Energy or Torque]
     boo=
     boo | uncanceled free unit boo
@@ -3335,16 +3337,16 @@ var tests =`
     abc=2lb
     TEST details abc | === unit details abc ===, abc=1 [], abc=2 [], abc=2lb [Mass], abc=2lb [Force]
     abc | > abc, = 1, > abc, = 2
-    abc=?Force
+    abc=:Force
     abc | = 1, = 2
-    abc= ?1
+    abc= :1
     abc | [Mass]
     abc=
     person; person; person | uncanceled free unit person
 
     # multi-line examples
     volume=
-    volume = 8 feet * 7 feet * 8 inch ? gal
+    volume = 8 feet * 7 feet * 8 inch : gal
     volume; (1 cal/(cc deltac)) (90 - 50) deltaf / (400 watt) ? day | = 2.84411 day
     volume=
     seed=
@@ -3352,8 +3354,8 @@ var tests =`
     1 seed/square foot; 200 acre ? bushels | = 494.451 bushels
     seed=
     flow,power=
-    flow = 1 acre * 2 inches / (1 day) ? cfm
-    power = (flow * 1 gram/cc) * (9.81 m/s^2) * (100 feet) ? hp
+    flow = 1 acre * 2 inches / (1 day) : cfm
+    power = (flow * 1 gram/cc) * (9.81 m/s^2) * (100 feet) : hp
     power / (110 volts) ? amps | = 6.46784 amps
     1 acre; 2 inches; 1 day; d_water; grav; 100 feet; 110 volts ? amps | = 6.46563 amps
     flow,power=
@@ -3415,8 +3417,8 @@ var tests =`
     (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
     foo=lb | > poundm, > poundf, defined
     foo=2;3 | > 2 * 3, > 2 / 3, > (2)^-1 * 3, > (2 * 3)^-1, defined
-    foo=lb ? MASS | > poundm, defined
-    foo=lb ? Force | > poundf, defined
+    foo=lb : MASS | > poundm, defined
+    foo=lb : Force | > poundf, defined
     foo= | undefined
     g?lb | > gramm ? poundm, > gramf ? poundf, = 0.00220462 lb
     lb;lb?1 | > poundm / poundm ? 1, > poundf / poundf ? 1, = 1 1
@@ -3511,19 +3513,20 @@ var teststhatmaythrow = `
     [(0]) | unmatched parenthesis [
     ([0)] | unmatched parenthesis (
     ?? | ? may only occur once
-    :: | : may only occur once
+    :: | expected a value before :
     == | = may only occur once
     ww:q=1 | undefined category ww
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
-    1/sqrt(23 mi:li) | bad token :
-    q=1?xyz | bad unit filter
+    1/sqrt(23 mi:li) | incompatible units
+    1/sqrt(23 mi,li) | bad token ,
+    q=:** | bad unit filter
     foot+0 | addition of dissimilar units
     foot-0 | subtraction of dissimilar units
 
     # multi-line examples
     area,power=
-    area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) ? Area
-    power=area * (30 deltaf) / (11 rvalue) ? Power
+    area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) : Area
+    power=area * (30 deltaf) / (11 rvalue) : Power
     (20 lb * 37e6 btu/ton) / power ? day | = 7.93929 day
     area,power=
 `;
@@ -3766,6 +3769,7 @@ This, again, allows you to enter equations in a more natural format.
 <tr><td>~</td><td>prefix multiplication</td></tr>
 <tr><td>^</td><td>exponentiation</td></tr>
 <tr><td>* / per</td><td>implied multiplication, multiplication, division</td></tr>
+<tr><td>:</td><td>dimensional filter</td></tr>
 <tr><td>+ -</td><td>addition, subtraction</td></tr>
 <tr><td>;</td><td>solve by dimensional analysis</td></tr>
 </table>
@@ -3867,11 +3871,11 @@ The following examples illustrate this:
 <p><b>name = expression</b>
 <p>Where <b>name</b> is the name of the unit whose definition is to be added and <b>expression</b> is the arithmetic expression you want evaluated.
 <p>To limit definitions using a dimensional filter, use the form:
-<p><b>name = expression ? filter</b>
+<p><b>name = expression : filter</b>
 <p>To undefine all definitions of a unit name, use the form:
 <p><b>name =</b>
 <p>To limit undefinitions using a dimensional filter, use the form:
-<p><b>name = ? filter</b>
+<p><b>name = : filter</b>
 <p>Note when using unit definitions:
 <ul>
 <li>units may have multiple definitions,</li>
