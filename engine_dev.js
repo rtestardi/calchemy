@@ -14,6 +14,8 @@ const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const xunit_regexp_head =    /^[_A-Za-z$%][_A-Za-z0-9$%:]*/;
+const xunit_regexp_tail =     /[_A-Za-z$%][_A-Za-z0-9$%:]*$/;
 const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^]/g;
 const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
@@ -157,6 +159,15 @@ class Unit {
         }
         for (i = rhs.exponents.length; i < maxbaseunits; i++) {
             rhs.exponents[i] = 0;
+        }
+
+        if (! testing) {
+            if (this.type == "DERIVED") {
+                throw "specify value for " + this.names[0];
+            }
+            if (op != ':' && rhs.type == "DERIVED") {
+                throw "specify value for " + rhs.names[0];
+            }
         }
 
         // if we are not loading the database...
@@ -346,7 +357,11 @@ class Unit {
             case ':':
                 // filter out different dimensions
                 if (! this.Compatible(rhs, false)) {
-                    throw "incompatible units";
+                    if (this.type == "BASE") {
+                        throw "specify value for " + this.names[0];
+                    } else {
+                        throw "incompatible units :" + rhs.names[0];
+                    }
                 }
                 unit.coefficient = this.coefficient;
                 unit.exponents = this.exponents;
@@ -1218,21 +1233,6 @@ function ParseTokens(tokens, line)
     var k;
     var unit;
     if (tokens.length) {
-        // if we are not loading the database and not running tests...
-        if (! loading && ! testing) {
-            // if we have [Derived] then ask for a value before we proceed...
-            for (i = 0; i < tokens.length; i++) {
-                if (tokens[i][0].match(unit_regexp_ch)) {
-                    if (i-1 >= 0 && tokens[i-1] == '[' && i+1 < tokens.length && tokens[i+1] == ']') {
-                        unit = LookupUnit(tokens[i]);
-                        if (! unit || unit.type == "DERIVED") {
-                            throw "enter value for " + tokens[i];
-                        }
-                    }
-                }
-            }
-        }
-
         // if we are defining a base unit...
         if (tokens[0] == "BASE") {
             if (tokens.length != 2) {

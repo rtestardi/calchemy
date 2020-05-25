@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.14c</p>
+v1.14d</p>
 </td>
 </tr>
 </table>
@@ -282,8 +282,6 @@ AMBIGUOUS Heat_combustion_v=joule/liter
 DERIVED Fuel_efficiency=kilometer/liter
 DERIVED Momentum=kilogramm meter/second
 AMBIGUOUS Stiffness=newton/meter
-AMBIGUOUS Radius=meter
-AMBIGUOUS Height=meter
 
 Physical_constant:speed_of_light,c=2.99792458E+08 meter/second #speed of light in vacuum
 Physical_constant:gravity,grav=9.80665 meter/second^2 #standard acceleration of gravity
@@ -825,6 +823,8 @@ const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const xunit_regexp_head =    /^[_A-Za-z$%][_A-Za-z0-9$%:]*/;
+const xunit_regexp_tail =     /[_A-Za-z$%][_A-Za-z0-9$%:]*$/;
 const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^]/g;
 const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
@@ -968,6 +968,15 @@ class Unit {
         }
         for (i = rhs.exponents.length; i < maxbaseunits; i++) {
             rhs.exponents[i] = 0;
+        }
+
+        if (! testing) {
+            if (this.type == "DERIVED") {
+                throw "specify value for " + this.names[0];
+            }
+            if (op != ':' && rhs.type == "DERIVED") {
+                throw "specify value for " + rhs.names[0];
+            }
         }
 
         // if we are not loading the database...
@@ -1157,7 +1166,11 @@ class Unit {
             case ':':
                 // filter out different dimensions
                 if (! this.Compatible(rhs, false)) {
-                    throw "incompatible units";
+                    if (this.type == "BASE") {
+                        throw "specify value for " + this.names[0];
+                    } else {
+                        throw "incompatible units :" + rhs.names[0];
+                    }
                 }
                 unit.coefficient = this.coefficient;
                 unit.exponents = this.exponents;
@@ -2029,21 +2042,6 @@ function ParseTokens(tokens, line)
     var k;
     var unit;
     if (tokens.length) {
-        // if we are not loading the database and not running tests...
-        if (! loading && ! testing) {
-            // if we have [Derived] then ask for a value before we proceed...
-            for (i = 0; i < tokens.length; i++) {
-                if (tokens[i][0].match(unit_regexp_ch)) {
-                    if (i-1 >= 0 && tokens[i-1] == '[' && i+1 < tokens.length && tokens[i+1] == ']') {
-                        unit = LookupUnit(tokens[i]);
-                        if (! unit || unit.type == "DERIVED") {
-                            throw "enter value for " + tokens[i];
-                        }
-                    }
-                }
-            }
-        }
-
         // if we are defining a base unit...
         if (tokens[0] == "BASE") {
             if (tokens.length != 2) {
@@ -2936,16 +2934,22 @@ function ShowCategories()
 }
 
 // return the word at the cursor
-function Word()
+function Word(extended)
 {
     var line = document.getElementById("equation").value;
     var start = document.getElementById("equation").selectionStart;
-    var match = line.slice(start).match(unit_regexp_head);
+    var match = line.slice(start).match(extended?xunit_regexp_head:unit_regexp_head);
     if (match) {
         start += match[0].length;
     }
     line = line.slice(0, start);
-    var word = line.match(unit_regexp_tail);
+    var word = line.match(extended?xunit_regexp_tail:unit_regexp_tail);
+    if (word) {
+        word = word[0];
+        if (extended) {
+            word = word.replace(/.*:/, "");
+        }
+    }
     return word;
 }
 
@@ -2954,15 +2958,15 @@ function Word()
 function Units()
 {
     // if there is a word at the cursor...
-    var word = Word();
+    var word = Word(true);
     if (word) {
-        var unit = LookupUnit(word[0]);
+        var unit = LookupUnit(word);
         if (unit && unit.type) {
             // do a unit category search
-            ShowUnitsByCategory(word[0]);
+            ShowUnitsByCategory(word);
         } else {
             // do a unit search
-            ShowUnitsByName(word[0]);
+            ShowUnitsByName(word);
         }
     } else {
         // do a category search
@@ -2975,10 +2979,10 @@ function Units()
 function Details()
 {
     // if there is a word at the cursor...
-    var word = Word();
+    var word = Word(false);
     if (word) {
         // show unit details
-        ShowUnitsDetails(word[0]);
+        ShowUnitsDetails(word);
     }
     Scroll();
 }
@@ -3055,17 +3059,27 @@ function Examples()
     Scroll(true);
 }
 
+var preequations = `
+    # equation support
+    Cd = 1
+    width = 1 Length
+    height = 1 Length
+    depth = 1 Length
+    base = 1 Length
+    radius = 1 Length
+`;
+
 var equations =`
     # Geometrical
-    [Length] [Length] ? [Area]  # area of rectangle | = 1 [Area]
-    (1/2) [Length] [Length] ? [Area]  # area of triangle | = 0.5 [Area]
-    pi [Radius]^2 ? [Area]  # area of circle | = 3.14159 [Area]
-    4 pi [Radius]^2 ? [Area]  # area of sphere | = 12.5664 [Area]
-    [Length] [Length] [Length] ? [Volume]  # volume of a rectangular prism | = 1000 [Volume]
-    (1/3) [Length] [Length] [Length] ? [Volume]  # volume of a pyramid | = 333.333 [Volume]
-    pi [Radius]^2 [Length] ? [Volume]  # volume of cylinder | = 3141.59 [Volume]
-    (4/3) pi [Radius]^3 ? [Volume]  # volume of sphere | = 4188.79 [Volume]
-    sqrt([Length]^2 + [Length]^2) ? [Length]  # length of hypotenuse | = 1.41421 [Length]
+    [width:Length] [height:Length] ? [Area]  # area of rectangle | = 1 [Area]
+    (1/2) [base:Length] [height:Length] ? [Area]  # area of triangle | = 0.5 [Area]
+    pi [radius:Length]^2 ? [Area]  # area of circle | = 3.14159 [Area]
+    4 pi [radius:Length]^2 ? [Area]  # area of sphere | = 12.5664 [Area]
+    [width:Length] [height:Length] [depth:Length] ? [Volume]  # volume of a rectangular prism | = 1000 [Volume]
+    (1/3) [base:Length] [depth:Length] [height:Length] ? [Volume]  # volume of a pyramid | = 333.333 [Volume]
+    pi [radius:Length]^2 [Length] ? [Volume]  # volume of cylinder | = 3141.59 [Volume]
+    (4/3) pi [radius:Length]^3 ? [Volume]  # volume of sphere | = 4188.79 [Volume]
+    sqrt([base:Length]^2 + [height:Length]^2) ? [Length]  # length of hypotenuse | = 1.41421 [Length]
 
     # Electrical
     [Current] [Resistance] ? [Voltage]  # ohm's law | = 1 [Voltage]
@@ -3084,7 +3098,7 @@ var equations =`
 
     # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
-    [Mass] grav [Height] ? [Energy]  # potential energy | = 9.80665 [Energy]
+    [Mass] grav [height:Length] ? [Energy]  # potential energy | = 9.80665 [Energy]
     [Force] [Length] ? [Energy] | = 1 [Energy]
     [Force] [Speed] ? [Power] | = 1 [Power]
     [Energy] / [Time] ? [Power] | = 1 [Power]
@@ -3094,22 +3108,32 @@ var equations =`
     [Mass] [Acceleration] [Speed] ? [Power] | = 1 [Power]
     [Mass] [Acceleration] [Length] ? [Energy] | = 1 [Energy]
     [Mass] [Speed] ? [Momentum] | = 1 [Momentum]
-    [Force] [Radius] ? [Torque] | = 1 [Torque]
-    [Angular_velocity] [Radius] ? [Speed] | = 1 [Speed]
-    [Angular_velocity]^2 [Radius] ? [Acceleration] | = 1 [Acceleration]
+    [Force] [radius:Length] ? [Torque] | = 1 [Torque]
+    [Angular_velocity] [radius:Length] ? [Speed] | = 1 [Speed]
+    [Angular_velocity]^2 [radius:Length] ? [Acceleration] | = 1 [Acceleration]
 
     # Fluid_mechanical
-    [Density] grav [Height] ? [Pressure]  # static head pressure | = 9806.65 [Pressure]
+    [Density] grav [height:Length] ? [Pressure]  # static head pressure | = 9806.65 [Pressure]
     0.5 [Cd] [Density] [Speed]^2 [Area] ? [Force]  # dynamic drag force | = 500 [Force]
 
     # Orbit_mechanical
-    G [Mass] [Mass] / [Radius]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
-    sqrt(2 G [Mass] / [Radius]) ? [Speed]  # escape speed | = 0.0000115521 [Speed]
-    G [Mass] [Mass] / (2 [Radius]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
-    -G [Mass] [Mass] / [Radius] ? [Energy]  # orbital potential energy | = -6.67259e-11 [Energy]
+    G [Mass] [Mass] / [radius:Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
+    sqrt(2 G [Mass] / [radius:Length]) ? [Speed]  # escape speed | = 0.0000115521 [Speed]
+    G [Mass] [Mass] / (2 [radius:Length]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
+    -G [Mass] [Mass] / [radius:Length] ? [Energy]  # orbital potential energy | = -6.67259e-11 [Energy]
 
     # Nuclear
     [Mass] c^2 ? [Energy] | = 89875500000000000 [Energy]
+`;
+
+var postequations = `
+    # equation support
+    Cd =
+    width =
+    height =
+    depth =
+    base =
+    radius =
 `;
 
 // the user clicked an equation group; show equations
@@ -3240,8 +3264,8 @@ var tests =`
     (-foot)(-foot) ? sqft | = 1 sqft
     -foot^2 ? sqft | = 1 sqft
     -foot*2 ? foot | = -2 foot
-    0+foot | [Length or Radius or Height]
-    0-foot | [Length or Radius or Height]
+    0+foot | [Length]
+    0-foot | [Length]
     cal per (gm deltaK) | [Specific_heat_m]
     1/3*cal per (gm deltaK) | [Specific_heat_m]
     1/(3 cal per (gm deltaK)) | [Specific_heat_m^-1]
@@ -3282,9 +3306,9 @@ var tests =`
     speed_of_light ? mph | = 670617000 mph
     2;3 | = 6, = 0.666667, = 1.5, = 0.166667
     lb | [Mass], [Force]
-    ft | [Length or Radius or Height]
+    ft | [Length]
     21 inches * 0.25 acre ? gallons | = 142560 gallons
-    gal^.33333333 | [Length or Radius or Height]
+    gal^.33333333 | [Length]
     square mm * 1000^2 ? square m | = 1 square m
 
     # free units and plurals
@@ -3325,7 +3349,7 @@ var tests =`
     Mass =
     Mass | [Mass]
     Mass = Length
-    Mass | [Mass], [Length or Radius or Height]
+    Mass | [Mass], [Length]
     Mass =
     Mass | [Mass]
     abc=
@@ -3362,6 +3386,11 @@ var tests =`
     3.2 scalecm * 4.8 scalecm ? acres | = 1410.47 acres
     scalecm=
     1&2&3|= 1, = 2, = 3
+    area,power=
+    area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) : Area
+    power=area * (30 deltaf) / (11 rvalue) : Power
+    (20 lb * 37e6 btu/ton) / power ? day | = 7.93929 day
+    area,power=
 
     # temperatures
     25 degC ? degF | = 77 degF , Caution: Calculation involves offset temperature units; see Calchemy Help.
@@ -3386,10 +3415,10 @@ var tests =`
     visc_air? | > visc_air ?, = 0.0000178 pascal*second
 
     # dimensions
-    Length | [Length or Radius or Height]
-    Length ? 1 | Dimensional Mismatch [Length^-1 or Radius^-1 or Height^-1]
-    cup^(1/3) | [Length or Radius or Height]
-    acre^(1/2) | [Length or Radius or Height]
+    Length | [Length]
+    Length ? 1 | Dimensional Mismatch [Length^-1]
+    cup^(1/3) | [Length]
+    acre^(1/2) | [Length]
     s?1 | Dimensional Mismatch [Frequency or Angular_velocity or Time^-1]
     s | [Time or Frequency^-1 or Angular_velocity^-1]
     s? | = 1 second
@@ -3423,6 +3452,15 @@ var tests =`
     asn 1 | > asn(1), = 1.5708
     q=asn 1 | > asn(1), defined
     q=
+
+    # filters, parameters
+    in:ftlb | incompatible units :ftlb
+    Area:1 | incompatible units :undefined
+    1:Area | incompatible units :Area
+    Area?1 | Dimensional Mismatch [Fuel_efficiency or Area^-1]
+    1?Area | Dimensional Mismatch [Area or Fuel_efficiency^-1]
+    abc:Area | specify value for abc
+    Area:abc | incompatible units :abc
 
     # help examples
     3 meter ? inch | = 118.11 inch
@@ -3466,7 +3504,7 @@ var tests =`
 
     # unit help
     TEST details lb | === unit details lb ===,Common:poundm,lbm,lb*,pound*=453.592 gramm [Mass], Common:poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
-    TEST details ft | === unit details ft ===,Common:foot,ft,feet=12 inch [Length or Radius or Height]
+    TEST details ft | === unit details ft ===,Common:foot,ft,feet=12 inch [Length]
     TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix:kilo,k=1E+03*Common:Byte*,byte*,B,char*=8 bit #computer storage [Storage]
     TEST byname lb | === units by name lb ===,lb,lbf,lbm
     TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_explosive, fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
@@ -3478,15 +3516,7 @@ var tests =`
     TEST bycategory Angular_velocity | === units in category Angular_velocity ===, cps, hertz, Hz, rpm, rps
     TEST bydimension Fuel_efficiency | === units in category Fuel_efficiency ===, mpg
 
-    # equation support
-    Cd = 1
-`;
-
-var teststhatmaythrow = `
-    # equation support
-    Cd =
-
-    # tests that may throw
+    # various errors
     TEST throw | unknown test throw
     TEST details abc | undefined unit abc
     TEST byname abc | undefined unit abc
@@ -3515,18 +3545,11 @@ var teststhatmaythrow = `
     == | = may only occur once
     ww:q=1 | undefined category ww
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
-    1/sqrt(23 mi:li) | incompatible units
+    1/sqrt(23 mi:li) | incompatible units :li
     1/sqrt(23 mi,li) | bad token ,
     q=:** | bad unit filter
     foot+0 | addition of dissimilar units
     foot-0 | subtraction of dissimilar units
-
-    # multi-line examples
-    area,power=
-    area = (20 ft * 8 ft * 2) + (20 ft * 7 ft * 2) + (7 ft * 8 ft * 2) : Area
-    power=area * (30 deltaf) / (11 rvalue) : Power
-    (20 lb * 37e6 btu/ton) / power ? day | = 7.93929 day
-    area,power=
 `;
 
 // the user clicked the Test button; run the unit test
@@ -3534,7 +3557,7 @@ function Test()
 {
     // append a temporary deletable chunk to the results list with the test in progress
     lasttag = "";
-    Chunk("tests started ...");
+    Chunk(null, "tests started ...");
     Scroll();
     setTimeout(TestReal, 100);  // XXX -- why does 0 not work?
 }
@@ -3543,7 +3566,7 @@ function Test()
 function TestReal()
 {
     try {
-        var lines = (tests+examples+equations+teststhatmaythrow+database_tests).split(/[\r\n]+/);
+        var lines = (tests+examples+preequations+equations+postequations+database_tests).split(/[\r\n]+/);
         testing = true;
         offset_warn = false;
         offset_warned = false;
@@ -3644,7 +3667,7 @@ function TestReal()
 
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
-        Chunk("tests started ...", html + "<br>... tests complete " + passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
+        Chunk(null, "tests started ..." + html + "<br>... tests complete " + passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
     } catch (error) {
         Chunk(null, error);
     } finally {
