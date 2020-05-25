@@ -1172,7 +1172,6 @@ function TokenizeLine(input)
 
     var token;
     var tokens = [];
-    var colon = false;
     var equal = false;
     var question = false;
     // for all letters in the command line...
