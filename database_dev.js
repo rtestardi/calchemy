@@ -137,8 +137,6 @@ AMBIGUOUS Heat_combustion_v=joule/liter
 DERIVED Fuel_efficiency=kilometer/liter
 DERIVED Momentum=kilogramm meter/second
 AMBIGUOUS Stiffness=newton/meter
-AMBIGUOUS Radius=meter
-AMBIGUOUS Height=meter
 
 Physical_constant:speed_of_light,c=2.99792458E+08 meter/second #speed of light in vacuum
 Physical_constant:gravity,grav=9.80665 meter/second^2 #standard acceleration of gravity
