@@ -354,19 +354,6 @@ class Unit {
                 }
                 break;
 
-            case ':':
-                // filter out different dimensions
-                if (! this.Compatible(rhs, false)) {
-                    if (this.type == "BASE") {
-                        throw "specify value for " + this.names[0];
-                    } else {
-                        throw "incompatible units :" + rhs.names[0];
-                    }
-                }
-                unit.coefficient = this.coefficient;
-                unit.exponents = this.exponents;
-                break;
-
             case '>':  // unary
             case '+':
                 // add coefficients for compatible exponents
@@ -385,6 +372,19 @@ class Unit {
                 }
                 unit.coefficient = this.coefficient - rhs.coefficient;
                 unit.exponents = rhs.exponents;
+                break;
+
+            case ':':
+                // filter out different dimensions
+                if (! this.Compatible(rhs, false)) {
+                    if (this.type == "BASE") {
+                        throw "specify value for " + this.names[0];
+                    } else {
+                        throw "incompatible units :" + rhs.names[0];
+                    }
+                }
+                unit.coefficient = this.coefficient;
+                unit.exponents = this.exponents;
                 break;
 
             default:
@@ -678,9 +678,9 @@ var prec = {
     "per": -1,  // left-to-right associativity  (unit division)
     '*':   -1,  // left-to-right associativity
     '/':   -1,  // left-to-right associativity
-    ':':   -2,  // left-to-right associativity  (dimensional filter)
-    '+':   -3,  // left-to-right associativity
-    '-':   -3,  // left-to-right associativity
+    '+':   -2,  // left-to-right associativity
+    '-':   -2,  // left-to-right associativity
+    ':':   -3,  // left-to-right associativity  (dimensional filter)
     '@':   -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
     '&':   -4,  // left-to-right associativity  (solve by dimensional analysis: l/r)
     '#':   -4,  // left-to-right associativity  (solve by dimensional analysis: r/l)
