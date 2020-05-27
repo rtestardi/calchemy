@@ -14,6 +14,7 @@ CATEGORY Air
 CATEGORY Batteries
 CATEGORY Speed_sound
 CATEGORY Frequency
+CATEGORY Angular_frequency
 CATEGORY Angular_velocity
 
 BASE MASS
@@ -68,7 +69,7 @@ SI,Metric:deltaK,deltak=TEMP #interval (T-T0) Kelvin
 dollar*,$=MONEY
 *SI,Metric:ampere*,A,amp*=CURRENT
 *SI,Metric:mole*,mol=SUBSTANCE
-*SI,Metric,Frequency,Angular_velocity:hertz,Hz=1/second
+*SI,Metric,Frequency,Angular_velocity:hertz,Hz=2pi radian/second
 
 #Secondary
 *Metric:liter*,L,litre*,l=1 cubic decimeter #was 1.000028 before 1964
@@ -89,6 +90,8 @@ dollar*,$=MONEY
 *Metric:maxwell*,Mx=1E-08 weber #CGS
 *Metric:gauss=0.0001 weber/meter^2 #CGS
 *Metric:oersted,Oe=79.57747 ampere/meter
+Angle:cycle*=2 pi radian
+Angle:revolution*,rev*=2pi radian
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -104,8 +107,9 @@ DERIVED Energy=joule
 AMBIGUOUS Torque=newton meter
 DERIVED Power=watt
 DERIVED Pressure=pascal
-DERIVED Frequency=hertz
-AMBIGUOUS Angular_velocity=radian/second
+DERIVED Angle:Frequency=hertz
+#AMBIGUOUS Angle:Angular_frequency=cycle/second
+AMBIGUOUS Angle:Angular_velocity=radian/second
 DERIVED Angular_acceleration=radian/second^2
 DERIVED Density=kilogramm/liter
 DERIVED Flow=liter/second
@@ -177,12 +181,10 @@ Physical_constant:rydberg_const=1.09737E+07/meter
 Physical_constant:volumetric_gas_constant,V0,=22.4141 liter/mole 
 Physical_constant:molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
 
-Number:cycle,repetition*=1
-Angle:revolution,rev*=2pi radian
-Angle:degree*,deg=(1/180) pi radian
+Angle:degree*,deg*=(1/180) pi radian
 Angle:grade,grad=0.9 degree
-Angle:arcmin=(1/60)degree
-Angle:arcsec=(1/60)arcmin
+Angle:arcmin*=(1/60)degree
+Angle:arcsec*=(1/60)arcmin
 
 #Time
 Metric:minute*,min*=60 second
@@ -354,11 +356,11 @@ absC,absc=1 deltaC #absolute Celsius, without caution
 absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Angular_velocity or Frequency
-Angular_velocity:rpm*=revolution/minute
-Angular_velocity:rps=revolution/second
-Angular_velocity:rps=revolution/second
-Frequency:cps=cycle/second
-Frequency:cpd=cycle/day
+Frequency,Angular_velocity:rpm*=revolution/minute
+Frequency,Angular_velocity:rps=revolution/second
+Frequency,Angular_velocity:rps=revolution/second
+Frequency,Angular_velocity:cps=cycle/second
+Frequency,Angular_velocity:cpd=cycle/day
 
 #Storage
 *Metric:Byte*,byte*,B,char*=8 bit #computer storage

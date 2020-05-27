@@ -494,6 +494,11 @@ class Unit {
                         string += (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "") + (invert?")^-1":"");
                         strings.push("> " + Simplify(this.interpretation) + " ?");
                         strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
+                        for (var j = 0; j < units[i].categories.length; j++) {
+                            if (units[i].categories[j].match(/(Angle|Angular)/)) {
+                                cycle_warn = true;
+                            }
+                        }
                     }
                 }
             }
@@ -835,8 +840,10 @@ function EvaluateTokens(tokens)
                 result = CleanAndPush(stack, result, op, next);
                 next = prefixunit[1];
             }
-            if (next.categories.includes("Angle") || next.categories.includes("Angular_velocity") || next.categories.includes("Angular_acceleration")) {
-                cycle_warn = true;
+            for (j = 0; j < next.categories.length; j++) {
+                if (next.categories[j].match(/(Angle|Angular)/)) {
+                    cycle_warn = true;
+                }
             }
             result = CleanAndPush(stack, result, op, next);
 
