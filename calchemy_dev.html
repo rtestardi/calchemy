@@ -834,7 +834,7 @@ var equations =`
     pi [radius:Length]^2 ? [Area]  # area of circle | = 3.14159 [Area]
     4 pi [radius:Length]^2 ? [Area]  # area of sphere | = 12.5664 [Area]
     [width:Length] [height:Length] [depth:Length] ? [Volume]  # volume of a rectangular prism | = 1000 [Volume]
-    (1/3) [base:Length] [depth:Length] [height:Length] ? [Volume]  # volume of a pyramid | = 333.333 [Volume]
+    (1/3) [base:Length] [height:Length] [depth:Length] ? [Volume]  # volume of a pyramid | = 333.333 [Volume]
     pi [radius:Length]^2 [Length] ? [Volume]  # volume of cylinder | = 3141.59 [Volume]
     (4/3) pi [radius:Length]^3 ? [Volume]  # volume of sphere | = 4188.79 [Volume]
     sqrt([base:Length]^2 + [height:Length]^2) ? [Length]  # length of hypotenuse | = 1.41421 [Length]
@@ -1261,17 +1261,17 @@ var tests =`
     3 cal per (gm deltaK) - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
 
     # unit help
-    TEST details lb | === unit details lb ===,Common:poundm,lbm,lb*,pound*=453.592 gramm [Mass], Common:poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
-    TEST details ft | === unit details ft ===,Common:foot,ft,feet=12 inch [Length]
-    TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix:kilo,k=1E+03*Common:Byte*,byte*,B,char*=8 bit #computer storage [Storage]
+    TEST details lb | === unit details lb ===,poundm,lbm,lb*,pound*=453.592 gramm [Mass], poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
+    TEST details ft | === unit details ft ===,foot,ft,feet=12 inch [Length]
+    TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix,SI:kilo,k=1E+03*Metric:Byte*,byte*,B,char*=8 bit #computer storage [Storage]
     TEST byname lb | === units by name lb ===,lb,lbf,lbm
-    TEST byname ft | === units by name ft ===, ft , fT , ftesla , ftlb , fton_explosive, fton_metric , ftonf_metric , ftonm_metric , ftonne , ftonnef , ftonnem , ftorr
+    TEST byname ft | === units by name ft ===,ft,fT,ftce,fTCE,ftesla,ftlb,ftoe,fTOE,fton_explosive,fton_metric,ftonf_metric,ftonm_metric,ftonne,ftonnef,ftonnem,ftorr,ftTNT
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
     TEST byname W | === units by name W ===,W,watt,watthour,Wb,weber,week,wh,Wh,wk
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb
     TEST bycategory Angle | === units in category Angle ===, arcmin, arcsec, cycle, deg, degree, grad, grade, rad, radian, rev, revolution
     TEST bycategory abc | === units in category abc ===
-    TEST bycategory Angular_velocity | === units in category Angular_velocity ===, cps, hertz, Hz, rpm, rps
+    TEST bycategory Angular_velocity | === units in category Angular_velocity === , cpd , cps , hertz , Hz , rpm , rps
     TEST bydimension Fuel_efficiency | === units in category Fuel_efficiency ===, mpg
 
     # various errors
