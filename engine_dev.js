@@ -36,7 +36,6 @@ var defining = false;  // while defining, don't record mismatches
 var evaluating = false;  // while evaluating units, free units may be used
 var testing = false;  // while testing, don't prompt for equation values
 var si = false;  // request to display mismatch result in SI format
-var massbase;  // may be undefined
 var storagebase;  // may be undefined
 var database_tests = "";
 
@@ -532,13 +531,8 @@ class Unit {
                 }
                 // if we did not find a derived unit...
                 if (ii == units.length) {
-                    // just use the base unit; for MASS base unit, divide by 1000 and prefix with kilo
-                    if (i == massbase) {
-                        coefficient /= Math.pow(1000, exponent);
-                        name = "kilo" + bases[i].names[0];
-                    } else {
-                        name = bases[i].names[0];
-                    }
+                    // just use the base unit
+                    name = bases[i].names[0];
                 }
                 if (cont) {
                     // multiply if more than one
@@ -1496,10 +1490,7 @@ function LoadDatabase(database)
 
     // identify our "special" base units
     for (i = 0; i < bases.length; i++) {
-        if (bases[i].names[0] == "MASS") {
-            // we display SI units in kilograms rather than grams
-            massbase = i;
-        } else if (bases[i].names[0] == "STORAGE") {
+        if (bases[i].names[0] == "STORAGE") {
             // we only allow binary prefixes on storage units
             storagebase = i;
         }
