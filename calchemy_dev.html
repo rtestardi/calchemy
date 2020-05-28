@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.14g</p>
+v1.14h</p>
 </td>
 </tr>
 </table>
@@ -1807,8 +1807,24 @@ If your equation demands that parameters be entered in specific units, it is not
 (These equations usually contain some unusual conversion factor that represents the combined conversions required to make the specific units of the equation coherent.)
 <h2>Units of Cycle or Revolution</h2>
 <p>In Calchemy, the units for cycle and revolution are defined as 2 pi radians.
-As such, the units for rpm, cps, and Hz are defined in terms of radians per unit time.
+As such, the units for Hz, rpm, cps, etc. are defined in terms of 2 pi radians per unit time.
 Calchemy cannot tell if you have left out or accidentally included a factor of 2 pi in your physical equation.
+<p>The fundamental units of Calchemy are defined as follows:
+<table border=1>
+<tr><td>radian</td><td>1</td></tr>
+<tr><td>cycle, revolution</td><td>2 pi radians</td></tr>
+<tr><td>hertz</td><td>2 pi radians/second</td></tr>
+<tr><td>cps, rps</td><td>2 pi radians/second</td></tr>
+<tr><td>rpm</td><td>2 pi radians/minute</td></tr>
+<tr><td>etc.</td><td></td></tr>
+</table>
+<p>Please note in particular, Calchemy's definition of hertz differs from that of SI (where hertz are rather surprisingly defined numerically equal to 1 radian per second).
+Calchemy's definition of hertz allows you to calculate coherent results from the <i>same equation</i> in terms of either radians per second (angular velocity, omega)
+<i>or</i> hertz (frequency, f), <i>or any other unit of angular velocity or frequency</i>, at the expense of only supporting <i>equations</i> for angular velocity (omega),
+<i>without</i> the explicit 2 pi found in equations for frequency (f).
+Equations for period (e.g., seconds per cycle or seconds per revolution) still require the explicit 2 pi, or, alternately and preferably, should just be solved in terms of
+"s/cycle" or "s/revolution".
+<p>There is unfortunately no perfect answer here; this may change in the future!
 <h2>Units of Offset Temperature</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.
 As such, every time you enter one of these, you can and should think of it as being instantly converted to absolute Kelvin and Rankine temperatures.
