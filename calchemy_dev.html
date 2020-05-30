@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.14h</p>
+v1.15</p>
 </td>
 </tr>
 </table>
@@ -779,7 +779,7 @@ var examples =`
     100 lbf * 60 mph ? hp | = 16 hp
     1 cup * 1.59 gram/cc ? lb  # weight of sugar | = 0.829325 lb
     35 ft * 20 meters ? acres | = 0.0527224 acres
-    1/sqrt(23 millihenry * 10 microfarad) ? Hz  # frequency of LC oscillator | = 331.861 Hz
+    1/2 pi sqrt(23 millihenry * 10 microfarad) ? Hz  # frequency of LC oscillator | = 331.861 Hz
     60 PiB/month ? Gbps  # fast network bandwidth | = 205.644 Gbps
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2  # solar collector size | = 486.71 ft^2
     2 packs; 30 rolls/pack; 425 sheets/roll; 40 sheets/poop; 1 poops/person/day; 3 persons ? months | = 6.9863 months
@@ -795,7 +795,7 @@ var examples =`
     40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
     1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / (10 sec) ? hp  # measured power drag on car | = 6.98976 hp
     3.4 mega byte / (1200 baud) ? hour  # slow network time | = 6.2963 hour
-    6.98976 hp; 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
+    6.98976 hp; 2pi 3500 rpmf ? ft lb  # convert power to torque | = 10.4889 ft lb
     (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
 `;
 
@@ -852,7 +852,8 @@ var equations =`
     [Inductance] + [Inductance] ? [Inductance]  # series inductors | = 2 [Inductance]
     1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
     0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
-    1/sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 0.159155 [Frequency]
+    1/2 pi sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 0.159155 [Frequency]
+    1/sqrt([Inductance] [Capacitance]) ? [Angular_velocity]  # angular velocity of LC oscillator | = 1 [Angular_velocity]
 
     # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
@@ -1169,8 +1170,8 @@ var tests =`
     1m^4 | [LENGTH^4]
     1m^4? | = 1 meter^4
     1/grav? | = 0.101972 (meter/second^2)^-1
-    1/sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 2085.14 radian/second
-    visc_air? | > visc_air ?, = 0.0000178 pascal*second
+    1/2 pi sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 331.861 radian/second
+    visc_air? | > visc_air ? [Viscosity], = 0.0000178 pascal*second
 
     # dimensions
     Length | [Length]
@@ -1191,8 +1192,8 @@ var tests =`
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
-    1/2*feet * 2 meters ? | > (1 / 2) * foot * 2 meter ? , = 0.3048 meter^2
-    1/sqrt(23mH * 10uF)? | > 1 / (23 milli~henry * 10 micro~farad)^0.5 ?, = 331.861 hertz, = 2085.14 radian/second
+    1/2*feet * 2 meters ? | > (1 / 2) * foot * 2 meter ? [Area], = 0.3048 meter^2
+    1/sqrt(23mH * 10uF)? |>1/(23milli~henry*10micro~farad)^0.5?[Frequency],=2085.14hertz,>1/(23milli~henry*10micro~farad)^0.5?[Angular_velocity],=2085.14radian/second
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
     2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
     --3 | > (0-(0-3)), = 3
@@ -1234,8 +1235,8 @@ var tests =`
     10 mph * 30 feet * 10 gal/acre ? gal/min | = 6.06061 gal/min
     43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec | = 8.77198 sec
     40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour | = 0.79228 hour
-    40 knot / (2500 rpm * 90%) ? inch/rev | = 21.604 inch/rev
-    1/sqrt(23mH; 10uF)?Hz | = 331.861 Hz
+    40 knot / (2500 rpm * 90%) ? inch/rev |> 40 knot / (2500 rpm_as_omega * 90 percent) ? inch / revolution_as_angle, > 40 knot / (2500 rpm_as_frequency * 90 percent) ? inch / revolution_as_number, = 21.604 inch/rev
+    1/(2 pi sqrt(23mH; 10uF))?Hz | = 331.861 Hz
     20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2 | = 486.71 ft^2
     (3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt | = 532.196 watt
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
@@ -1269,10 +1270,9 @@ var tests =`
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
     TEST byname W | === units by name W ===,W,watt,watthour,Wb,weber,week,wh,Wh,wk
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb
-    TEST bycategory Angle | === units in category Angle ===, arcmin, arcsec, cycle, deg, degree, grad, grade, rad, radian, rev, revolution
+    TEST bycategory Angle | === units in category Angle ===,arcmin,arcsec,cycle,cycle_as_angle,deg,degree,grad,grade,rad,radian,rev,rev_as_angle,revolution,revolution_as_angle
     TEST bycategory abc | === units in category abc ===
-    TEST bycategory Angular_velocity | === units in category Angular_velocity === , cpd , cps , hertz , Hz , rpm , rps
-    TEST bydimension Fuel_efficiency | === units in category Fuel_efficiency ===, mpg
+    TEST bycategory Angular_velocity | === units in category Angular_velocity ===, cpd,cpd_as_omega,cpdo,cps,cps_as_omega,cpso,rpm,rpm_as_omega,rpmo,rps,rps_as_omega,rpso
 
     # various errors
     TEST throw | unknown test throw
@@ -1728,7 +1728,7 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <p><a href="javascript:Hyperlink('40 knot / (2500 rpm * 90%25) ? inch/rev')">40 knot / (2500 rpm * 90%) ? inch/rev</a>
 <br>= 21.604 inch/rev
 <p>What is the frequency of an LC oscillator?
-<p><a href="javascript:Hyperlink('1/sqrt(23mH; 10uF)?Hz')">1/sqrt(23mH; 10uF)?Hz</a>
+<p><a href="javascript:Hyperlink('1/(2 pi sqrt(23mH; 10uF))?Hz')">1/sqrt(23mH; 10uF)?Hz</a>
 <br>= 331.861 Hz
 <p>How large of a solar collector do you need to heat a house with 20,000 Btu/hr assuming 80% efficiency?
 (Solar insolation for Denver in February is 14 megajoules/day/square meter.)
@@ -1805,26 +1805,41 @@ And you must enter any dimensionless factors into Calchemy along with the other 
 Note that true physical equations do not specify the units used for the parameters.
 If your equation demands that parameters be entered in specific units, it is not a physical equation and cannot be used with Calchemy.
 (These equations usually contain some unusual conversion factor that represents the combined conversions required to make the specific units of the equation coherent.)
+
 <h2>Units of Cycle or Revolution</h2>
-<p>In Calchemy, the units for cycle and revolution are defined as 2 pi radians.
-As such, the units for Hz, rpm, cps, etc. are defined in terms of 2 pi radians per unit time.
+<p>In Calchemy, as in SI, the unit for radian (angle) is defined as dimensionless 1; the unit for hertz (frequency) is defined as 1/second.
+This can lead to unexpected results, such as a radians/second being equal to a hertz.
+This is unfortunate and there is no perfect answer here;
+neither angles and numbers nor angular velocities and frequencies can be distinguished by Calchemy, since the have the same dimensions.
 Calchemy cannot tell if you have left out or accidentally included a factor of 2 pi in your physical equation.
+<p>In Calchemy, the units of revolution and cycle are defined as overloaded units as <i>both</i> numbers and angles,
+and as such the units for rpm, cps, etc., are also defined as overloaded units as both frequencies and angular velocities.
+Calchemy will always show you which definition it is using when interpreting your equations, and you may receive multiple results from ambiguous equations.
 <p>The fundamental units of Calchemy are defined as follows:
+
 <table border=1>
-<tr><td>radian</td><td>1</td></tr>
-<tr><td>cycle, revolution</td><td>2 pi radians</td></tr>
-<tr><td>hertz</td><td>2 pi radians/second</td></tr>
-<tr><td>cps, rps</td><td>2 pi radians/second</td></tr>
-<tr><td>rpm</td><td>2 pi radians/minute</td></tr>
-<tr><td>etc.</td><td></td></tr>
+<tr><td>radian, rad</td><td>1</td></tr>
+<tr><td>hertz, Hz</td><td>1/second</td></tr>
 </table>
-<p>Please note in particular, Calchemy's definition of hertz differs from that of SI (where hertz are rather surprisingly defined numerically equal to 1 radian per second).
-Calchemy's definition of hertz allows you to calculate coherent results from the <i>same equation</i> in terms of either radians per second (angular velocity, omega)
-<i>or</i> hertz (frequency, f), <i>or any other unit of angular velocity or frequency</i>, at the expense of only supporting <i>equations</i> for angular velocity (omega),
-<i>without</i> the explicit 2 pi found in equations for frequency (f).
-Equations for period (e.g., seconds per cycle or seconds per revolution) still require the explicit 2 pi, or, alternately and preferably, should just be solved in terms of
-"s/cycle" or "s/revolution".
-<p>There is unfortunately no perfect answer here; this may change in the future!
+
+<h3>Angle or Number</h3>
+<p>Use ..._as_angle units in equations for "theta" or angle; use ..._as_number units in equations for "n" or number.
+<table border=1>
+<tr><td>suffix:</td><td>..._as_angle</td><td>..._as_number</td></tr>
+<tr><td>cycle</td><td>2 pi</td><td>1</td></tr>
+<tr><td>revolution, rev</td><td>2 pi</td><td>1</td></tr>
+</table>
+
+<h3>Angular_velocity or Frequency</h3>
+<p>Use ..._as_omega or ...o units in equations for "omega" or angular velocity; use ..._as_frequency or ...f units in equations for "f" or frequency.
+<table border=1>
+<tr><td>suffix:</td><td>..._as_omega<br>...o</td><td>..._as_frequency<br>...f</td></tr>
+<tr><td>rpm</td><td>2 pi/minute</td><td>1/minute</td></tr>
+<tr><td>rps</td><td>2 pi/second</td><td>1/second</td></tr>
+<tr><td>cps</td><td>2 pi/second</td><td>1/second</td></tr>
+<tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
+</table>
+
 <h2>Units of Offset Temperature</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.
 As such, every time you enter one of these, you can and should think of it as being instantly converted to absolute Kelvin and Rankine temperatures.
@@ -1832,9 +1847,17 @@ Likewise, when you ask for a result in degC or degF, the evaluated (absolute) Ke
 Calchemy cannot tell if you have accidentally converted a temperature offset into an absolute temperature or not.
 <p>Conversely, the deltaC (and deltaK) and deltaF (and deltaR) units are defined as the "interval" of 1 degree in the Celsius (and Kelvin) and Fahrenheit (and Rankine)
 temperature scales, much like the "interval" of a pound or a watt, where 2 times one interval equals 2 intervals...
+
+<h2>Overloaded Units</h2>
+In the case of units which traditionally have more than one common use (such as "ounce", which can be a unit of mass, force, or volume),
+Calchemy understands all of the uses and the unit is said to be an overloaded unit.
+Calchemy will use any of the definitions for a unit that result in a dimensionally correct equation.
+Calchemy will always show you which definition for a unit it is using when interpreting your equations, and you may receive multiple results from ambiguous equations.
+
 <h2>Ambiguous Dimensions</h2>
 <p>Dimensions such as Torque and Energy are identical, only differing in an unspecified vector component.
 Similarly, dimensions such as Pressure and Latent Heat by Volume are surprisingly identical, only differing in their use!
+
 <h2>Numeric Precision</h2>
 <p>Calchemy is not intended to be used for high precision calculations.
 <p>The number of significant digits typically carried by Calchemy during the phases of its calculations are summarized in the following table:
