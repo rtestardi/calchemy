@@ -491,12 +491,10 @@ class Unit {
                         // format the SI result
                         var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
                         string += (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "") + (invert?")^-1":"");
-                        strings.push("> " + Simplify(this.interpretation) + " ?");
+                        strings.push("> " + Simplify(this.interpretation) + " ? [" + units[i].names[0] + "]" + (invert?"^-1":""));
                         strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
-                        for (var j = 0; j < units[i].categories.length; j++) {
-                            if (units[i].categories[j].match(/(Angle|Angular)/)) {
-                                cycle_warn = true;
-                            }
+                        if (units[i].categories.includes("Warn")) {
+                            cycle_warn = true;
                         }
                     }
                 }
@@ -834,10 +832,8 @@ function EvaluateTokens(tokens)
                 result = CleanAndPush(stack, result, op, next);
                 next = prefixunit[1];
             }
-            for (j = 0; j < next.categories.length; j++) {
-                if (next.categories[j].match(/(Angle|Angular)/)) {
-                    cycle_warn = true;
-                }
+            if (next.categories.includes("Warn")) {
+                cycle_warn = true;
             }
             result = CleanAndPush(stack, result, op, next);
 
@@ -1497,6 +1493,20 @@ function LoadDatabase(database)
     }
 }
 
+// low quality results contain mix of angles and numbers; high quality results do not contain solve by dimensional analysis ^-1
+function Quality(interpretation)
+{
+    if (interpretation.match(/_as_number/) || interpretation.match(/_as_frequency/)) {
+        if (interpretation.match(/_as_angle/) || interpretation.match(/_as_omega/)) {
+            return 0;  // low
+        }
+    }
+    if (interpretation.match(/[^][-]1/)) {
+        return 1;  // medium
+    }
+    return 2;  // high
+}
+
 // run a command line and return the output as an array of strings and a success bool
 function RunLine(line)
 {
@@ -1522,11 +1532,13 @@ function RunLine(line)
 
     // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
     if (results.length) {
+        var j;
+        var k;
         var answers = [];
         var interpretations = [];
 
         // format the results we will output, appending the captured dimension we parsed from the command line
-        for (var j = 0; j < results.length; j++) {
+        for (j = 0; j < results.length; j++) {
             var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
             var answer = answers.indexOf(string);
             if (answer == -1) {
@@ -1539,21 +1551,35 @@ function RunLine(line)
                 }
             }
         }
+
+        var minimum = 0;
+        for (j = 0; j < answers.length; j++) {
+            for (k = 0; k < interpretations[j].length; k++) {
+                if (Quality(interpretations[j][k]) > 0) {
+                    // we won't print low quality results at all if there are any non-low quality results
+                    minimum = 1;
+                }
+            }
+        }
+
         // generate merged answers and interpretations
         for (j = 0; j < answers.length; j++) {
-            var quality = false;
-            for (var k = 0; k < interpretations[j].length; k++) {
-                if (! interpretations[j][k].match(/[^][-]1/)) {
-                    // if we have an interpretation without ^-1, don't show interpretations with ^-1
-                    quality = true;
-                }
-            }
+            var best = 0;
+            var current;
             for (k = 0; k < interpretations[j].length; k++) {
-                if (! quality || ! interpretations[j][k].match(/[^][-]1/)) {
-                    output.push("> " + interpretations[j][k]);
+                if ((current = Quality(interpretations[j][k])) > best) {
+                    // we won't print medium quality interpretations if there are high-quality interpretations
+                    best = current;
                 }
             }
-            output.push(answers[j]);
+            if (best >= minimum) {
+                for (k = 0; k < interpretations[j].length; k++) {
+                    if (Quality(interpretations[j][k]) >= best) {
+                        output.push("> " + interpretations[j][k]);
+                    }
+                }
+                output.push(answers[j]);
+            }
         }
 
     // otherwise, if we defined a unit or got one or more dimensional mismatches (or SI results)...

@@ -13,8 +13,8 @@ CATEGORY Ice
 CATEGORY Air
 CATEGORY Batteries
 CATEGORY Speed_sound
+CATEGORY Warn
 CATEGORY Frequency
-CATEGORY Angular_frequency
 CATEGORY Angular_velocity
 
 BASE MASS
@@ -64,12 +64,12 @@ Number:e=2.71828182845904523
 *SI,Metric:gramm,gm,g,gram*=MASS
 *SI,Metric:second*,s,sec*=TIME
 SI,Metric:deltaK,deltak=TEMP #interval (T-T0) Kelvin
-*SI,Metric,Angle:radian*,rad=1
+*SI,Metric,Angle,Warn:radian*,rad=1
 *Metric:bit*,b=STORAGE
 dollar*,$=MONEY
 *SI,Metric:ampere*,A,amp*=CURRENT
 *SI,Metric:mole*,mol=SUBSTANCE
-*SI,Metric,Frequency,Angular_velocity:hertz,Hz=2pi radian/second
+*SI,Metric,Frequency,Warn:hertz,Hz=1/second
 
 #Secondary
 *Metric:liter*,L,litre*,l=1 cubic decimeter #was 1.000028 before 1964
@@ -90,8 +90,12 @@ dollar*,$=MONEY
 *Metric:maxwell*,Mx=1E-08 weber #CGS
 *Metric:gauss=0.0001 weber/meter^2 #CGS
 *Metric:oersted,Oe=79.57747 ampere/meter
-Angle:cycle*=2 pi radian
-Angle:revolution*,rev*=2pi radian
+
+#Angle or Number
+Angle,Warn:cycle_as_angle,cycle*=2 pi radian
+Number,Warn:cycle_as_number,cycle*=1
+Angle,Warn:revolution_as_angle,revolution*,rev_as_angle,rev*=2pi radian
+Number,Warn:revolution_as_number,revolution*,rev_as_angle,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -107,10 +111,9 @@ DERIVED Energy=joule
 AMBIGUOUS Torque=newton meter
 DERIVED Power=watt
 DERIVED Pressure=pascal
-DERIVED Angle:Frequency=hertz
-#AMBIGUOUS Angle:Angular_frequency=cycle/second
-AMBIGUOUS Angle:Angular_velocity=radian/second
-DERIVED Angular_acceleration=radian/second^2
+DERIVED Warn:Frequency=hertz
+AMBIGUOUS Warn:Angular_velocity=radian/second
+DERIVED Warn:Angular_acceleration=radian/second^2
 DERIVED Density=kilogramm/liter
 DERIVED Flow=liter/second
 DERIVED Heat_latent_m=joule/kilogramm
@@ -356,11 +359,14 @@ absC,absc=1 deltaC #absolute Celsius, without caution
 absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Angular_velocity or Frequency
-Frequency,Angular_velocity:rpm*=revolution/minute
-Frequency,Angular_velocity:rps=revolution/second
-Frequency,Angular_velocity:rps=revolution/second
-Frequency,Angular_velocity:cps=cycle/second
-Frequency,Angular_velocity:cpd=cycle/day
+Angular_velocity,Warn:rpm_as_omega,rpmo*,rpm*=revolution_as_angle/minute
+Frequency,Warn:rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
+Angular_velocity,Warn:rps_as_omega,rpso*,rps*=revolution_as_angle/second
+Frequency,Warn:rps_as_frequency,rpsf*,rps*=revolution_as_number/second
+Angular_velocity,Warn:cps_as_omega,cpso*,cps*=cycle_as_angle/second
+Frequency,Warn:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
+Angular_velocity,Warn:cpd_as_omega,cpdo*,cpd*=cycle_as_angle/day
+Frequency,Warn:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
 
 #Storage
 *Metric:Byte*,byte*,B,char*=8 bit #computer storage
