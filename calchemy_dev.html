@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15a</p>
+v1.15b</p>
 </td>
 </tr>
 </table>
@@ -1164,7 +1164,7 @@ var tests =`
     joule*meter | [MASS*LENGTH^3*TIME^-2]
     joule*meter?|= 1 kilogramm*meter^3*second^-2
     shm_water?|= 4184 joule/(kilogramm*deltaK)
-    $?|= 1 MONEY
+    $?|= 1 dollar
     1kgm^4 | [MASS^4]
     1kgm^4? | = 1 kilogramm^4
     1m^4 | [LENGTH^4]
@@ -1211,6 +1211,11 @@ var tests =`
     asn 1 | > asn(1), = 1.5708
     q=asn 1 | > asn(1), defined
     q=
+
+
+    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?[Frequency],`+
+    `>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz,>(2pi(1meter/gravity)^0.5)^-1*1?[Angular_velocity],>((2pi(1meter/gravity)^0.5)*1)^-1?[Angular_velocity]`+
+    `,=0.498403radian/second
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb

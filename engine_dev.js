@@ -102,6 +102,8 @@ class Unit {
         this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
+        // interpretation is calculated after instantiation
+        // dimension is calculated after instantiation
     }
 
     // test if scalar zero
@@ -147,7 +149,7 @@ class Unit {
     }
 
     // perform an operation on a unit and return the resulting result
-    Operate(op, rhs)
+    Operate(op, rhs, derivedok)
     {
         var unit = new Unit();
 
@@ -160,11 +162,12 @@ class Unit {
             rhs.exponents[i] = 0;
         }
 
-        if (! testing) {
+        if (! testing && derivedok != true) {
+            // XXX -- can we get rid of this code path difference for testing???
             if (this.type == "DERIVED") {
                 throw "specify value for " + this.names[0];
             }
-            if (op != ':' && rhs.type == "DERIVED") {
+            if (op != ':' && op != '^' && rhs.type == "DERIVED") {
                 throw "specify value for " + rhs.names[0];
             }
         }
@@ -204,12 +207,12 @@ class Unit {
                     display = ' ' + op + ' ';
                     dividing = true;
                     break;
-                case ':':
-                    break;
                 case '+':
                 case '-':
                     display = ' ' + op + ' ';
                     adding = true;
+                    break;
+                case ':':
                     break;
                 case '@':
                     display = " * ";
@@ -478,21 +481,24 @@ class Unit {
     {
         // look for a single dimension match, possibly inverted
         var i;
-        var strings = [];
+        var denom;
+        var result;
+        var results = [];
 
         // for uninverted and then inverted...
         for (var invert = 0; invert < 2; invert++) {
             // for all units...
             for (i = 0; i < units.length; i++) {
-                // if this unit is a dimension...
+                // if this unit is a derived unit...
                 if (units[i].type == "DERIVED") {
-                    // if this unit is a compatible dimension...
+                    // if this unit is a compatible derived unit...
                     if (this.Compatible(units[i], invert)) {
-                        // format the SI result
-                        var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
-                        string += (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "") + (invert?")^-1":"");
-                        strings.push("> " + Simplify(this.interpretation) + " ? [" + units[i].names[0] + "]" + (invert?"^-1":""));
-                        strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
+                        // calculate the SI result in terms of the derived unit
+                        denom = units[i].Operate('^', Value(invert?-1:1), true);
+                        denom.interpretation = "[" + units[i].names[0] + "]" + (invert?"^-1":"");
+                        result = this.Operate('?', denom, true);
+                        result.dimension = (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim() + (invert?")^-1":"");
+                        results.push(result);
                         if (units[i].categories.includes("Warn")) {
                             cycle_warn = true;
                         }
@@ -500,19 +506,17 @@ class Unit {
                 }
             }
             // if we found a result...
-            if (strings.length) {
+            if (results.length) {
                 // N.B. if we match an uninverted dimension, skip the inverted ones
                 // return it
-                return strings;
+                return results;
             }
         }
 
         // otherwise, we have to match individual base dimensions and powers
 
-        var coefficient = this.coefficient;
-        var string2 =  "";
-        var cont = false;
-        var name;
+        denom = null;
+        var string =  "";
         // for each exponent...
         for (i = 0; i < this.exponents.length; i++) {
             // if the exponent is non-0...
@@ -521,32 +525,41 @@ class Unit {
                 var exponent = this.exponents[i];
                 for (var ii = 0; ii < units.length; ii++) {
                     if (units[ii].type == "DERIVED" && bases[i].Compatible(units[ii], false)) {
-                        // and divide the overall coefficient for the derived unit
-                        coefficient /= Math.pow(units[ii].coefficient, exponent);
-                        name = units[ii].definition.replace(/.*= */, "");
+                        // and divide the overall result by the derived unit
+                        var term;
+                        if (exponent == 1) {
+                            term = units[ii];
+                        } else {
+                            term = units[ii].Operate('^', Value(this.exponents[i]), true);
+                        }
+                        if (! denom) {
+                            denom = term;
+                        } else {
+                            // multiply if more than one term
+                            denom = denom.Operate('*', term, true);
+                            string += "*";
+                        }
+                        // format the derived unit name
+                        string += units[ii].definition.replace(/.*= */, "") + (exponent!=1?"^"+exponent:"");
                         break;
                     }
                 }
                 // if we did not find a derived unit...
                 if (ii == units.length) {
-                    // just use the base unit
-                    name = bases[i].names[0];
+                    throw "missing DERIVED unit for " + bases[i].names[0];
                 }
-                if (cont) {
-                    // multiply if more than one
-                    string2 += "*";
-                }
-                // format the derived unit name
-                string2 += name + (exponent!=1?"^"+exponent:"");
-                cont = true;
             }
         }
 
         // return the overall coefficient and individual base dimensions and powers
-        var string1 = ((coefficient).toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision()
-        strings.push("> " + Simplify(this.interpretation) + " ?");
-        strings.push("= " + string1 + " " + string2);  // XXX -- seems weird these are passed up as mismatch string with "= "...
-        return strings;
+        if (! denom) {
+            denom = Value(1).Operate('^', Value(1), true);
+        }
+        denom.interpretation = "";
+        result = this.Operate('?', denom, true);
+        result.dimension = string;
+        results.push(result);
+        return results;
     }
 }
 
@@ -1104,7 +1117,7 @@ function AlternateTokens(tokens, n)
             j = -1;
         }
         // if the evaluation resulted in a dimensionless exponent...
-        if (j == -1) {
+        if (j == -1 && ! si) {
             // dimensionless results are top priority
             results.push(result);
 
@@ -1112,9 +1125,7 @@ function AlternateTokens(tokens, n)
         } else if (j < freebaseunit) {
             // second priority are mismatches or SI or dimension calculations
 
-            // else if "?" was entered: coefficient dim [SI]
-            // else: dim
-            var strings;
+            var strings = [];
             var question = tokens.includes('?');
 
             // if "expression ? unit" was entered...
@@ -1125,7 +1136,7 @@ function AlternateTokens(tokens, n)
             // otherwise, if "expression ?" was entered...
             } else if (si) {
                 // the user requested an SI result; show the SI result as "coefficient dimension"
-                strings = result.SI();
+                results = results.concat(result.SI());
 
             // "expression" was entered...
             } else {
@@ -1209,13 +1220,6 @@ function TokenizeLine(input)
             throw "token error " + ch;
         }
         tokens.push(token);
-    }
-
-    // remove trailing '?' for si or filter request
-    si = false;
-    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
-        si = true;
-        tokens.pop();
     }
 
     return tokens;
@@ -1528,7 +1532,16 @@ function RunLine(line)
     errors = [];
     defines = false;
     undefines = false;
-    ParseTokens(TokenizeLine(line), line);
+
+    si = false;
+    var tokens = TokenizeLine(line);
+    // remove trailing '?' for si or filter request
+    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
+        si = true;
+        tokens.pop();
+    }
+
+    ParseTokens(tokens, line);
 
     // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
     if (results.length) {
@@ -1539,7 +1552,7 @@ function RunLine(line)
 
         // format the results we will output, appending the captured dimension we parsed from the command line
         for (j = 0; j < results.length; j++) {
-            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
+            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + (si?" "+results[j].dimension:dimension);  // N.B. * 1 removes trailing 0's from toPrecision()
             var answer = answers.indexOf(string);
             if (answer == -1) {
                 interpretations[answers.length] = [Simplify(results[j].interpretation)];
