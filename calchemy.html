@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15c</p>
+v1.15d</p>
 </td>
 </tr>
 </table>
@@ -241,7 +241,7 @@ dollar*,$=MONEY
 Angle,Warn:cycle_as_angle,cycle*=2 pi radian
 Number,Warn:cycle_as_number,cycle*=1
 Angle,Warn:revolution_as_angle,revolution*,rev_as_angle,rev*=2pi radian
-Number,Warn:revolution_as_number,revolution*,rev_as_angle,rev*=1
+Number,Warn:revolution_as_number,revolution*,rev_as_number,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -4162,10 +4162,10 @@ Calchemy will always show you which definition it is using when interpreting you
 <p>Use ..._as_omega or ...o units in equations for "omega" or angular velocity; use ..._as_frequency or ...f units in equations for "f" or frequency.
 <table border=1>
 <tr><td>suffix:</td><td>..._as_omega<br>...o</td><td>..._as_frequency<br>...f</td></tr>
+<tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
+<tr><td>cps</td><td>2 pi/second</td><td>1/second</td></tr>
 <tr><td>rpm</td><td>2 pi/minute</td><td>1/minute</td></tr>
 <tr><td>rps</td><td>2 pi/second</td><td>1/second</td></tr>
-<tr><td>cps</td><td>2 pi/second</td><td>1/second</td></tr>
-<tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
 </table>
 
 <h2 id='offset'>Offset Temperature Units</h2>
@@ -4181,6 +4181,15 @@ In the case of units which traditionally have more than one common use (such as 
 Calchemy understands all of the uses and the unit is said to be an overloaded unit.
 Calchemy will use any of the definitions for a unit that result in a dimensionally correct equation.
 Calchemy will always show you which definition for a unit it is using when interpreting your equations, and you may receive multiple results from ambiguous equations.
+<p>The following units (in addition to Units of Cycle or Revolution listed above) are defined as overloaded units:
+<table border=1>
+<tr><td>gram</td><td>mass or force</td></tr>
+<tr><td>ounce, oz</td><td>mass or force or volume</td></tr>
+<tr><td>pound, lb</td><td>mass or force</td></tr>
+<tr><td>ton</td><td>mass or force</td></tr>
+<tr><td>ton_metric, tonne</td><td>mass or force</td></tr>
+<tr><td>ton_long</td><td>mass or force</td></tr>
+</table>
 
 <h2>Ambiguous Dimensions</h2>
 <p>Dimensions such as Torque and Energy are identical, only differing in an unspecified vector component.

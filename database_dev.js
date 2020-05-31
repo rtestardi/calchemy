@@ -96,7 +96,7 @@ dollar*,$=MONEY
 Angle,Warn:cycle_as_angle,cycle*=2 pi radian
 Number,Warn:cycle_as_number,cycle*=1
 Angle,Warn:revolution_as_angle,revolution*,rev_as_angle,rev*=2pi radian
-Number,Warn:revolution_as_number,revolution*,rev_as_angle,rev*=1
+Number,Warn:revolution_as_number,revolution*,rev_as_number,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
