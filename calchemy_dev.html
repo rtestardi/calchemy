@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15d</p>
+v1.15e</p>
 </td>
 </tr>
 </table>
@@ -1824,10 +1824,11 @@ And you must enter any dimensionless factors into Calchemy along with the other 
 Note that true physical equations do not specify the units used for the parameters.
 If your equation demands that parameters be entered in specific units, it is not a physical equation and cannot be used with Calchemy.
 (These equations usually contain some unusual conversion factor that represents the combined conversions required to make the specific units of the equation coherent.)
+<p>Always double-check your answers!
 
 <h2 id='cycle'>Units of Cycle or Revolution</h2>
 <p>In Calchemy, as in SI, the unit for radian (angle) is defined as dimensionless 1; the unit for hertz (frequency) is defined as 1/second.
-This can lead to unexpected results, such as a radians/second being equal to a hertz.
+This can lead to unexpected results, such as a radians/second being numerically equal to a hertz.
 This is unfortunate and there is no perfect answer here;
 neither angles and numbers nor angular velocities and frequencies can be distinguished by Calchemy, since the have the same dimensions.
 Calchemy cannot tell if you have left out or accidentally included a factor of 2 pi in your physical equation.
