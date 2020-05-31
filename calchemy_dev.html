@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15</p>
+v1.15b</p>
 </td>
 </tr>
 </table>
@@ -1164,7 +1164,7 @@ var tests =`
     joule*meter | [MASS*LENGTH^3*TIME^-2]
     joule*meter?|= 1 kilogramm*meter^3*second^-2
     shm_water?|= 4184 joule/(kilogramm*deltaK)
-    $?|= 1 MONEY
+    $?|= 1 dollar
     1kgm^4 | [MASS^4]
     1kgm^4? | = 1 kilogramm^4
     1m^4 | [LENGTH^4]
@@ -1211,6 +1211,11 @@ var tests =`
     asn 1 | > asn(1), = 1.5708
     q=asn 1 | > asn(1), defined
     q=
+
+
+    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?[Frequency],`+
+    `>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz,>(2pi(1meter/gravity)^0.5)^-1*1?[Angular_velocity],>((2pi(1meter/gravity)^0.5)*1)^-1?[Angular_velocity]`+
+    `,=0.498403radian/second
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb
@@ -1728,7 +1733,7 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <p><a href="javascript:Hyperlink('40 knot / (2500 rpm * 90%25) ? inch/rev')">40 knot / (2500 rpm * 90%) ? inch/rev</a>
 <br>= 21.604 inch/rev
 <p>What is the frequency of an LC oscillator?
-<p><a href="javascript:Hyperlink('1/(2 pi sqrt(23mH; 10uF))?Hz')">1/sqrt(23mH; 10uF)?Hz</a>
+<p><a href="javascript:Hyperlink('1/(2 pi sqrt(23mH; 10uF))?Hz')">1/(2 pi sqrt(23mH; 10uF))?Hz</a>
 <br>= 331.861 Hz
 <p>How large of a solar collector do you need to heat a house with 20,000 Btu/hr assuming 80% efficiency?
 (Solar insolation for Denver in February is 14 megajoules/day/square meter.)
@@ -1798,7 +1803,7 @@ selecting the javascript database in the list.
 However, as with all calculators, the answer it gives you is only as good as the data you give it.
 <p>Calchemy ensures that the data you give it is dimensionally consistent.
 <p>However, there are more aspects to good data than simple dimensional consistency.
-Many physical equations also include dimensionless factors like 2 pi, an efficiency, or 1/2, or involve temperature offsets.
+Many physical equations also include dimensionless factors like 2 pi, an efficiency, or 1/2, or involve offset temperature units.
 Beware that Calchemy cannot tell if you have left out (or inadvertently included) one of these factors.
 <p>You must know the physical equation for the problem you are trying to solve before entering it into Calchemy!
 And you must enter any dimensionless factors into Calchemy along with the other parameters of the physical equation, as these factors are part of the physical equation!
@@ -1840,11 +1845,11 @@ Calchemy will always show you which definition it is using when interpreting you
 <tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
 </table>
 
-<h2>Units of Offset Temperature</h2>
+<h2>Offset Temperature Units</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.
 As such, every time you enter one of these, you can and should think of it as being instantly converted to absolute Kelvin and Rankine temperatures.
 Likewise, when you ask for a result in degC or degF, the evaluated (absolute) Kelvin or Rankine temperature result is then converted back to Celsius or Fahrenheit.
-Calchemy cannot tell if you have accidentally converted a temperature offset into an absolute temperature or not.
+Calchemy cannot tell if you have accidentally converted a offset temperature into an absolute temperature or not.
 <p>Conversely, the deltaC (and deltaK) and deltaF (and deltaR) units are defined as the "interval" of 1 degree in the Celsius (and Kelvin) and Fahrenheit (and Rankine)
 temperature scales, much like the "interval" of a pound or a watt, where 2 times one interval equals 2 intervals...
 

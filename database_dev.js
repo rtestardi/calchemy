@@ -90,6 +90,7 @@ dollar*,$=MONEY
 *Metric:maxwell*,Mx=1E-08 weber #CGS
 *Metric:gauss=0.0001 weber/meter^2 #CGS
 *Metric:oersted,Oe=79.57747 ampere/meter
+*Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Angle or Number
 Angle,Warn:cycle_as_angle,cycle*=2 pi radian
@@ -101,7 +102,7 @@ DERIVED Mass=kilogramm
 DERIVED Length=meter
 DERIVED Time=second
 DERIVED Temperature=deltaK
-DERIVED Storage=bit
+DERIVED Storage=Byte
 DERIVED Area=meter^2
 DERIVED Volume=liter
 DERIVED Speed=meter/second
@@ -145,6 +146,7 @@ AMBIGUOUS Heat_combustion_v=joule/liter
 DERIVED Fuel_efficiency=kilometer/liter
 DERIVED Momentum=kilogramm meter/second
 AMBIGUOUS Stiffness=newton/meter
+DERIVED Money=dollar
 
 Number,Metric:percent,%=1/100
 Number,Metric:permille=1/1000
@@ -367,9 +369,6 @@ Angular_velocity,Warn:cps_as_omega,cpso*,cps*=cycle_as_angle/second
 Frequency,Warn:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
 Angular_velocity,Warn:cpd_as_omega,cpdo*,cpd*=cycle_as_angle/day
 Frequency,Warn:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
-
-#Storage
-*Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Money
 cent*=0.01 dollar #U.S.

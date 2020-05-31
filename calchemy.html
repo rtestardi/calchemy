@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15</p>
+v1.15b</p>
 </td>
 </tr>
 </table>
@@ -235,6 +235,7 @@ dollar*,$=MONEY
 *Metric:maxwell*,Mx=1E-08 weber #CGS
 *Metric:gauss=0.0001 weber/meter^2 #CGS
 *Metric:oersted,Oe=79.57747 ampere/meter
+*Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Angle or Number
 Angle,Warn:cycle_as_angle,cycle*=2 pi radian
@@ -246,7 +247,7 @@ DERIVED Mass=kilogramm
 DERIVED Length=meter
 DERIVED Time=second
 DERIVED Temperature=deltaK
-DERIVED Storage=bit
+DERIVED Storage=Byte
 DERIVED Area=meter^2
 DERIVED Volume=liter
 DERIVED Speed=meter/second
@@ -290,6 +291,7 @@ AMBIGUOUS Heat_combustion_v=joule/liter
 DERIVED Fuel_efficiency=kilometer/liter
 DERIVED Momentum=kilogramm meter/second
 AMBIGUOUS Stiffness=newton/meter
+DERIVED Money=dollar
 
 Number,Metric:percent,%=1/100
 Number,Metric:permille=1/1000
@@ -512,9 +514,6 @@ Angular_velocity,Warn:cps_as_omega,cpso*,cps*=cycle_as_angle/second
 Frequency,Warn:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
 Angular_velocity,Warn:cpd_as_omega,cpdo*,cpd*=cycle_as_angle/day
 Frequency,Warn:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
-
-#Storage
-*Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Money
 cent*=0.01 dollar #U.S.
@@ -943,6 +942,8 @@ class Unit {
         this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
+        // interpretation is calculated after instantiation
+        // dimension is calculated after instantiation
     }
 
     // test if scalar zero
@@ -988,7 +989,7 @@ class Unit {
     }
 
     // perform an operation on a unit and return the resulting result
-    Operate(op, rhs)
+    Operate(op, rhs, derivedok)
     {
         var unit = new Unit();
 
@@ -1001,11 +1002,12 @@ class Unit {
             rhs.exponents[i] = 0;
         }
 
-        if (! testing) {
+        if (! testing && derivedok != true) {
+            // XXX -- can we get rid of this code path difference for testing???
             if (this.type == "DERIVED") {
                 throw "specify value for " + this.names[0];
             }
-            if (op != ':' && rhs.type == "DERIVED") {
+            if (op != ':' && op != '^' && rhs.type == "DERIVED") {
                 throw "specify value for " + rhs.names[0];
             }
         }
@@ -1045,12 +1047,12 @@ class Unit {
                     display = ' ' + op + ' ';
                     dividing = true;
                     break;
-                case ':':
-                    break;
                 case '+':
                 case '-':
                     display = ' ' + op + ' ';
                     adding = true;
+                    break;
+                case ':':
                     break;
                 case '@':
                     display = " * ";
@@ -1319,21 +1321,24 @@ class Unit {
     {
         // look for a single dimension match, possibly inverted
         var i;
-        var strings = [];
+        var denom;
+        var result;
+        var results = [];
 
         // for uninverted and then inverted...
         for (var invert = 0; invert < 2; invert++) {
             // for all units...
             for (i = 0; i < units.length; i++) {
-                // if this unit is a dimension...
+                // if this unit is a derived unit...
                 if (units[i].type == "DERIVED") {
-                    // if this unit is a compatible dimension...
+                    // if this unit is a compatible derived unit...
                     if (this.Compatible(units[i], invert)) {
-                        // format the SI result
-                        var string = ((this.coefficient/units[i].coefficient).toPrecision(6) * 1) + " ";  // N.B. * 1 removes trailing 0's from toPrecision()
-                        string += (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "") + (invert?")^-1":"");
-                        strings.push("> " + Simplify(this.interpretation) + " ? [" + units[i].names[0] + "]" + (invert?"^-1":""));
-                        strings.push("= " + string);  // XXX -- seems weird these are passed up as mismatch string with "= "...
+                        // calculate the SI result in terms of the derived unit
+                        denom = units[i].Operate('^', Value(invert?-1:1), true);
+                        denom.interpretation = "[" + units[i].names[0] + "]" + (invert?"^-1":"");
+                        result = this.Operate('?', denom, true);
+                        result.dimension = (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim() + (invert?")^-1":"");
+                        results.push(result);
                         if (units[i].categories.includes("Warn")) {
                             cycle_warn = true;
                         }
@@ -1341,19 +1346,17 @@ class Unit {
                 }
             }
             // if we found a result...
-            if (strings.length) {
+            if (results.length) {
                 // N.B. if we match an uninverted dimension, skip the inverted ones
                 // return it
-                return strings;
+                return results;
             }
         }
 
         // otherwise, we have to match individual base dimensions and powers
 
-        var coefficient = this.coefficient;
-        var string2 =  "";
-        var cont = false;
-        var name;
+        denom = null;
+        var string =  "";
         // for each exponent...
         for (i = 0; i < this.exponents.length; i++) {
             // if the exponent is non-0...
@@ -1362,32 +1365,41 @@ class Unit {
                 var exponent = this.exponents[i];
                 for (var ii = 0; ii < units.length; ii++) {
                     if (units[ii].type == "DERIVED" && bases[i].Compatible(units[ii], false)) {
-                        // and divide the overall coefficient for the derived unit
-                        coefficient /= Math.pow(units[ii].coefficient, exponent);
-                        name = units[ii].definition.replace(/.*= */, "");
+                        // and divide the overall result by the derived unit
+                        var term;
+                        if (exponent == 1) {
+                            term = units[ii];
+                        } else {
+                            term = units[ii].Operate('^', Value(this.exponents[i]), true);
+                        }
+                        if (! denom) {
+                            denom = term;
+                        } else {
+                            // multiply if more than one term
+                            denom = denom.Operate('*', term, true);
+                            string += "*";
+                        }
+                        // format the derived unit name
+                        string += units[ii].definition.replace(/.*= */, "") + (exponent!=1?"^"+exponent:"");
                         break;
                     }
                 }
                 // if we did not find a derived unit...
                 if (ii == units.length) {
-                    // just use the base unit
-                    name = bases[i].names[0];
+                    throw "missing DERIVED unit for " + bases[i].names[0];
                 }
-                if (cont) {
-                    // multiply if more than one
-                    string2 += "*";
-                }
-                // format the derived unit name
-                string2 += name + (exponent!=1?"^"+exponent:"");
-                cont = true;
             }
         }
 
         // return the overall coefficient and individual base dimensions and powers
-        var string1 = ((coefficient).toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision()
-        strings.push("> " + Simplify(this.interpretation) + " ?");
-        strings.push("= " + string1 + " " + string2);  // XXX -- seems weird these are passed up as mismatch string with "= "...
-        return strings;
+        if (! denom) {
+            denom = Value(1).Operate('^', Value(1), true);
+        }
+        denom.interpretation = "";
+        result = this.Operate('?', denom, true);
+        result.dimension = string;
+        results.push(result);
+        return results;
     }
 }
 
@@ -1945,7 +1957,7 @@ function AlternateTokens(tokens, n)
             j = -1;
         }
         // if the evaluation resulted in a dimensionless exponent...
-        if (j == -1) {
+        if (j == -1 && ! si) {
             // dimensionless results are top priority
             results.push(result);
 
@@ -1953,9 +1965,7 @@ function AlternateTokens(tokens, n)
         } else if (j < freebaseunit) {
             // second priority are mismatches or SI or dimension calculations
 
-            // else if "?" was entered: coefficient dim [SI]
-            // else: dim
-            var strings;
+            var strings = [];
             var question = tokens.includes('?');
 
             // if "expression ? unit" was entered...
@@ -1966,7 +1976,7 @@ function AlternateTokens(tokens, n)
             // otherwise, if "expression ?" was entered...
             } else if (si) {
                 // the user requested an SI result; show the SI result as "coefficient dimension"
-                strings = result.SI();
+                results = results.concat(result.SI());
 
             // "expression" was entered...
             } else {
@@ -2050,13 +2060,6 @@ function TokenizeLine(input)
             throw "token error " + ch;
         }
         tokens.push(token);
-    }
-
-    // remove trailing '?' for si or filter request
-    si = false;
-    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
-        si = true;
-        tokens.pop();
     }
 
     return tokens;
@@ -2369,7 +2372,16 @@ function RunLine(line)
     errors = [];
     defines = false;
     undefines = false;
-    ParseTokens(TokenizeLine(line), line);
+
+    si = false;
+    var tokens = TokenizeLine(line);
+    // remove trailing '?' for si or filter request
+    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
+        si = true;
+        tokens.pop();
+    }
+
+    ParseTokens(tokens, line);
 
     // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
     if (results.length) {
@@ -2380,7 +2392,7 @@ function RunLine(line)
 
         // format the results we will output, appending the captured dimension we parsed from the command line
         for (j = 0; j < results.length; j++) {
-            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
+            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + (si?" "+results[j].dimension:dimension);  // N.B. * 1 removes trailing 0's from toPrecision()
             var answer = answers.indexOf(string);
             if (answer == -1) {
                 interpretations[answers.length] = [Simplify(results[j].interpretation)];
@@ -3461,7 +3473,7 @@ var tests =`
     joule*meter | [MASS*LENGTH^3*TIME^-2]
     joule*meter?|= 1 kilogramm*meter^3*second^-2
     shm_water?|= 4184 joule/(kilogramm*deltaK)
-    $?|= 1 MONEY
+    $?|= 1 dollar
     1kgm^4 | [MASS^4]
     1kgm^4? | = 1 kilogramm^4
     1m^4 | [LENGTH^4]
@@ -3508,6 +3520,11 @@ var tests =`
     asn 1 | > asn(1), = 1.5708
     q=asn 1 | > asn(1), defined
     q=
+
+
+    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?[Frequency],`+
+    `>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz,>(2pi(1meter/gravity)^0.5)^-1*1?[Angular_velocity],>((2pi(1meter/gravity)^0.5)*1)^-1?[Angular_velocity]`+
+    `,=0.498403radian/second
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb
@@ -4025,7 +4042,7 @@ Click/tap an equation to enter it into the equation line at the cursor.</dd>
 <p><a href="javascript:Hyperlink('40 knot / (2500 rpm * 90%25) ? inch/rev')">40 knot / (2500 rpm * 90%) ? inch/rev</a>
 <br>= 21.604 inch/rev
 <p>What is the frequency of an LC oscillator?
-<p><a href="javascript:Hyperlink('1/(2 pi sqrt(23mH; 10uF))?Hz')">1/sqrt(23mH; 10uF)?Hz</a>
+<p><a href="javascript:Hyperlink('1/(2 pi sqrt(23mH; 10uF))?Hz')">1/(2 pi sqrt(23mH; 10uF))?Hz</a>
 <br>= 331.861 Hz
 <p>How large of a solar collector do you need to heat a house with 20,000 Btu/hr assuming 80% efficiency?
 (Solar insolation for Denver in February is 14 megajoules/day/square meter.)
@@ -4095,7 +4112,7 @@ selecting the javascript database in the list.
 However, as with all calculators, the answer it gives you is only as good as the data you give it.
 <p>Calchemy ensures that the data you give it is dimensionally consistent.
 <p>However, there are more aspects to good data than simple dimensional consistency.
-Many physical equations also include dimensionless factors like 2 pi, an efficiency, or 1/2, or involve temperature offsets.
+Many physical equations also include dimensionless factors like 2 pi, an efficiency, or 1/2, or involve offset temperature units.
 Beware that Calchemy cannot tell if you have left out (or inadvertently included) one of these factors.
 <p>You must know the physical equation for the problem you are trying to solve before entering it into Calchemy!
 And you must enter any dimensionless factors into Calchemy along with the other parameters of the physical equation, as these factors are part of the physical equation!
@@ -4137,11 +4154,11 @@ Calchemy will always show you which definition it is using when interpreting you
 <tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
 </table>
 
-<h2>Units of Offset Temperature</h2>
+<h2>Offset Temperature Units</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.
 As such, every time you enter one of these, you can and should think of it as being instantly converted to absolute Kelvin and Rankine temperatures.
 Likewise, when you ask for a result in degC or degF, the evaluated (absolute) Kelvin or Rankine temperature result is then converted back to Celsius or Fahrenheit.
-Calchemy cannot tell if you have accidentally converted a temperature offset into an absolute temperature or not.
+Calchemy cannot tell if you have accidentally converted a offset temperature into an absolute temperature or not.
 <p>Conversely, the deltaC (and deltaK) and deltaF (and deltaR) units are defined as the "interval" of 1 degree in the Celsius (and Kelvin) and Fahrenheit (and Rankine)
 temperature scales, much like the "interval" of a pound or a watt, where 2 times one interval equals 2 intervals...
 
