@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15b</p>
+v1.15c</p>
 </td>
 </tr>
 </table>
@@ -2933,6 +2933,15 @@ function ShowUnitsByCategory(category, bydimension)  // or "All Units"
         }
     }
 
+    // finally look for SI units
+    for (i = 0; i < units.length; i++) {
+        if (units[i].type == "DERIVED" && units[i].names[0] == category) {
+            if (! names.includes(units[i].names[j])) {
+                names.push(units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim());
+            }
+        }
+    }
+
     // compute the list of hyperlinked units
     Sort(names);
     var html = "";
@@ -3019,7 +3028,6 @@ function Word(extended)
     }
     return word;
 }
-
 
 // the user clicked the Find Units button; find units requested by the user
 function Units()
@@ -3170,6 +3178,8 @@ var equations =`
     [Force] [Length] ? [Energy] | = 1 [Energy]
     [Force] [Speed] ? [Power] | = 1 [Power]
     [Energy] / [Time] ? [Power] | = 1 [Power]
+    [Angular_velocity] [Torque] ? [Power] | = 1 [Power]
+    2 pi [Frequency] [Torque] ? [Power] | = 6.28319 [Power]
     [Stiffness] [Length] ? [Force] | = 1 [Force]
     [Stiffness] [Length]^2 ? [Energy] | = 1 [Energy]
     [Mass] [Acceleration] ? [Force]  # newton's second law | = 1 [Force]
@@ -3583,10 +3593,10 @@ var tests =`
     TEST byname ft | === units by name ft ===,ft,fT,ftce,fTCE,ftesla,ftlb,ftoe,fTOE,fton_explosive,fton_metric,ftonf_metric,ftonm_metric,ftonne,ftonnef,ftonnem,ftorr,ftTNT
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
     TEST byname W | === units by name W ===,W,watt,watthour,Wb,weber,week,wh,Wh,wk
-    TEST bycategory Torque | === units in category Torque ===, ftlb, inlb
+    TEST bycategory Torque | === units in category Torque ===, ftlb, inlb, newton meter
     TEST bycategory Angle | === units in category Angle ===,arcmin,arcsec,cycle,cycle_as_angle,deg,degree,grad,grade,rad,radian,rev,rev_as_angle,revolution,revolution_as_angle
     TEST bycategory abc | === units in category abc ===
-    TEST bycategory Angular_velocity | === units in category Angular_velocity ===, cpd,cpd_as_omega,cpdo,cps,cps_as_omega,cpso,rpm,rpm_as_omega,rpmo,rps,rps_as_omega,rpso
+    TEST bycategory Angular_velocity|===unitsincategoryAngular_velocity===,cpd,cpd_as_omega,cpdo,cps,cps_as_omega,cpso,radian/second,rpm,rpm_as_omega,rpmo,rps,rps_as_omega,rpso
 
     # various errors
     TEST throw | unknown test throw
@@ -3784,6 +3794,10 @@ var help =`
 </ul>
 </li>
 <li><a href=#cautions>Cautions</a></li>
+<ul>
+    <li><a href=#cycle>Units of Cycle or Revolution</a></li>
+    <li><a href=#offset>Offset Temperature Units</a></li>
+</ul>
 <li><a href=#info>For More Information</a></li>
 </ul>
 
@@ -4120,7 +4134,7 @@ Note that true physical equations do not specify the units used for the paramete
 If your equation demands that parameters be entered in specific units, it is not a physical equation and cannot be used with Calchemy.
 (These equations usually contain some unusual conversion factor that represents the combined conversions required to make the specific units of the equation coherent.)
 
-<h2>Units of Cycle or Revolution</h2>
+<h2 id='cycle'>Units of Cycle or Revolution</h2>
 <p>In Calchemy, as in SI, the unit for radian (angle) is defined as dimensionless 1; the unit for hertz (frequency) is defined as 1/second.
 This can lead to unexpected results, such as a radians/second being equal to a hertz.
 This is unfortunate and there is no perfect answer here;
@@ -4154,7 +4168,7 @@ Calchemy will always show you which definition it is using when interpreting you
 <tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
 </table>
 
-<h2>Offset Temperature Units</h2>
+<h2 id='offset'>Offset Temperature Units</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.
 As such, every time you enter one of these, you can and should think of it as being instantly converted to absolute Kelvin and Rankine temperatures.
 Likewise, when you ask for a result in degC or degF, the evaluated (absolute) Kelvin or Rankine temperature result is then converted back to Celsius or Fahrenheit.
