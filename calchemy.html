@@ -2490,10 +2490,18 @@ function Scroll(noscroll)
     }
 }
 
+// convert text to breakable text for the history list
+// XXX -- why don't tables break anywhere on phone?  Just enter long numeric string. :-(
+function Break(output)
+{
+    // allow breaks periodically
+    return output.match(/(.{1,20})/g).join("<wbr>");
+}
+
 // convert text to hyperlinked html for the history list
 function History(text)
 {
-    var html = text;
+    var html = Break(text);
     if (html.match(/[#]/)) {
         html = html.replace(/[#]/, "<i class='i4'>#").replace(/$/, "</i>");
     }
@@ -2592,7 +2600,7 @@ function SnoopAndDelete(tag)
     var lines = mid.split("<br>");
     var snoops = [];
     for (var i = 0; i < lines.length; i++) {
-        var snoop = lines[i].replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ");
+        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ");
         if (snoop.trim().length) {
             snoops.push(snoop);
         }
@@ -2731,7 +2739,7 @@ function Enter()
                 if (output[i].match(/^= /)) {
                     html += "<br>" + History(output[i]);
                 } else if (output[i].match(/^[>] /)) {
-                    html += "<br><i>" + output[i] + "</i>";
+                    html += "<br><i>" + Break(output[i]) + "</i>";
                 } else {
                     html += "<br>" + output[i];
                 }
