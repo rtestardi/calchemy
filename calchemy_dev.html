@@ -14,13 +14,15 @@ a { text-decoration: none; }
 #equation { width: 96%; font-size:120%; }
 #copyright { font-size:75%; padding: 0px; }
 * { overflow-wrap: anywhere; word-wrap: anywhere; }
+button { overflow-wrap: normal; word-wrap: normal; }
 html,button,input { font: 36px Arial, Helvetica, sans-serif; padding: 15px; margin: 15px 0px 15px 0px; }
 @media(min-width:80em){ html,button,input { font: 24px Arial, Helvetica, sans-serif; padding: 10px; margin: 10px 0px 10px 0px; } }
 @supports(-webkit-touch-callout:none) { button,input { -webkit-appearance: none; border-radius: 2px; } }
 img { padding: 0px; margin: 10px 10px 0px 0px; }
 table,tr,td { margin: 0px; padding: 0px; }
-table.table1,table.table2 { table-layout: fixed; width: 100%; }
-i.i1 { filter: grayscale(75%) opacity(75%); }
+.table1,.table2 { table-layout: fixed; width: 100%; }
+.td3 { width: 4%; vertical-align: bottom; }
+.i4 { filter: grayscale(75%) opacity(75%); }
 hr { height: 2px; }
 body,html { margin: 0px; }
 </style>
@@ -187,7 +189,7 @@ function History(text)
 {
     var html = text;
     if (html.match(/[#]/)) {
-        html = html.replace(/[#]/, "<i class='i1'>#").replace(/$/, "</i>");
+        html = html.replace(/[#]/, "<i class='i4'>#").replace(/$/, "</i>");
     }
     return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + html + "</a>";
 }
@@ -214,7 +216,7 @@ function Chunk(label, result)
     // create the chunk as a searchable comment preceded by a horizontal line and followed by a table with a delete button to the right
     var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated below
     var head = "<table><tr><td>";
-    var button = "</td><td style='width: 4%; vertical-align: bottom;'><button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
+    var button = "</td><td class='td3'><button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
     var tail = "</td></tr></table>";
 
     document.getElementById("results").innerHTML += hrtag + head + label + result + button + tail;
