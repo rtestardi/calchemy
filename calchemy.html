@@ -103,7 +103,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15e</p>
+v1.15f</p>
 </td>
 </tr>
 </table>
@@ -238,10 +238,10 @@ dollar*,$=MONEY
 *Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Angle or Number
-Angle,Warn:cycle_as_angle,cycle*=2 pi radian
-Number,Warn:cycle_as_number,cycle*=1
-Angle,Warn:revolution_as_angle,revolution*,rev_as_angle,rev*=2pi radian
-Number,Warn:revolution_as_number,revolution*,rev_as_number,rev*=1
+Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi radian
+Number,Warn:cycle_as_number,cyclen,cycle*=1
+Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2pi radian
+Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -506,13 +506,13 @@ absC,absc=1 deltaC #absolute Celsius, without caution
 absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Angular_velocity or Frequency
-Angular_velocity,Warn:rpm_as_omega,rpmo*,rpm*=revolution_as_angle/minute
+Angular_velocity,Warn:rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
 Frequency,Warn:rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
-Angular_velocity,Warn:rps_as_omega,rpso*,rps*=revolution_as_angle/second
+Angular_velocity,Warn:rps_as_angular_velocity,rpsa*,rps*=revolution_as_angle/second
 Frequency,Warn:rps_as_frequency,rpsf*,rps*=revolution_as_number/second
-Angular_velocity,Warn:cps_as_omega,cpso*,cps*=cycle_as_angle/second
+Angular_velocity,Warn:cps_as_angular_velocity,cpsa*,cps*=cycle_as_angle/second
 Frequency,Warn:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
-Angular_velocity,Warn:cpd_as_omega,cpdo*,cpd*=cycle_as_angle/day
+Angular_velocity,Warn:cpd_as_angular_velocity,cpda*,cpd*=cycle_as_angle/day
 Frequency,Warn:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
 
 #Money
@@ -942,8 +942,8 @@ class Unit {
         this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
-        // interpretation is calculated after instantiation
-        // dimension is calculated after instantiation
+        this.interpretation = (names == undefined) ? "" : names[0];  // string
+        // this.dimension is calculated after instantiation only for SI results
     }
 
     // test if scalar zero
@@ -1416,7 +1416,6 @@ function DefineBaseUnit(names, pluralizable)
     bases[nextbaseunit] = unit;
     nextbaseunit++;
     // make the unit (mostly) immutable
-    unit.interpretation = names[0];
     Object.freeze(unit);
     units.push(unit);
     // return the unit
@@ -1509,12 +1508,11 @@ function LookupPrefixedUnit(name)
 // return a literal value as a unit
 function Value(token)
 {
-    var unit = new Unit();
+    var unit = new Unit([token]);
     unit.coefficient = Number(token);
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;
     }
-    unit.interpretation = token;
     return unit;
 }
 
@@ -2220,7 +2218,6 @@ function ParseTokens(tokens, line)
                             mismatches.push("> " + Simplify(results[j].interpretation));
                         }
                     }
-                    unit.interpretation = names[0];
                     Object.freeze(unit);
                     units.push(unit);
                     defines = true;
@@ -2341,7 +2338,7 @@ function LoadDatabase(database)
 function Quality(interpretation)
 {
     if (interpretation.match(/_as_number/) || interpretation.match(/_as_frequency/)) {
-        if (interpretation.match(/_as_angle/) || interpretation.match(/_as_omega/)) {
+        if (interpretation.match(/_as_angle/) || interpretation.match(/_as_angular_velocity/)) {
             return 0;  // low
         }
     }
@@ -3538,7 +3535,7 @@ var tests =`
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb
-    Area:1 | incompatible units :undefined
+    Area:1 | incompatible units :1
     1:Area | incompatible units :Area
     Area?1 | Dimensional Mismatch [Fuel_efficiency or Area^-1]
     1?Area | Dimensional Mismatch [Area or Fuel_efficiency^-1]
@@ -3559,7 +3556,8 @@ var tests =`
     10 mph * 30 feet * 10 gal/acre ? gal/min | = 6.06061 gal/min
     43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec | = 8.77198 sec
     40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour | = 0.79228 hour
-    40 knot / (2500 rpm * 90%) ? inch/rev |> 40 knot / (2500 rpm_as_omega * 90 percent) ? inch / revolution_as_angle, > 40 knot / (2500 rpm_as_frequency * 90 percent) ? inch / revolution_as_number, = 21.604 inch/rev
+    40 knot / (2500 rpm * 90%) ? inch/rev |> 40 knot / (2500 rpm_as_angular_velocity * 90 percent) ? inch / revolution_as_angle,`+
+    `> 40 knot / (2500 rpm_as_frequency * 90 percent) ? inch / revolution_as_number, = 21.604 inch/rev
     1/(2 pi sqrt(23mH; 10uF))?Hz | = 331.861 Hz
     20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2 | = 486.71 ft^2
     (3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt | = 532.196 watt
@@ -3594,9 +3592,11 @@ var tests =`
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
     TEST byname W | === units by name W ===,W,watt,watthour,Wb,weber,week,wh,Wh,wk
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb, newton meter
-    TEST bycategory Angle | === units in category Angle ===,arcmin,arcsec,cycle,cycle_as_angle,deg,degree,grad,grade,rad,radian,rev,rev_as_angle,revolution,revolution_as_angle
+    TEST bycategory Angle | === units in category Angle ===,arcmin,arcsec,cycle,cycle_as_angle,cyclea,deg,degree,grad,grade,rad,radian,rev,rev_as_angle,reva,revolution,`+
+    `revolution_as_angle,revolutiona
     TEST bycategory abc | === units in category abc ===
-    TEST bycategory Angular_velocity|===unitsincategoryAngular_velocity===,cpd,cpd_as_omega,cpdo,cps,cps_as_omega,cpso,radian/second,rpm,rpm_as_omega,rpmo,rps,rps_as_omega,rpso
+    TEST bycategory Angular_velocity|===unitsincategoryAngular_velocity===,cpd,cpd_as_angular_velocity,cpda,cps,cps_as_angular_velocity,cpsa,radian/second,rpm,`+
+    `rpm_as_angular_velocity,rpma,rps,rps_as_angular_velocity,rpsa
 
     # various errors
     TEST throw | unknown test throw
@@ -4152,17 +4152,17 @@ Calchemy will always show you which definition it is using when interpreting you
 </table>
 
 <h3>Angle or Number</h3>
-<p>Use ..._as_angle units in equations for "theta" or angle; use ..._as_number units in equations for "n" or number.
+<p>Use ..._as_angle or ...a units in equations for "theta" or angle; use ..._as_number or ...n units in equations for "n" or number.
 <table border=1>
-<tr><td>suffix:</td><td>..._as_angle</td><td>..._as_number</td></tr>
+<tr><td>suffix:</td><td>..._as_angle<br>...a</td><td>..._as_number<br>...n</td></tr>
 <tr><td>cycle</td><td>2 pi</td><td>1</td></tr>
 <tr><td>revolution, rev</td><td>2 pi</td><td>1</td></tr>
 </table>
 
 <h3>Angular_velocity or Frequency</h3>
-<p>Use ..._as_omega or ...o units in equations for "omega" or angular velocity; use ..._as_frequency or ...f units in equations for "f" or frequency.
+<p>Use ..._as_angular_velocity or ...a units in equations for "omega" or angular velocity; use ..._as_frequency or ...f units in equations for "f" or frequency.
 <table border=1>
-<tr><td>suffix:</td><td>..._as_omega<br>...o</td><td>..._as_frequency<br>...f</td></tr>
+<tr><td>suffix:</td><td>..._as_angular_velocity<br>...a</td><td>..._as_frequency<br>...f</td></tr>
 <tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
 <tr><td>cps</td><td>2 pi/second</td><td>1/second</td></tr>
 <tr><td>rpm</td><td>2 pi/minute</td><td>1/minute</td></tr>
