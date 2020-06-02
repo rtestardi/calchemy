@@ -1210,8 +1210,8 @@ var tests =`
     kg? | = 1 kilogramm, = 9.80665 newton
     kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
-    pi^2 | unexpected exponent of pi; use pin to escape
-    pin^2 | > (pin)^2, = 9.8696
+    pi^2 | unexpected exponent of pi; use pi_as_number or pin to escape
+    pi_as_number^2 | > (pi_as_number)^2, = 9.8696
     400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
 
     # interpretations
@@ -1876,6 +1876,9 @@ Calchemy will always show you which definition it is using when interpreting you
 <tr><td>rpm</td><td>2 pi/minute</td><td>1/minute</td></tr>
 <tr><td>rps</td><td>2 pi/second</td><td>1/second</td></tr>
 </table>
+
+<p>N.B. Calchemy considers equations with higher-order (greater than 1 or less than -1) powers of "pi" to be dimensionally incorrect;
+to escape this restriction, replace "pi" in your equation with "pi_as_number" or "pin".
 
 <h2 id='offset'>Offset Temperature Units</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.

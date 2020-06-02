@@ -58,7 +58,7 @@ PREFIX Prefix:zebi,Zi=1024^7 #storage
 PREFIX Prefix:yobi,Yi=1024^8 #storage
 
 Number:pi=3.14159265358979323 PI
-Number:pin=3.14159265358979323
+Number:pi_as_number,pin=3.14159265358979323
 Number:e=2.71828182845904523
 
 #Primary
