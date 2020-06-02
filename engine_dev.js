@@ -1153,6 +1153,7 @@ function AlternateTokens(tokens, n)
             }
 
             // record the result as a mismatch
+            // XXX -- generate merged mismatches and interpretations
             for (var k = 0; k < strings.length; k++) {
                 if (! mismatches.includes(strings[k])) {
                     if (! defining) {
