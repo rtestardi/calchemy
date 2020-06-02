@@ -13,13 +13,16 @@ a { text-decoration: none; }
 #results { line-height: 1.4; }
 #equation { width: 96%; font-size:120%; }
 #copyright { font-size:75%; padding: 0px; }
+* { overflow-wrap: anywhere; word-wrap: anywhere; }
+button { overflow-wrap: normal; word-wrap: normal; }
 html,button,input { font: 36px Arial, Helvetica, sans-serif; padding: 15px; margin: 15px 0px 15px 0px; }
 @media(min-width:80em){ html,button,input { font: 24px Arial, Helvetica, sans-serif; padding: 10px; margin: 10px 0px 10px 0px; } }
 @supports(-webkit-touch-callout:none) { button,input { -webkit-appearance: none; border-radius: 2px; } }
 img { padding: 0px; margin: 10px 10px 0px 0px; }
 table,tr,td { margin: 0px; padding: 0px; }
-table.table1,table.table2 { width: 100%; }
-i.i1 { filter: grayscale(75%) opacity(75%); }
+.table1,.table2 { table-layout: fixed; width: 100%; }
+.td3 { width: 4%; vertical-align: bottom; }
+.i4 { filter: grayscale(75%) opacity(75%); }
 hr { height: 2px; }
 body,html { margin: 0px; }
 </style>
@@ -103,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15e</p>
+v1.15f</p>
 </td>
 </tr>
 </table>
@@ -181,12 +184,20 @@ function Scroll(noscroll)
     }
 }
 
+// convert text to breakable text for the history list
+// XXX -- why don't tables break anywhere on phone?  Just enter long numeric string. :-(
+function Break(output)
+{
+    // allow breaks periodically
+    return output.match(/(.{1,20})/g).join("<wbr>");
+}
+
 // convert text to hyperlinked html for the history list
 function History(text)
 {
-    var html = text;
+    var html = Break(text);
     if (html.match(/[#]/)) {
-        html = html.replace(/[#]/, "<i class='i1'>#").replace(/$/, "</i>");
+        html = html.replace(/[#]/, "<i class='i4'>#").replace(/$/, "</i>");
     }
     return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + html + "</a>";
 }
@@ -213,7 +224,7 @@ function Chunk(label, result)
     // create the chunk as a searchable comment preceded by a horizontal line and followed by a table with a delete button to the right
     var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated below
     var head = "<table><tr><td>";
-    var button = "</td><td style='width: 4%; vertical-align: bottom;'><button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
+    var button = "</td><td class='td3'><button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
     var tail = "</td></tr></table>";
 
     document.getElementById("results").innerHTML += hrtag + head + label + result + button + tail;
@@ -283,7 +294,7 @@ function SnoopAndDelete(tag)
     var lines = mid.split("<br>");
     var snoops = [];
     for (var i = 0; i < lines.length; i++) {
-        var snoop = lines[i].replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ");
+        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ");
         if (snoop.trim().length) {
             snoops.push(snoop);
         }
@@ -422,7 +433,7 @@ function Enter()
                 if (output[i].match(/^= /)) {
                     html += "<br>" + History(output[i]);
                 } else if (output[i].match(/^[>] /)) {
-                    html += "<br><i>" + output[i] + "</i>";
+                    html += "<br><i>" + Break(output[i]) + "</i>";
                 } else {
                     html += "<br>" + output[i];
                 }
@@ -822,7 +833,7 @@ function Examples()
 
     // append a deletable chunk to the results list with the examples, replacing any existing examples chunk
     Chunk("=== examples ===", html);
-    Scroll(true);
+    Scroll();
 }
 
 var preequations = `
@@ -1229,7 +1240,7 @@ var tests =`
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb
-    Area:1 | incompatible units :undefined
+    Area:1 | incompatible units :1
     1:Area | incompatible units :Area
     Area?1 | Dimensional Mismatch [Fuel_efficiency or Area^-1]
     1?Area | Dimensional Mismatch [Area or Fuel_efficiency^-1]
@@ -1250,7 +1261,8 @@ var tests =`
     10 mph * 30 feet * 10 gal/acre ? gal/min | = 6.06061 gal/min
     43 feet * (pi * (0.25 inch)^2) / (3 gal/min) ? sec | = 8.77198 sec
     40 gal * shv_water * (140-45) deltaF / (40000 Btu/hour) ? hour | = 0.79228 hour
-    40 knot / (2500 rpm * 90%) ? inch/rev |> 40 knot / (2500 rpm_as_omega * 90 percent) ? inch / revolution_as_angle, > 40 knot / (2500 rpm_as_frequency * 90 percent) ? inch / revolution_as_number, = 21.604 inch/rev
+    40 knot / (2500 rpm * 90%) ? inch/rev |> 40 knot / (2500 rpm_as_angular_velocity * 90 percent) ? inch / revolution_as_angle,`+
+    `> 40 knot / (2500 rpm_as_frequency * 90 percent) ? inch / revolution_as_number, = 21.604 inch/rev
     1/(2 pi sqrt(23mH; 10uF))?Hz | = 331.861 Hz
     20000 btu/hour; 80% * 14 megajoules/day/square meter ? ft^2 | = 486.71 ft^2
     (3/4) cup * shv_water * (212 - 52) deltaF / (2 min + 4 sec) ? watt | = 532.196 watt
@@ -1285,9 +1297,11 @@ var tests =`
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte
     TEST byname W | === units by name W ===,W,watt,watthour,Wb,weber,week,wh,Wh,wk
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb, newton meter
-    TEST bycategory Angle | === units in category Angle ===,arcmin,arcsec,cycle,cycle_as_angle,deg,degree,grad,grade,rad,radian,rev,rev_as_angle,revolution,revolution_as_angle
+    TEST bycategory Angle | === units in category Angle ===,arcmin,arcsec,cycle,cycle_as_angle,cyclea,deg,degree,grad,grade,rad,radian,rev,rev_as_angle,reva,revolution,`+
+    `revolution_as_angle,revolutiona
     TEST bycategory abc | === units in category abc ===
-    TEST bycategory Angular_velocity|===unitsincategoryAngular_velocity===,cpd,cpd_as_omega,cpdo,cps,cps_as_omega,cpso,radian/second,rpm,rpm_as_omega,rpmo,rps,rps_as_omega,rpso
+    TEST bycategory Angular_velocity|===unitsincategoryAngular_velocity===,cpd,cpd_as_angular_velocity,cpda,cps,cps_as_angular_velocity,cpsa,radian/second,rpm,`+
+    `rpm_as_angular_velocity,rpma,rps,rps_as_angular_velocity,rpsa
 
     # various errors
     TEST throw | unknown test throw
@@ -1484,11 +1498,12 @@ var help =`
     <li><a href=#runtime>Runtime Database</a></li>
 </ul>
 </li>
-<li><a href=#cautions>Cautions</a></li>
+<li><a href=#cautions>Cautions</a>
 <ul>
     <li><a href=#cycle>Units of Cycle or Revolution</a></li>
     <li><a href=#offset>Offset Temperature Units</a></li>
 </ul>
+</li>
 <li><a href=#info>For More Information</a></li>
 </ul>
 
@@ -1796,7 +1811,7 @@ To take advantage of this feature you will typically copy calchemy.html to a loc
 Custom.js must define the javascript variable "custom" as a multi-line template string containing one or more unit definitions and/or undefinitions within back-ticks, like:
 <pre>
 custom=&#096;
-foreverandaday=1e99 years + 1 day
+foreverandaday=1e99 years+1 day
 slowasmolasses=0.001 mph
 &#096;;
 </pre>
@@ -1804,7 +1819,7 @@ slowasmolasses=0.001 mph
 <p>A database from a text file on the local computer may be loaded at runtime by clicking/tapping the &lt;Load&gt; button, selecting "Local Database", and browsing to the file.
 The file should contain text lines with one or more unit definitions and/or undefinitions, like:
 <pre>
-foreverandaday=1e99 years + 1 day
+foreverandaday=1e99 years+1 day
 slowasmolasses=0.001 mph
 </pre>
 <p>
@@ -1843,17 +1858,17 @@ Calchemy will always show you which definition it is using when interpreting you
 </table>
 
 <h3>Angle or Number</h3>
-<p>Use ..._as_angle units in equations for "theta" or angle; use ..._as_number units in equations for "n" or number.
+<p>Use ..._as_angle or ...a units in equations for "theta" or angle; use ..._as_number or ...n units in equations for "n" or number.
 <table border=1>
-<tr><td>suffix:</td><td>..._as_angle</td><td>..._as_number</td></tr>
+<tr><td>suffix:</td><td>..._as<wbr>_angle<br>...a</td><td>..._as<wbr>_number<br>...n</td></tr>
 <tr><td>cycle</td><td>2 pi</td><td>1</td></tr>
 <tr><td>revolution, rev</td><td>2 pi</td><td>1</td></tr>
 </table>
 
 <h3>Angular_velocity or Frequency</h3>
-<p>Use ..._as_omega or ...o units in equations for "omega" or angular velocity; use ..._as_frequency or ...f units in equations for "f" or frequency.
+<p>Use ..._as_angular_velocity or ...a units in equations for "omega" or angular velocity; use ..._as_frequency or ...f units in equations for "f" or frequency.
 <table border=1>
-<tr><td>suffix:</td><td>..._as_omega<br>...o</td><td>..._as_frequency<br>...f</td></tr>
+<tr><td>suffix:</td><td>..._as<wbr>_angular_velocity<br>...a</td><td>..._as<wbr>_frequency<br>...f</td></tr>
 <tr><td>cpd</td><td>2 pi/day</td><td>1/day</td></tr>
 <tr><td>cps</td><td>2 pi/second</td><td>1/second</td></tr>
 <tr><td>rpm</td><td>2 pi/minute</td><td>1/minute</td></tr>
@@ -1905,7 +1920,7 @@ Similarly, dimensions such as Pressure and Latent Heat by Volume are surprisingl
 
 <h1 id='info'>For More Information</h1>
 <p>Visit us on the web at: <a href=http://www.calchemy.com target=_blank>http://www.calchemy.com</a>
-<p>See the GitHub Repository at: <a href=https://github.com/rtestardi/calchemy target=_blank>https://github.com/rtestardi/calchemy</a>
+<p>See the GitHub Repository at: <a href=https://github.com/rtestardi/calchemy target=_blank>https://github.com<wbr>/rtestardi/calchemy</a>
 `;
 
 // the user clicked the Help button; show the internal help and point to calchemy.com

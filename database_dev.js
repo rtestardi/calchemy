@@ -93,10 +93,10 @@ dollar*,$=MONEY
 *Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Angle or Number
-Angle,Warn:cycle_as_angle,cycle*=2 pi radian
-Number,Warn:cycle_as_number,cycle*=1
-Angle,Warn:revolution_as_angle,revolution*,rev_as_angle,rev*=2pi radian
-Number,Warn:revolution_as_number,revolution*,rev_as_number,rev*=1
+Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi radian
+Number,Warn:cycle_as_number,cyclen,cycle*=1
+Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2pi radian
+Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -361,13 +361,13 @@ absC,absc=1 deltaC #absolute Celsius, without caution
 absF,absf=1 deltaF #absolute Fahrenheit, without caution
 
 #Angular_velocity or Frequency
-Angular_velocity,Warn:rpm_as_omega,rpmo*,rpm*=revolution_as_angle/minute
+Angular_velocity,Warn:rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
 Frequency,Warn:rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
-Angular_velocity,Warn:rps_as_omega,rpso*,rps*=revolution_as_angle/second
+Angular_velocity,Warn:rps_as_angular_velocity,rpsa*,rps*=revolution_as_angle/second
 Frequency,Warn:rps_as_frequency,rpsf*,rps*=revolution_as_number/second
-Angular_velocity,Warn:cps_as_omega,cpso*,cps*=cycle_as_angle/second
+Angular_velocity,Warn:cps_as_angular_velocity,cpsa*,cps*=cycle_as_angle/second
 Frequency,Warn:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
-Angular_velocity,Warn:cpd_as_omega,cpdo*,cpd*=cycle_as_angle/day
+Angular_velocity,Warn:cpd_as_angular_velocity,cpda*,cpd*=cycle_as_angle/day
 Frequency,Warn:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
 
 #Money

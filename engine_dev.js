@@ -102,8 +102,8 @@ class Unit {
         this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
-        // interpretation is calculated after instantiation
-        // dimension is calculated after instantiation
+        this.interpretation = (names == undefined) ? "" : names[0];  // string
+        // this.dimension is calculated after instantiation only for SI results
     }
 
     // test if scalar zero
@@ -576,7 +576,6 @@ function DefineBaseUnit(names, pluralizable)
     bases[nextbaseunit] = unit;
     nextbaseunit++;
     // make the unit (mostly) immutable
-    unit.interpretation = names[0];
     Object.freeze(unit);
     units.push(unit);
     // return the unit
@@ -669,12 +668,11 @@ function LookupPrefixedUnit(name)
 // return a literal value as a unit
 function Value(token)
 {
-    var unit = new Unit();
+    var unit = new Unit([token]);
     unit.coefficient = Number(token);
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;
     }
-    unit.interpretation = token;
     return unit;
 }
 
@@ -1380,7 +1378,6 @@ function ParseTokens(tokens, line)
                             mismatches.push("> " + Simplify(results[j].interpretation));
                         }
                     }
-                    unit.interpretation = names[0];
                     Object.freeze(unit);
                     units.push(unit);
                     defines = true;
@@ -1501,7 +1498,7 @@ function LoadDatabase(database)
 function Quality(interpretation)
 {
     if (interpretation.match(/_as_number/) || interpretation.match(/_as_frequency/)) {
-        if (interpretation.match(/_as_angle/) || interpretation.match(/_as_omega/)) {
+        if (interpretation.match(/_as_angle/) || interpretation.match(/_as_angular_velocity/)) {
             return 0;  // low
         }
     }
