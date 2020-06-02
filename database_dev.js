@@ -96,7 +96,7 @@ dollar*,$=MONEY
 
 #Angle or Number
 Angle,Warn:cycle_as_angle,cyclea,cycle*=2pi radian
-Number,Warn:cycle_as_number,cyclen,cycle*=1 PI^-1
+Number,Warn:cycle_as_number,cyclen,cycle*=1
 Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2pi radian
 Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
