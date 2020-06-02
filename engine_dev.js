@@ -886,6 +886,9 @@ function EvaluateTokens(tokens)
 function Simplify(interpretation)
 {
     // XXX -- alternate parens; remove redundant parens
+    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
+        interpretation = interpretation.slice(1, interpretation.length-1);
+    }
     return interpretation.replace(/[{]/g, "(").replace(/[}]/g, ")");
 }
 
