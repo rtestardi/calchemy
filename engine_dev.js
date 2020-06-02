@@ -1122,7 +1122,7 @@ function AlternateTokens(tokens, n)
         // if the evaluation resulted in a dimensionless exponent...
         if (j <= 0 && ! si) {
             // if PI is not in range -1..1...
-            if (result.exponents.length && (result.exponents[0] < -1 || result.exponents[0] > 1)) {
+            if (result.exponents.length && (result.exponents[0] < -1.000001 || result.exponents[0] > 1.000001)) {
                 throw "unexpected exponent of pi; use pi_as_number or pin to escape";
             }
 
