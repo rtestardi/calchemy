@@ -135,8 +135,8 @@ class Unit {
             unit.exponents[i] = 0;
         }
 
-        // for all exponents...
-        for (i = 0; i < this.exponents.length; i++) {
+        // for all exponents beyond PI...
+        for (i = 1; i < this.exponents.length; i++) {
             // if the exponent does not match...
             if (this.exponents[i] != (invert?-1:1)*unit.exponents[i]) {
                 // units are incompatible
@@ -295,7 +295,8 @@ class Unit {
                         throw "non-dimensionless exponent";
                     }
                     unit.exponents[i] = (this.exponents[i] * rhs.coefficient).toPrecision(4) * 1;  // N.B. * 1 returns to float
-                    if (unit.exponents[i] != Math.round(unit.exponents[i])) {
+                    // check for non-integral exponents beyond PI
+                    if (i && unit.exponents[i] != Math.round(unit.exponents[i])) {
                         throw "non-integral exponent";
                     }
                 }
@@ -380,9 +381,9 @@ class Unit {
                 // filter out different dimensions
                 if (! this.Compatible(rhs, false)) {
                     if (this.type == "BASE") {
-                        throw "specify value for " + this.names[0];
+                        throw "specify value for " + this.names[0];  //OK
                     } else {
-                        throw "incompatible units :" + rhs.names[0];
+                        throw "incompatible units :" + rhs.names[0];  //OK
                     }
                 }
                 unit.coefficient = this.coefficient;
@@ -453,8 +454,8 @@ class Unit {
 
         // otherwise, we have to match individual base dimensions and powers
 
-        // for each base unit...
-        for (i = 0; i < nextbaseunit; i++) {
+        // for each base unit beyond PI...
+        for (i = 1; i < nextbaseunit; i++) {
             // if the exponent is non-0...
             var remaining = this.exponents[i]*(question?-1:1);
             if (remaining) {
@@ -671,7 +672,7 @@ function Value(token)
     var unit = new Unit([token]);
     unit.coefficient = Number(token);
     if (isNaN(unit.coefficient)) {
-        throw "bad value " + token;
+        throw "bad value " + token;  //OK
     }
     return unit;
 }
@@ -784,9 +785,10 @@ function EvaluateTokens(tokens)
                     result = CleanAndPush(stack, result, '^', Value("0.5"));
                 } else {
                     var interpretation = token + "{" + result.interpretation + "}";
-                    for (j = 0; j < result.exponents.length; j++) {
+                    // check that argument is dimensionless beyond PI...
+                    for (j = 1; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
-                            throw "non-dimensionless exponent";
+                            throw "non-dimensionless argument";  //OK
                         }
                     }
                     if (token == "sin") {
@@ -1107,9 +1109,9 @@ function AlternateTokens(tokens, n)
         // evaluate a single expression in an array of tokens and return a single result
         var result = EvaluateTokens(tokens);
 
-        // check if the evaluation resulted in a dimensionless exponent
+        // check if the evaluation resulted in a dimensionless exponent beyond PI
         if (evaluating) {
-            for (j = result.exponents.length-1; j >= 0; j--) {
+            for (j = result.exponents.length-1; j >= 1; j--) {
                 if (result.exponents[j]) {
                     break;
                 }
@@ -1118,7 +1120,12 @@ function AlternateTokens(tokens, n)
             j = -1;
         }
         // if the evaluation resulted in a dimensionless exponent...
-        if (j == -1 && ! si) {
+        if (j <= 0 && ! si) {
+            // if PI is not in range -1..1...
+            if (result.exponents.length && (result.exponents[0] < -1 || result.exponents[0] > 1)) {
+                throw("unexpected exponent of pi");
+            }
+
             // dimensionless results are top priority
             results.push(result);
 
