@@ -58,6 +58,7 @@ PREFIX Prefix:zebi,Zi=1024^7 #storage
 PREFIX Prefix:yobi,Yi=1024^8 #storage
 
 Number:pi=3.14159265358979323 PI
+Number:pin=3.14159265358979323
 Number:e=2.71828182845904523
 
 #Primary
@@ -97,7 +98,7 @@ dollar*,$=MONEY
 Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi radian
 Number,Warn:cycle_as_number,cyclen,cycle*=1 PI^-1
 Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2pi radian
-Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1 PI^-1
+Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter

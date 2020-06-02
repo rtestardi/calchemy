@@ -1123,7 +1123,7 @@ function AlternateTokens(tokens, n)
         if (j <= 0 && ! si) {
             // if PI is not in range -1..1...
             if (result.exponents.length && (result.exponents[0] < -1 || result.exponents[0] > 1)) {
-                throw("unexpected exponent of pi");
+                throw "unexpected exponent of pi; use pin to escape";
             }
 
             // dimensionless results are top priority

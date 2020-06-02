@@ -206,6 +206,7 @@ PREFIX Prefix:zebi,Zi=1024^7 #storage
 PREFIX Prefix:yobi,Yi=1024^8 #storage
 
 Number:pi=3.14159265358979323 PI
+Number:pin=3.14159265358979323
 Number:e=2.71828182845904523
 
 #Primary
@@ -245,7 +246,7 @@ dollar*,$=MONEY
 Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi radian
 Number,Warn:cycle_as_number,cyclen,cycle*=1 PI^-1
 Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2pi radian
-Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1 PI^-1
+Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -1967,7 +1968,7 @@ function AlternateTokens(tokens, n)
         if (j <= 0 && ! si) {
             // if PI is not in range -1..1...
             if (result.exponents.length && (result.exponents[0] < -1 || result.exponents[0] > 1)) {
-                throw("unexpected exponent of pi");
+                throw "unexpected exponent of pi; use pin to escape";
             }
 
             // dimensionless results are top priority
@@ -3527,7 +3528,8 @@ var tests =`
     kg? | = 1 kilogramm, = 9.80665 newton
     kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
-    pi^2 | unexpected exponent of pi
+    pi^2 | unexpected exponent of pi; use pin to escape
+    pin^2 | > (pin)^2, = 9.8696
     400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
 
     # interpretations
