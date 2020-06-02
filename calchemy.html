@@ -106,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15g</p>
+v1.15h</p>
 </td>
 </tr>
 </table>
@@ -1729,6 +1729,9 @@ function EvaluateTokens(tokens)
 function Simplify(interpretation)
 {
     // XXX -- alternate parens; remove redundant parens
+    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
+        interpretation = interpretation.slice(1, interpretation.length-1);
+    }
     return interpretation.replace(/[{]/g, "(").replace(/[}]/g, ")");
 }
 
@@ -3523,7 +3526,7 @@ var tests =`
     1/sqrt(23mH * 10uF)? |>1/(23milli~henry*10micro~farad)^0.5?[Frequency],=2085.14hertz,>1/(23milli~henry*10micro~farad)^0.5?[Angular_velocity],=2085.14radian/second
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
     2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
-    --3 | > (0-(0-3)), = 3
+    --3 | > 0-(0-3), = 3
     cal/(gm deltaK) | > calorie/(gramm deltaK), [Specific_heat_m]
     1/cal/(gm deltaK) |> (1 / calorie) / (gramm deltaK), [MASS^-2*LENGTH^-2*TIME^2*TEMP^-1]
     1/(cal/(gm deltaK)) | > 1 / (calorie/(gramm deltaK)), [Specific_heat_m^-1]
