@@ -3527,6 +3527,8 @@ var tests =`
     kg? | = 1 kilogramm, = 9.80665 newton
     kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
+    pi^2 | unexpected exponent of pi
+    400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
@@ -3549,7 +3551,6 @@ var tests =`
     asn 1 | > asn(1), = 1.5708
     q=asn 1 | > asn(1), defined
     q=
-
 
     2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?[Frequency],`+
     `>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz,>(2pi(1meter/gravity)^0.5)^-1*1?[Angular_velocity],>((2pi(1meter/gravity)^0.5)*1)^-1?[Angular_velocity]`+
