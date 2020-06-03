@@ -106,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15i</p>
+v1.15j</p>
 </td>
 </tr>
 </table>
@@ -534,8 +534,8 @@ function Hyperlink(string)
     var equation = document.getElementById("equation");
     var start = equation.selectionStart;
     var end = equation.selectionEnd;
-    // if this is a bare unit
-    if (string.match(unit_regexp_all)) {
+    // if we are properly inside a word...
+    if (start > 0 && end < equation.value.length-1 && equation.value.slice(start-1, end+1).match(unit_regexp_all)) {
         // find the start and end of the word at the cursor
         var match = equation.value.slice(0, start).match(unit_regexp_tail);
         if (match) {
@@ -1191,7 +1191,7 @@ var tests =`
     1m^4 | [LENGTH^4]
     1m^4? | = 1 meter^4
     1/grav? | = 0.101972 (meter/second^2)^-1
-    1/2 pi sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 331.861 radian/second
+    1/2 pi sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz
     visc_air? | > visc_air ? [Viscosity], = 0.0000178 pascal*second
 
     # dimensions
@@ -1210,8 +1210,8 @@ var tests =`
     kg? | = 1 kilogramm, = 9.80665 newton
     kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
-    pi^2 | unexpected exponent of pi; use pi_as_number or pin to escape
-    pi_as_number^2 | > (pi_as_number)^2, = 9.8696
+    pi*radian | unexpected exponent of pi; use pi_as_number or pin to escape
+    pi_as_number*radian | > pi_as_number * radian, = 3.14159
     400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
 
     # interpretations
@@ -1236,9 +1236,8 @@ var tests =`
     q=asn 1 | > asn(1), defined
     q=
 
-    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?[Frequency],`+
-    `>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz,>(2pi(1meter/gravity)^0.5)^-1*1?[Angular_velocity],>((2pi(1meter/gravity)^0.5)*1)^-1?[Angular_velocity]`+
-    `,=0.498403radian/second
+    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?`+
+    `[Frequency],>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb

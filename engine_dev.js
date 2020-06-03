@@ -106,6 +106,18 @@ class Unit {
         // this.dimension is calculated after instantiation only for SI results
     }
 
+    // pi analysis; check if orders of PI and RADIAN are within limits
+    PiAnalysis()
+    {
+        // if exponents are beyond PI and RADIAN...
+        if (this.exponents.length > 1) {
+            if (this.exponents[0] && this.exponents[1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // test if scalar zero
     Zero()
     {
@@ -135,8 +147,8 @@ class Unit {
             unit.exponents[i] = 0;
         }
 
-        // for all exponents beyond PI...
-        for (i = 1; i < this.exponents.length; i++) {
+        // for all exponents beyond PI and RADIAN...
+        for (i = 2; i < this.exponents.length; i++) {
             // if the exponent does not match...
             if (this.exponents[i] != (invert?-1:1)*unit.exponents[i]) {
                 // units are incompatible
@@ -295,8 +307,8 @@ class Unit {
                         throw "non-dimensionless exponent";
                     }
                     unit.exponents[i] = (this.exponents[i] * rhs.coefficient).toPrecision(4) * 1;  // N.B. * 1 returns to float
-                    // check for non-integral exponents beyond PI
-                    if (i && unit.exponents[i] != Math.round(unit.exponents[i])) {
+                    // check for non-integral exponents beyond PI and RADIAN
+                    if (i > 1 && unit.exponents[i] != Math.round(unit.exponents[i])) {
                         throw "non-integral exponent";
                     }
                 }
@@ -454,8 +466,8 @@ class Unit {
 
         // otherwise, we have to match individual base dimensions and powers
 
-        // for each base unit beyond PI...
-        for (i = 1; i < nextbaseunit; i++) {
+        // for each base unit beyond PI and RADIAN...
+        for (i = 2; i < nextbaseunit; i++) {
             // if the exponent is non-0...
             var remaining = this.exponents[i]*(question?-1:1);
             if (remaining) {
@@ -499,9 +511,12 @@ class Unit {
                         denom.interpretation = "[" + units[i].names[0] + "]" + (invert?"^-1":"");
                         result = this.Operate('?', denom, true);
                         result.dimension = (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim() + (invert?")^-1":"");
-                        results.push(result);
-                        if (units[i].categories.includes("Warn")) {
-                            cycle_warn = true;
+                        if (result.PiAnalysis()) {
+                            // we have a winner
+                            results.push(result);
+                            if (units[i].categories.includes("Warn")) {
+                                cycle_warn = true;
+                            }
                         }
                     }
                 }
@@ -518,8 +533,8 @@ class Unit {
 
         denom = null;
         var string =  "";
-        // for each exponent...
-        for (i = 0; i < this.exponents.length; i++) {
+        // for each exponent beyond PI and RADIAN...
+        for (i = 2; i < this.exponents.length; i++) {
             // if the exponent is non-0...
             if (this.exponents[i]) {
                 // find the derived unit for the exponent
@@ -785,8 +800,8 @@ function EvaluateTokens(tokens)
                     result = CleanAndPush(stack, result, '^', Value("0.5"));
                 } else {
                     var interpretation = token + "{" + result.interpretation + "}";
-                    // check that argument is dimensionless beyond PI...
-                    for (j = 1; j < result.exponents.length; j++) {
+                    // check that argument is dimensionless beyond PI and RADIAN...
+                    for (j = 2; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
                             throw "non-dimensionless argument";  //OK
                         }
@@ -1109,9 +1124,9 @@ function AlternateTokens(tokens, n)
         // evaluate a single expression in an array of tokens and return a single result
         var result = EvaluateTokens(tokens);
 
-        // check if the evaluation resulted in a dimensionless exponent beyond PI
+        // check if the evaluation resulted in a dimensionless exponent beyond PI and RADIAN
         if (evaluating) {
-            for (j = result.exponents.length-1; j >= 1; j--) {
+            for (j = result.exponents.length-1; j >= 2; j--) {
                 if (result.exponents[j]) {
                     break;
                 }
@@ -1120,9 +1135,8 @@ function AlternateTokens(tokens, n)
             j = -1;
         }
         // if the evaluation resulted in a dimensionless exponent...
-        if (j <= 0 && ! si) {
-            // if PI is not in range -1..1...
-            if (result.exponents.length && (result.exponents[0] < -1.000001 || result.exponents[0] > 1.000001)) {
+        if (j <= 1 && ! si) {
+            if (! result.PiAnalysis()) {
                 throw "unexpected exponent of pi; use pi_as_number or pin to escape";
             }
 
