@@ -17,6 +17,8 @@ CATEGORY Warn
 CATEGORY Frequency
 CATEGORY Angular_velocity
 
+BASE PI #must be first
+BASE RADIAN #must be second
 BASE MASS
 BASE LENGTH
 BASE TIME
@@ -56,7 +58,8 @@ PREFIX Prefix:exbi,Ei=1024^6 #storage
 PREFIX Prefix:zebi,Zi=1024^7 #storage
 PREFIX Prefix:yobi,Yi=1024^8 #storage
 
-Number:pi=3.14159265358979323
+Number:pi=3.14159265358979323 PI
+Number:pi_as_number,pin=3.14159265358979323
 Number:e=2.71828182845904523
 
 #Primary
@@ -64,7 +67,7 @@ Number:e=2.71828182845904523
 *SI,Metric:gramm,gm,g,gram*=MASS
 *SI,Metric:second*,s,sec*=TIME
 SI,Metric:deltaK,deltak=TEMP #interval (T-T0) Kelvin
-*SI,Metric,Angle,Warn:radian*,rad=1
+*SI,Metric,Angle,Warn:radian*,rad=1 RADIAN
 *Metric:bit*,b=STORAGE
 dollar*,$=MONEY
 *SI,Metric:ampere*,A,amp*=CURRENT
@@ -93,9 +96,9 @@ dollar*,$=MONEY
 *Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Angle or Number
-Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi radian
+Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi_as_number radian
 Number,Warn:cycle_as_number,cyclen,cycle*=1
-Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2pi radian
+Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2 pi_as_number radian
 Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
 DERIVED Mass=kilogramm
@@ -186,7 +189,7 @@ Physical_constant:rydberg_const=1.09737E+07/meter
 Physical_constant:volumetric_gas_constant,V0,=22.4141 liter/mole 
 Physical_constant:molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
 
-Angle:degree*,deg*=(1/180) pi radian
+Angle:degree*,deg*=(1/180) pi_as_number radian
 Angle:grade,grad=0.9 degree
 Angle:arcmin*=(1/60)degree
 Angle:arcsec*=(1/60)arcmin
@@ -383,7 +386,7 @@ Physical_constant:mass_electron,rm_e=9.10939E-31 kilogramm #rest mass electron
 Physical_constant:mass_proton,rm_p=1.67262E-27 kilogramm #rest mass proton
 Physical_constant:mass_neutron,rm_n=1.67493E-27 kilogramm #rest mass neutron
 
-Physical_constant:permeability_vac,mu0=4 pi*1E-07 henry/meter
+Physical_constant:permeability_vac,mu0=4 pi_as_number*1E-07 henry/meter
 Physical_constant:permittivity_vac,e0=8.85419E-12 farad/meter
 
 Number:bakers_dozen=13
@@ -410,8 +413,8 @@ ton_assay=29.1667 gramm #refined from ore
 
 sthen*=1E+08 dyne
 
-circ_inch*=(pi/4)sqin #area 1 inch diam
-circ_mil*=pi*2.5E-07 sqin #area 1 mil diam
+circ_inch*=(pi_as_number/4)sqin #area 1 inch diam
+circ_mil*=pi_as_number*2.5E-07 sqin #area 1 mil diam
 Metric:barn*=1E-28 meter^2
 Metric:shed*=1E-24 barn
 Metric:outhouse*=1E-06 barn

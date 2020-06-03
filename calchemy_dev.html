@@ -106,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15h</p>
+v1.15j</p>
 </td>
 </tr>
 </table>
@@ -534,8 +534,8 @@ function Hyperlink(string)
     var equation = document.getElementById("equation");
     var start = equation.selectionStart;
     var end = equation.selectionEnd;
-    // if this is a bare unit
-    if (string.match(unit_regexp_all)) {
+    // if we are properly inside a word...
+    if (start > 0 && end < equation.value.length-1 && equation.value.slice(start-1, end+1).match(unit_regexp_all)) {
         // find the start and end of the word at the cursor
         var match = equation.value.slice(0, start).match(unit_regexp_tail);
         if (match) {
@@ -813,8 +813,8 @@ var examples =`
     (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
     40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
     1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / (10 sec) ? hp  # measured power drag on car | = 6.98976 hp
+    6.98976 hp; 2pi 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
     3.4 mega byte / (1200 baud) ? hour  # slow network time | = 6.2963 hour
-    6.98976 hp; 2pi 3500 rpmf ? ft lb  # convert power to torque | = 10.4889 ft lb
     (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
 `;
 
@@ -1191,7 +1191,7 @@ var tests =`
     1m^4 | [LENGTH^4]
     1m^4? | = 1 meter^4
     1/grav? | = 0.101972 (meter/second^2)^-1
-    1/2 pi sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 331.861 radian/second
+    1/2 pi sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz
     visc_air? | > visc_air ? [Viscosity], = 0.0000178 pascal*second
 
     # dimensions
@@ -1210,6 +1210,9 @@ var tests =`
     kg? | = 1 kilogramm, = 9.80665 newton
     kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
+    pi*radian | unexpected exponent of pi; use pi_as_number or pin to escape
+    pi_as_number*radian | > pi_as_number * radian, = 3.14159
+    400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
@@ -1233,10 +1236,8 @@ var tests =`
     q=asn 1 | > asn(1), defined
     q=
 
-
-    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?[Frequency],`+
-    `>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz,>(2pi(1meter/gravity)^0.5)^-1*1?[Angular_velocity],>((2pi(1meter/gravity)^0.5)*1)^-1?[Angular_velocity]`+
-    `,=0.498403radian/second
+    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?`+
+    `[Frequency],>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb
@@ -1318,7 +1319,7 @@ var tests =`
     boo = abc | undefined unit abc
     ( | unmatched parenthesis (
     sin | missing argument sin
-    sin(1 meter) | non-dimensionless exponent
+    sin(1 meter) | non-dimensionless argument
     *2 | expected a value before *
     BASE | missing unit
     ^=0 | unexpected ^
@@ -1874,6 +1875,9 @@ Calchemy will always show you which definition it is using when interpreting you
 <tr><td>rpm</td><td>2 pi/minute</td><td>1/minute</td></tr>
 <tr><td>rps</td><td>2 pi/second</td><td>1/second</td></tr>
 </table>
+
+<p>N.B. Calchemy considers equations with both powers of "pi" and powers of "radian" to be dimensionally incorrect;
+to escape this restriction, replace "pi" in your equation with "pi_as_number" or "pin".
 
 <h2 id='offset'>Offset Temperature Units</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.

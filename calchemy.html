@@ -106,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15h</p>
+v1.15j</p>
 </td>
 </tr>
 </table>
@@ -165,6 +165,8 @@ CATEGORY Warn
 CATEGORY Frequency
 CATEGORY Angular_velocity
 
+BASE PI #must be first
+BASE RADIAN #must be second
 BASE MASS
 BASE LENGTH
 BASE TIME
@@ -204,7 +206,8 @@ PREFIX Prefix:exbi,Ei=1024^6 #storage
 PREFIX Prefix:zebi,Zi=1024^7 #storage
 PREFIX Prefix:yobi,Yi=1024^8 #storage
 
-Number:pi=3.14159265358979323
+Number:pi=3.14159265358979323 PI
+Number:pi_as_number,pin=3.14159265358979323
 Number:e=2.71828182845904523
 
 #Primary
@@ -212,7 +215,7 @@ Number:e=2.71828182845904523
 *SI,Metric:gramm,gm,g,gram*=MASS
 *SI,Metric:second*,s,sec*=TIME
 SI,Metric:deltaK,deltak=TEMP #interval (T-T0) Kelvin
-*SI,Metric,Angle,Warn:radian*,rad=1
+*SI,Metric,Angle,Warn:radian*,rad=1 RADIAN
 *Metric:bit*,b=STORAGE
 dollar*,$=MONEY
 *SI,Metric:ampere*,A,amp*=CURRENT
@@ -241,9 +244,9 @@ dollar*,$=MONEY
 *Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Angle or Number
-Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi radian
+Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi_as_number radian
 Number,Warn:cycle_as_number,cyclen,cycle*=1
-Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2pi radian
+Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2 pi_as_number radian
 Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
 DERIVED Mass=kilogramm
@@ -334,7 +337,7 @@ Physical_constant:rydberg_const=1.09737E+07/meter
 Physical_constant:volumetric_gas_constant,V0,=22.4141 liter/mole 
 Physical_constant:molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
 
-Angle:degree*,deg*=(1/180) pi radian
+Angle:degree*,deg*=(1/180) pi_as_number radian
 Angle:grade,grad=0.9 degree
 Angle:arcmin*=(1/60)degree
 Angle:arcsec*=(1/60)arcmin
@@ -531,7 +534,7 @@ Physical_constant:mass_electron,rm_e=9.10939E-31 kilogramm #rest mass electron
 Physical_constant:mass_proton,rm_p=1.67262E-27 kilogramm #rest mass proton
 Physical_constant:mass_neutron,rm_n=1.67493E-27 kilogramm #rest mass neutron
 
-Physical_constant:permeability_vac,mu0=4 pi*1E-07 henry/meter
+Physical_constant:permeability_vac,mu0=4 pi_as_number*1E-07 henry/meter
 Physical_constant:permittivity_vac,e0=8.85419E-12 farad/meter
 
 Number:bakers_dozen=13
@@ -558,8 +561,8 @@ ton_assay=29.1667 gramm #refined from ore
 
 sthen*=1E+08 dyne
 
-circ_inch*=(pi/4)sqin #area 1 inch diam
-circ_mil*=pi*2.5E-07 sqin #area 1 mil diam
+circ_inch*=(pi_as_number/4)sqin #area 1 inch diam
+circ_mil*=pi_as_number*2.5E-07 sqin #area 1 mil diam
 Metric:barn*=1E-28 meter^2
 Metric:shed*=1E-24 barn
 Metric:outhouse*=1E-06 barn
@@ -949,6 +952,18 @@ class Unit {
         // this.dimension is calculated after instantiation only for SI results
     }
 
+    // pi analysis; check if orders of PI and RADIAN are within limits
+    PiAnalysis()
+    {
+        // if exponents are beyond PI and RADIAN...
+        if (this.exponents.length > 1) {
+            if (this.exponents[0] && this.exponents[1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // test if scalar zero
     Zero()
     {
@@ -978,8 +993,8 @@ class Unit {
             unit.exponents[i] = 0;
         }
 
-        // for all exponents...
-        for (i = 0; i < this.exponents.length; i++) {
+        // for all exponents beyond PI and RADIAN...
+        for (i = 2; i < this.exponents.length; i++) {
             // if the exponent does not match...
             if (this.exponents[i] != (invert?-1:1)*unit.exponents[i]) {
                 // units are incompatible
@@ -1138,7 +1153,8 @@ class Unit {
                         throw "non-dimensionless exponent";
                     }
                     unit.exponents[i] = (this.exponents[i] * rhs.coefficient).toPrecision(4) * 1;  // N.B. * 1 returns to float
-                    if (unit.exponents[i] != Math.round(unit.exponents[i])) {
+                    // check for non-integral exponents beyond PI and RADIAN
+                    if (i > 1 && unit.exponents[i] != Math.round(unit.exponents[i])) {
                         throw "non-integral exponent";
                     }
                 }
@@ -1223,9 +1239,9 @@ class Unit {
                 // filter out different dimensions
                 if (! this.Compatible(rhs, false)) {
                     if (this.type == "BASE") {
-                        throw "specify value for " + this.names[0];
+                        throw "specify value for " + this.names[0];  //OK
                     } else {
-                        throw "incompatible units :" + rhs.names[0];
+                        throw "incompatible units :" + rhs.names[0];  //OK
                     }
                 }
                 unit.coefficient = this.coefficient;
@@ -1296,8 +1312,8 @@ class Unit {
 
         // otherwise, we have to match individual base dimensions and powers
 
-        // for each base unit...
-        for (i = 0; i < nextbaseunit; i++) {
+        // for each base unit beyond PI and RADIAN...
+        for (i = 2; i < nextbaseunit; i++) {
             // if the exponent is non-0...
             var remaining = this.exponents[i]*(question?-1:1);
             if (remaining) {
@@ -1341,9 +1357,12 @@ class Unit {
                         denom.interpretation = "[" + units[i].names[0] + "]" + (invert?"^-1":"");
                         result = this.Operate('?', denom, true);
                         result.dimension = (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim() + (invert?")^-1":"");
-                        results.push(result);
-                        if (units[i].categories.includes("Warn")) {
-                            cycle_warn = true;
+                        if (result.PiAnalysis()) {
+                            // we have a winner
+                            results.push(result);
+                            if (units[i].categories.includes("Warn")) {
+                                cycle_warn = true;
+                            }
                         }
                     }
                 }
@@ -1360,8 +1379,8 @@ class Unit {
 
         denom = null;
         var string =  "";
-        // for each exponent...
-        for (i = 0; i < this.exponents.length; i++) {
+        // for each exponent beyond PI and RADIAN...
+        for (i = 2; i < this.exponents.length; i++) {
             // if the exponent is non-0...
             if (this.exponents[i]) {
                 // find the derived unit for the exponent
@@ -1514,7 +1533,7 @@ function Value(token)
     var unit = new Unit([token]);
     unit.coefficient = Number(token);
     if (isNaN(unit.coefficient)) {
-        throw "bad value " + token;
+        throw "bad value " + token;  //OK
     }
     return unit;
 }
@@ -1627,9 +1646,10 @@ function EvaluateTokens(tokens)
                     result = CleanAndPush(stack, result, '^', Value("0.5"));
                 } else {
                     var interpretation = token + "{" + result.interpretation + "}";
-                    for (j = 0; j < result.exponents.length; j++) {
+                    // check that argument is dimensionless beyond PI and RADIAN...
+                    for (j = 2; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
-                            throw "non-dimensionless exponent";
+                            throw "non-dimensionless argument";  //OK
                         }
                     }
                     if (token == "sin") {
@@ -1950,9 +1970,9 @@ function AlternateTokens(tokens, n)
         // evaluate a single expression in an array of tokens and return a single result
         var result = EvaluateTokens(tokens);
 
-        // check if the evaluation resulted in a dimensionless exponent
+        // check if the evaluation resulted in a dimensionless exponent beyond PI and RADIAN
         if (evaluating) {
-            for (j = result.exponents.length-1; j >= 0; j--) {
+            for (j = result.exponents.length-1; j >= 2; j--) {
                 if (result.exponents[j]) {
                     break;
                 }
@@ -1961,7 +1981,11 @@ function AlternateTokens(tokens, n)
             j = -1;
         }
         // if the evaluation resulted in a dimensionless exponent...
-        if (j == -1 && ! si) {
+        if (j <= 1 && ! si) {
+            if (! result.PiAnalysis()) {
+                throw "unexpected exponent of pi; use pi_as_number or pin to escape";
+            }
+
             // dimensionless results are top priority
             results.push(result);
 
@@ -1989,6 +2013,7 @@ function AlternateTokens(tokens, n)
             }
 
             // record the result as a mismatch
+            // XXX -- generate merged mismatches and interpretations
             for (var k = 0; k < strings.length; k++) {
                 if (! mismatches.includes(strings[k])) {
                     if (! defining) {
@@ -2843,8 +2868,8 @@ function Hyperlink(string)
     var equation = document.getElementById("equation");
     var start = equation.selectionStart;
     var end = equation.selectionEnd;
-    // if this is a bare unit
-    if (string.match(unit_regexp_all)) {
+    // if we are properly inside a word...
+    if (start > 0 && end < equation.value.length-1 && equation.value.slice(start-1, end+1).match(unit_regexp_all)) {
         // find the start and end of the word at the cursor
         var match = equation.value.slice(0, start).match(unit_regexp_tail);
         if (match) {
@@ -3122,8 +3147,8 @@ var examples =`
     (50 ft * 30 ft * 0.75 inches/week) / (5 gal/min) ? hours/week  # lawn sprinkler time | = 2.33766 hours/week
     40 gal * 1 cal/(cc deltaK) * (140-45) deltaF / (40000 btu/hour) ? hour  # water heater recovery time | = 0.79228 hour
     1/2 * 2000 lbm * ((60 mph)^2 - (55 mph)^2) / (10 sec) ? hp  # measured power drag on car | = 6.98976 hp
+    6.98976 hp; 2pi 3500 rpm ? ft lb  # convert power to torque | = 10.4889 ft lb
     3.4 mega byte / (1200 baud) ? hour  # slow network time | = 6.2963 hour
-    6.98976 hp; 2pi 3500 rpmf ? ft lb  # convert power to torque | = 10.4889 ft lb
     (1 gallon)^(1/3) ? inches  # width of a gallon cube | = 6.13579 inches
 `;
 
@@ -3500,7 +3525,7 @@ var tests =`
     1m^4 | [LENGTH^4]
     1m^4? | = 1 meter^4
     1/grav? | = 0.101972 (meter/second^2)^-1
-    1/2 pi sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz, = 331.861 radian/second
+    1/2 pi sqrt(23 millihenry * 10 microfarad) ? | = 331.861 hertz
     visc_air? | > visc_air ? [Viscosity], = 0.0000178 pascal*second
 
     # dimensions
@@ -3519,6 +3544,9 @@ var tests =`
     kg? | = 1 kilogramm, = 9.80665 newton
     kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
     kg? | = 1 kilogramm, = 9.80665 newton
+    pi*radian | unexpected exponent of pi; use pi_as_number or pin to escape
+    pi_as_number*radian | > pi_as_number * radian, = 3.14159
+    400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
@@ -3542,10 +3570,8 @@ var tests =`
     q=asn 1 | > asn(1), defined
     q=
 
-
-    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?[Frequency],`+
-    `>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz,>(2pi(1meter/gravity)^0.5)^-1*1?[Angular_velocity],>((2pi(1meter/gravity)^0.5)*1)^-1?[Angular_velocity]`+
-    `,=0.498403radian/second
+    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?`+
+    `[Frequency],>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb
@@ -3627,7 +3653,7 @@ var tests =`
     boo = abc | undefined unit abc
     ( | unmatched parenthesis (
     sin | missing argument sin
-    sin(1 meter) | non-dimensionless exponent
+    sin(1 meter) | non-dimensionless argument
     *2 | expected a value before *
     BASE | missing unit
     ^=0 | unexpected ^
@@ -4183,6 +4209,9 @@ Calchemy will always show you which definition it is using when interpreting you
 <tr><td>rpm</td><td>2 pi/minute</td><td>1/minute</td></tr>
 <tr><td>rps</td><td>2 pi/second</td><td>1/second</td></tr>
 </table>
+
+<p>N.B. Calchemy considers equations with both powers of "pi" and powers of "radian" to be dimensionally incorrect;
+to escape this restriction, replace "pi" in your equation with "pi_as_number" or "pin".
 
 <h2 id='offset'>Offset Temperature Units</h2>
 <p>In Calchemy, the degC (and absC) and degF (and absF) units are defined as offsets into the Celsius and Fahrenheit temperature scales.
