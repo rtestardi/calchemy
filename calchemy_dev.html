@@ -106,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15m</p>
+v1.15n</p>
 </td>
 </tr>
 </table>
@@ -535,7 +535,7 @@ function Hyperlink(string)
     var start = equation.selectionStart;
     var end = equation.selectionEnd;
     // if we are properly inside a word...
-    if (start > 0 && end < equation.value.length-1 && equation.value.slice(start-1, end+1).match(unit_regexp_all)) {
+    if (start > 0 && equation.value.slice(start-1, end).match(unit_regexp_all) || end < equation.value.length-1 && equation.value.slice(start, end+1).match(unit_regexp_all)) {
         // find the start and end of the word at the cursor
         var match = equation.value.slice(0, start).match(unit_regexp_tail);
         if (match) {
@@ -844,6 +844,8 @@ var preequations = `
     depth = 1 Length
     base = 1 Length
     radius = 1 Length
+    f = 1/second
+    omega = 1 radian/second
 `;
 
 var equations =`
@@ -871,8 +873,8 @@ var equations =`
     [Inductance] + [Inductance] ? [Inductance]  # series inductors | = 2 [Inductance]
     1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
     0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
-    1/2 pi sqrt([Inductance] [Capacitance]) ? [Frequency]  # frequency of LC oscillator | = 0.159155 [Frequency]
-    1/sqrt([Inductance] [Capacitance]) ? [Angular_velocity]  # angular velocity of LC oscillator | = 1 [Angular_velocity]
+    1/2 pi sqrt([Inductance] [Capacitance]) ? [f:Frequency]  # frequency of LC oscillator | = 0.159155 [f:Frequency]
+    1/sqrt([Inductance] [Capacitance]) ? [omega:Angular_velocity]  # angular velocity of LC oscillator | = 1 [omega:Angular_velocity]
 
     # Mechanical
     0.5 [Mass] [Speed]^2 ? [Energy]  # kinetic energy | = 0.5 [Energy]
@@ -880,8 +882,8 @@ var equations =`
     [Force] [Length] ? [Energy] | = 1 [Energy]
     [Force] [Speed] ? [Power] | = 1 [Power]
     [Energy] / [Time] ? [Power] | = 1 [Power]
-    [Angular_velocity] [Torque] ? [Power] | = 1 [Power]
-    2 pi [Frequency] [Torque] ? [Power] | = 6.28319 [Power]
+    [omega:Angular_velocity] [Torque] ? [Power] | = 1 [Power]
+    2 pi [f:Frequency] [Torque] ? [Power] | = 6.28319 [Power]
     [Stiffness] [Length] ? [Force] | = 1 [Force]
     [Stiffness] [Length]^2 ? [Energy] | = 1 [Energy]
     [Mass] [Acceleration] ? [Force]  # newton's second law | = 1 [Force]
@@ -889,8 +891,8 @@ var equations =`
     [Mass] [Acceleration] [Length] ? [Energy] | = 1 [Energy]
     [Mass] [Speed] ? [Momentum] | = 1 [Momentum]
     [Force] [radius:Length] ? [Torque] | = 1 [Torque]
-    [Angular_velocity] [radius:Length] ? [Speed] | = 1 [Speed]
-    [Angular_velocity]^2 [radius:Length] ? [Acceleration] | = 1 [Acceleration]
+    [omega:Angular_velocity] [radius:Length] ? [Speed] | = 1 [Speed]
+    [omega:Angular_velocity]^2 [radius:Length] ? [Acceleration] | = 1 [Acceleration]
 
     # Fluid_mechanical
     [Density] grav [height:Length] ? [Pressure]  # static head pressure | = 9806.65 [Pressure]
@@ -914,6 +916,8 @@ var postequations = `
     depth =
     base =
     radius =
+    f =
+    omega =
 `;
 
 // the user clicked an equation group; show equations
@@ -1213,6 +1217,7 @@ var tests =`
     pi*radian | unexpected exponents of pi and radian; use pi_as_number or pin to escape
     pi_as_number*radian | > pi_as_number * radian, = 3.14159
     400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
+    10.4889 ft lb ? > 10.4889 foot poundm ?, = 1.45014 kilogramm*meter, > 10.4889 foot poundf ? [Energy], = 14.221 joule, > 10.4889 foot poundf ? [Torque], = 14.221 newton meter
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
