@@ -106,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15n</p>
+v1.15p</p>
 </td>
 </tr>
 </table>
@@ -163,6 +163,10 @@ var custom = null;
 // persist new results, scroll the page to the equation line, and set equation focus
 function Scroll(noscroll)
 {
+    if (testing) {
+        return;
+    }
+
     // store our results history
     var save = document.getElementById("results").innerHTML.trim();  // XXX -- why space when empty?
     localStorage["calchemy.results"] = save;
@@ -1368,6 +1372,7 @@ function TestReal()
 
         var tested = 0;
         var passed = 0;
+        var start = new Date();
         var firsttag = lasttag;
 
         var html = "";
@@ -1458,9 +1463,11 @@ function TestReal()
             }
         }
 
+        var ms = new Date() - start;
+
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
-        Chunk(null, "tests started ..." + html + "<br>... tests complete " + passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed");
+        Chunk(null, "tests started ..." + html + "<br>... tests complete " + passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " passed in " + ms + " ms");
     } catch (error) {
         Chunk(null, error);
     } finally {
