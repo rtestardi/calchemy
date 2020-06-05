@@ -1136,7 +1136,7 @@ function AlternateTokens(tokens, n)
         // if the evaluation resulted in a dimensionless exponent...
         if (j <= 1 && ! si) {
             if (! result.PiAnalysis()) {
-                throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";
+                throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";  //OK
             }
 
             // dimensionless results are top priority

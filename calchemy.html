@@ -1982,7 +1982,7 @@ function AlternateTokens(tokens, n)
         // if the evaluation resulted in a dimensionless exponent...
         if (j <= 1 && ! si) {
             if (! result.PiAnalysis()) {
-                throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";
+                throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";  //OK
             }
 
             // dimensionless results are top priority
@@ -3554,7 +3554,7 @@ var tests =`
     pi*radian | unexpected exponents of pi and radian; use pi_as_number or pin to escape
     pi_as_number*radian | > pi_as_number * radian, = 3.14159
     400cc* 2pi 3500 rpm ? cfm | > 400 cc * 2 pi 3500 rpm_as_frequency ? cfm, = 310.644 cfm
-    10.4889 ft lb ? > 10.4889 foot poundm ?, = 1.45014 kilogramm*meter, > 10.4889 foot poundf ? [Energy], = 14.221 joule, > 10.4889 foot poundf ? [Torque], = 14.221 newton meter
+    10.4889 ft lb ? |>10.4889foot poundm?,=1.45014kilogramm*meter,>10.4889foot poundf?[Energy],=14.221joule,>10.4889foot poundf?[Torque],=14.221newton meter
 
     # interpretations
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
