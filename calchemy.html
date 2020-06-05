@@ -1449,9 +1449,9 @@ function DefineBaseUnit(names, pluralizable)
 function LookupUnit(name)
 {
     // if this is a precomputed unit to make loading faster
-    if (name[0] == 'i' && name.match(/^index[0-9]/)) {
+    if (name[0] == 'x' && name.match(/^xx[0-9]/)) {
         // no need to search, just return the unit
-        return units[name.replace(/^index/, "")];
+        return units[name.replace(/^xx/, "")];
     }
     // otherwise, for all units...
     for (var i = 0; i < units.length; i++) {
@@ -1821,7 +1821,7 @@ function LookupUnits(name, prefixable, search)
     var more = [];
 
     // if this is a precomputed unit to make loading faster
-    if (name[0] == 'i' && name.match(/^index[0-9]/)) {
+    if (name[0] == 'x' && name.match(/^xx[0-9]/)) {
         // no need to search, just return the unit
         more.push(name);
     } else {
@@ -1847,7 +1847,7 @@ function LookupUnits(name, prefixable, search)
                             more.push(unit.names[j]);
                         } else {
                             // use a precomputed unit to make subsequent searching faster
-                            more.push("index"+i);
+                            more.push("xx"+i);
                         }
                     }
                     if (unit.type == "PREFIX") {
@@ -1890,7 +1890,7 @@ function LookupUnits(name, prefixable, search)
                                             more.push(unit.names[jj]+unit2.names[j]);
                                         } else {
                                             // use a precomputed unit to make subsequent searching faster
-                                            more.push("index"+ii + '~' + "index"+i);
+                                            more.push("xx"+ii + '~' + "xx"+i);
                                         }
                                     }
                                 }
