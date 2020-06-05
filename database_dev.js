@@ -13,8 +13,8 @@ CATEGORY Ice
 CATEGORY Air
 CATEGORY Batteries
 CATEGORY Speed_sound
-CATEGORY Warn_deg
 CATEGORY Warn_angle
+CATEGORY Warn_temperature
 CATEGORY Frequency
 CATEGORY Angular_velocity
 
@@ -359,10 +359,10 @@ deltaC,deltac=1 deltaK #interval (T-T0) Celsius
 deltaF,deltaf=(1/1.8)deltaK #interval (T-T0) Fahrenheit
 *degK,degk=1 deltaK #absolute Kelvin
 *degR,degr=1 deltaR #absolute Rankine
-*Warn_deg:degC,degc=1 deltaC #absolute Celsius, with caution
-*Warn_deg:degF,degf=1 deltaF #absolute Fahrenheit, with caution
-Warn_deg:absC,absc=1 deltaC #absolute Celsius, with caution
-Warn_deg:absF,absf=1 deltaF #absolute Fahrenheit, with caution
+*Warn_temperature:degC,degc=1 deltaC #absolute Celsius, with caution
+*Warn_temperature:degF,degf=1 deltaF #absolute Fahrenheit, with caution
+Warn_temperature:absC,absc=1 deltaC #absolute Celsius, with caution
+Warn_temperature:absF,absf=1 deltaF #absolute Fahrenheit, with caution
 
 #Angular_velocity or Frequency
 Angular_velocity,Warn_angle:rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
