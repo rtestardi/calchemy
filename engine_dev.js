@@ -4,7 +4,7 @@
 // This is the calchemy engine; it loads the database one line at a time and then runs user command lines one at a time, returning their output.
 
 // regular expressions for string identification
-// XXX -- use typeof for value; anything for operator?
+// XXX -- token can use typeof for value; something for function call; anything for operator?
 const value_regexp_ch =       /[0-9.]/;
 const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
