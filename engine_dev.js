@@ -514,7 +514,7 @@ class Unit {
                         if (result.PiAnalysis()) {
                             // we have a winner
                             results.push(result);
-                            if (units[i].categories.includes("Warn")) {
+                            if (units[i].categories.includes("Warn_angle")) {
                                 cycle_warn = true;
                             }
                         }
@@ -860,7 +860,7 @@ function EvaluateTokens(tokens)
                 result = CleanAndPush(stack, result, op, next);
                 next = prefixunit[1];
             }
-            if (next.categories.includes("Warn")) {
+            if (next.categories.includes("Warn_angle")) {
                 cycle_warn = true;
             }
             result = CleanAndPush(stack, result, op, next);
