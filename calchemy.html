@@ -106,7 +106,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.15q</p>
+v1.15s</p>
 </td>
 </tr>
 </table>
@@ -150,12 +150,13 @@ var database =`
 CATEGORY SI
 CATEGORY Metric
 CATEGORY Prefix
-CATEGORY Physical_constant
 CATEGORY Number
 CATEGORY Angle
-CATEGORY Energy
-CATEGORY Torque
+CATEGORY Frequency
+CATEGORY Angular_velocity
+CATEGORY Physical_constant
 CATEGORY Physical_property
+CATEGORY Energy
 CATEGORY Water
 CATEGORY Ice
 CATEGORY Air
@@ -163,8 +164,6 @@ CATEGORY Batteries
 CATEGORY Speed_sound
 CATEGORY Warn_angle
 CATEGORY Warn_temperature
-CATEGORY Frequency
-CATEGORY Angular_velocity
 
 BASE PI #must be first
 BASE RADIAN #must be second
@@ -177,84 +176,100 @@ BASE MONEY
 BASE CURRENT
 BASE SUBSTANCE
 
-PREFIX Prefix,SI:yotta,Y=1E+24
-PREFIX Prefix,SI:zetta,Z=1E+21
-PREFIX Prefix,SI:exa,E=1E+18
-PREFIX Prefix,SI:peta,P=1E+15
-PREFIX Prefix,SI:tera,T=1E+12
-PREFIX Prefix,SI:giga,G=1E+09
-PREFIX Prefix,SI:mega,M=1E+06
-PREFIX Prefix,SI:kilo,k=1E+03
-PREFIX Prefix,SI:hecto,h=1E+02
-PREFIX Prefix,SI:deka,da=1E+01
-PREFIX Prefix,SI:deci,d=1E-01
-PREFIX Prefix,SI:centi,c=1E-02
-PREFIX Prefix,SI:milli,m=1E-03
-PREFIX Prefix,SI:micro,u=1E-06
-PREFIX Prefix,SI:nano,n=1E-09
-PREFIX Prefix,SI:pico,p=1E-12
-PREFIX Prefix,SI:femto,f=1E-15
-PREFIX Prefix,SI:atto,a=1E-18
-PREFIX Prefix,SI:zepto,z=1E-21
-PREFIX Prefix,SI:yocto,y=1E-24
+___PUSH Prefix,SI
+PREFIX yotta,Y=1E+24
+PREFIX zetta,Z=1E+21
+PREFIX exa,E=1E+18
+PREFIX peta,P=1E+15
+PREFIX tera,T=1E+12
+PREFIX giga,G=1E+09
+PREFIX mega,M=1E+06
+PREFIX kilo,k=1E+03
+PREFIX hecto,h=1E+02
+PREFIX deka,da=1E+01
+PREFIX deci,d=1E-01
+PREFIX centi,c=1E-02
+PREFIX milli,m=1E-03
+PREFIX micro,u=1E-06
+PREFIX nano,n=1E-09
+PREFIX pico,p=1E-12
+PREFIX femto,f=1E-15
+PREFIX atto,a=1E-18
+PREFIX zepto,z=1E-21
+PREFIX yocto,y=1E-24
+___POP SI
+PREFIX kibi,Ki=1024 #storage
+PREFIX mebi,Mi=1024^2 #storage
+PREFIX gibi,Gi=1024^3 #storage
+PREFIX tebi,Ti=1024^4 #storage
+PREFIX pebi,Pi=1024^5 #storage
+PREFIX exbi,Ei=1024^6 #storage
+PREFIX zebi,Zi=1024^7 #storage
+PREFIX yobi,Yi=1024^8 #storage
+___POP Prefix
 
-PREFIX Prefix:kibi,Ki=1024 #storage
-PREFIX Prefix:mebi,Mi=1024^2 #storage
-PREFIX Prefix:gibi,Gi=1024^3 #storage
-PREFIX Prefix:tebi,Ti=1024^4 #storage
-PREFIX Prefix:pebi,Pi=1024^5 #storage
-PREFIX Prefix:exbi,Ei=1024^6 #storage
-PREFIX Prefix:zebi,Zi=1024^7 #storage
-PREFIX Prefix:yobi,Yi=1024^8 #storage
-
-Number:pi=3.14159265358979323 PI
-Number:pi_as_number,pin=3.14159265358979323
-Number:e=2.71828182845904523
+___PUSH Number
+pi=3.14159265358979323 PI
+pi_as_number,pin=3.14159265358979323
+e=2.71828182845904523
+___POP Number
 
 #Primary
-*SI,Metric:meter*,m,metre*=LENGTH
-*SI,Metric:gramm,gm,g,gram*=MASS
-*SI,Metric:second*,s,sec*=TIME
-SI,Metric:deltaK,deltak=TEMP #interval (T-T0) Kelvin
-*SI,Metric,Angle,Warn_angle:radian*,rad=1 RADIAN
-*Metric:bit*,b=STORAGE
+___PUSH Metric,SI
+*meter*,m,metre*=LENGTH
+*gramm,gm,g,gram*=MASS
+*second*,s,sec*=TIME
+deltaK,deltak=TEMP #interval (T-T0) Kelvin
+*ampere*,A,amp*=CURRENT
+*mole*,mol=SUBSTANCE
+*Angle,Warn_angle:radian*,rad=1 RADIAN
+*Frequency,Warn_angle:hertz,Hz=1/second
+___POP SI
+*bit*,b=STORAGE
+___POP Metric
 dollar*,$=MONEY
-*SI,Metric:ampere*,A,amp*=CURRENT
-*SI,Metric:mole*,mol=SUBSTANCE
-*SI,Metric,Frequency,Warn_angle:hertz,Hz=1/second
 
 #Secondary
-*Metric:liter*,L,litre*,l=1 cubic decimeter #was 1.000028 before 1964
-*SI,Metric:newton*,N=1 kilogramm meter/second^2
-*SI,Metric,Energy:joule*,J=1 newton meter
-*SI,Metric:watt*,W=1 joule/second
-*SI,Metric:pascal*,Pa,=1 newton/square meter
-*SI,Metric:coulomb*,C=ampere second
-*SI,Metric:volt*,V=1 joule/coulomb
-*SI,Metric:ohm*=1 volt/ampere
-*SI,Metric:siemens,S=1 ampere/volt
-*SI,Metric:farad*,F=1 coulomb/volt
-*SI,Metric:henry*,H=1 second^2/farad
-*SI,Metric:weber*,Wb=1 volt second
-*SI,Metric:tesla*,T=1 weber/meter^2
-*:gamma*=1E-09 weber/meter^2
-*Metric:mho*=1 ampere/volt
-*Metric:maxwell*,Mx=1E-08 weber #CGS
-*Metric:gauss=0.0001 weber/meter^2 #CGS
-*Metric:oersted,Oe=79.57747 ampere/meter
-*Metric:Byte*,byte*,B,char*=8 bit #computer storage
+___PUSH Metric,SI
+*newton*,N=1 kilogramm meter/second^2
+*Energy:joule*,J=1 newton meter
+*watt*,W=1 joule/second
+*pascal*,Pa,=1 newton/square meter
+*coulomb*,C=ampere second
+*volt*,V=1 joule/coulomb
+*ohm*=1 volt/ampere
+*siemens,S=1 ampere/volt
+*farad*,F=1 coulomb/volt
+*henry*,H=1 second^2/farad
+*weber*,Wb=1 volt second
+*tesla*,T=1 weber/meter^2
+___POP SI
+*liter*,L,litre*,l=1 cubic decimeter #was 1.000028 before 1964
+*mho*=1 ampere/volt
+*maxwell*,Mx=1E-08 weber #CGS
+*gauss=0.0001 weber/meter^2 #CGS
+*oersted,Oe=79.57747 ampere/meter
+*Byte*,byte*,B,char*=8 bit #computer storage
+___POP Metric
+*gamma*=1E-09 weber/meter^2
 
 #Angle or Number
-Angle,Warn_angle:cycle_as_angle,cyclea,cycle*=2 pi_as_number radian
-Number,Warn_angle:cycle_as_number,cyclen,cycle*=1
-Angle,Warn_angle:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2 pi_as_number radian
-Number,Warn_angle:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
+___PUSH Warn_angle,Angle
+cycle_as_angle,cyclea,cycle*=2 pi_as_number radian
+revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2 pi_as_number radian
+___POP Angle
+___PUSH Number
+cycle_as_number,cyclen,cycle*=1
+revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
+___POP Number,Warn_angle
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
 DERIVED Time=second
 DERIVED Temperature=deltaK
 DERIVED Storage=Byte
+DERIVED Network_bandwidth=megabit/second
+AMBIGUOUS Storage_bandwidth=megabyte/second
 DERIVED Area=meter^2
 DERIVED Volume=liter
 DERIVED Speed=meter/second
@@ -300,48 +315,55 @@ DERIVED Momentum=kilogramm meter/second
 AMBIGUOUS Stiffness=newton/meter
 DERIVED Money=dollar
 
-Number,Metric:percent,%=1/100
-Number,Metric:permille=1/1000
-Number,Metric:permyriad=1/10000
-Number:dozen*=12
-Number:gross=144
-Number:karat*=1/24 #purity of gold (24 karat is pure)
-Number,Metric:ppm*=1E-06 #parts per million
-Number,Metric:ppb*=1E-09 #parts per billion
-Number,Metric:ppt*=1E-12 #parts per trillion
-Number,Metric:ppq*=1E-15 #parts per quadrillion
-Number:one=1 #multiplier (1) as used in the U.S.
-Number:ten=10 #multiplier (10) as used in the U.S.
-Number:hundred=100 #multiplier (100) as used in the U.S.
-Number:thousand=1E3 #multiplier (1 000) as used in the U.S.
-Number:million=1E+06 #multiplier (1 000 000) as used in the U.S.
-Number:billion=1E+09 #multiplier (1 000 000 000) as used in the U.S.
-Number:trillion=1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
-Number:quadrillion=1E+15 #multiplier (1E+15) as used in the U.S.
-Number:quintillion=1E+18 #multiplier (1E+18) as used in the U.S.
-Number:milliard=1E+09 #multiplier (1 000 000 000) as used in the U.K.
-Number:billion_long=1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
-Number:trillion_long=1E+18 #multiplier (1E+18) as used in the U.K.
-Number:quadrillion_long=1E+24 #multiplier (1E+24) as used in the U.K.
-Number:quintillion_long=1E+30 #multiplier (1E+30) as used in the U.K.
+___PUSH Number,Metric
+percent,%=1/100
+permille=1/1000
+permyriad=1/10000
+ppm*=1E-06 #parts per million
+ppb*=1E-09 #parts per billion
+ppt*=1E-12 #parts per trillion
+ppq*=1E-15 #parts per quadrillion
+___POP Metric
+dozen*=12
+gross=144
+karat*=1/24 #purity of gold (24 karat is pure)
+one=1 #multiplier (1) as used in the U.S.
+ten=10 #multiplier (10) as used in the U.S.
+hundred=100 #multiplier (100) as used in the U.S.
+thousand=1E3 #multiplier (1 000) as used in the U.S.
+million=1E+06 #multiplier (1 000 000) as used in the U.S.
+billion=1E+09 #multiplier (1 000 000 000) as used in the U.S.
+trillion=1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
+quadrillion=1E+15 #multiplier (1E+15) as used in the U.S.
+quintillion=1E+18 #multiplier (1E+18) as used in the U.S.
+milliard=1E+09 #multiplier (1 000 000 000) as used in the U.K.
+billion_long=1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
+trillion_long=1E+18 #multiplier (1E+18) as used in the U.K.
+quadrillion_long=1E+24 #multiplier (1E+24) as used in the U.K.
+quintillion_long=1E+30 #multiplier (1E+30) as used in the U.K.
+___POP Number
 
-Physical_constant,SI:dVcs=9192631770/second #transition freq of caesium 133
-Physical_constant,SI:speed_of_light,c,light,lightspeed=2.99792458E+08 meter/second #speed of light in vacuum
-Physical_constant,SI:plancks_const,h=6.626070E-34 joule second
-Physical_constant,SI:electron_charge*,qe=1.602176634E-19 ampere second
-Physical_constant,SI:boltzmann_const,k=1.380649E-23 joule/deltaK
-Physical_constant,SI:avogadros_num,Na=6.02214076E+23/mole
+___PUSH Physical_constant,SI
+dVcs=9192631770/second #transition freq of caesium 133
+speed_of_light,c,light,lightspeed=2.99792458E+08 meter/second #speed of light in vacuum
+plancks_const,h=6.626070E-34 joule second
+electron_charge*,qe=1.602176634E-19 ampere second
+boltzmann_const,k=1.380649E-23 joule/deltaK
+avogadros_num,Na=6.02214076E+23/mole
+___POP SI
+gravity,grav=9.80665 meter/second^2 #standard acceleration of Earth's gravity
+stef_boltz_const=5.67051E-08 watt/(meter^2 deltaK^4)
+rydberg_const=1.09737E+07/meter
+volumetric_gas_constant,V0,=22.4141 liter/mole 
+molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
+___POP Physical_constant
 
-Physical_constant:gravity,grav=9.80665 meter/second^2 #standard acceleration of Earth's gravity
-Physical_constant:stef_boltz_const=5.67051E-08 watt/(meter^2 deltaK^4)
-Physical_constant:rydberg_const=1.09737E+07/meter
-Physical_constant:volumetric_gas_constant,V0,=22.4141 liter/mole 
-Physical_constant:molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
-
-Angle:degree*,deg*=(1/180) pi_as_number radian
-Angle:grade,grad=0.9 degree
-Angle:arcmin*=(1/60)degree
-Angle:arcsec*=(1/60)arcmin
+___PUSH Angle
+degree*,deg*=(1/180) pi_as_number radian
+grade,grad=0.9 degree
+arcmin*=(1/60)degree
+arcsec*=(1/60)arcmin
+___POP Angle
 
 #Time
 Metric:minute*,min*=60 second
@@ -449,39 +471,45 @@ mach=340 meter/second
 galileo*=0.01 meter/second^2
 
 #Pressure
-*Pressure:torr=(101325/760)pascal
-*Pressure,Metric:bar=100000 pascal
-Pressure,Metric:metre_sea_water,msw=10 kilopascal
-Pressure:mb=millibar #pressure in millibar
-Pressure:atmosphere*,atm=101325 pascal #standard atmospheric pressure
-Pressure:psi=1 poundf/square inch
-Pressure:ksi=1000 poundf/square inch
-Pressure,Metric:mmHg,mmhg=133.3224 pascal #pressure (barometric)
-Pressure:inHg,inhg=mmHg * inch/millimeter
-Pressure:Hg,hg=mmHg/millimeter #density of mercury for pressure calculations
-Pressure:inWc,inwc,inH2O=248.84 pascal #inches water column at 60 degF
-Pressure:H2O=inWc/inch #density of water for pressure calculations
-Pressure,Metric:barye*,barie*=0.1 pascal
-Pressure:baryl=1 dyne/square centimeter
-Pressure,Metric:pieze,pz=10000 dyne/square centimeter
+___PUSH Pressure
+*torr=(101325/760)pascal
+*Metric:bar=100000 pascal
+Metric:metre_sea_water,msw=10 kilopascal
+mb=millibar #pressure in millibar
+atmosphere*,atm=101325 pascal #standard atmospheric pressure
+psi=1 poundf/square inch
+ksi=1000 poundf/square inch
+Metric:mmHg,mmhg=133.3224 pascal #pressure (barometric)
+inHg,inhg=mmHg * inch/millimeter
+Hg,hg=mmHg/millimeter #density of mercury for pressure calculations
+inWc,inwc,inH2O=248.84 pascal #inches water column at 60 degF
+H2O=inWc/inch #density of water for pressure calculations
+Metric:barye*,barie*=0.1 pascal
+baryl=1 dyne/square centimeter
+Metric:pieze,pz=10000 dyne/square centimeter
+___POP Pressure
 
 #Energy
-*Energy,Metric:electronvolt*,eV=1.60218E-19 joule
-*Energy,Metric:calorie*,cal=4.184 joule
-*Energy,Metric:watthour*,Wh,wh=3600 joule #watt hour
-Energy:foodcal,cal_food,Cal,Calorie*=1 kilocalorie #food package label energy
-Energy:Btu*,BTU*,btu*=1055.06 joule #international table
-Energy:therm*=105.4804E+06 joule #US
-Energy:quad*=1.05505585262E+18 joule
-Energy,Metric:erg*=1E-07 joule #CGS
-*Energy:ton_explosive,tTNT=4.184E+09 joule #ton of TNT equivalent
-*Energy:BOE,boe=6.12E+09 joule #barrel of oil equivalent
-*Energy:TOE,toe=41.868E+09 joule #tonne of oil equivalent
-*Energy:TCE,tce=29.288E+09 joule #tonne of oil equivalent
+___PUSH Energy
+*Metric:electronvolt*,eV=1.60218E-19 joule
+*Metric:calorie*,cal=4.184 joule
+*Metric:watthour*,Wh,wh=3600 joule #watt hour
+foodcal,cal_food,Cal,Calorie*=1 kilocalorie #food package label energy
+Btu*,BTU*,btu*=1055.06 joule #international table
+therm*=105.4804E+06 joule #US
+quad*=1.05505585262E+18 joule
+Metric:erg*=1E-07 joule #CGS
+*ton_explosive,tTNT=4.184E+09 joule #ton of TNT equivalent
+*BOE,boe=6.12E+09 joule #barrel of oil equivalent
+*TOE,toe=41.868E+09 joule #tonne of oil equivalent
+*TCE,tce=29.288E+09 joule #tonne of oil equivalent
+___POP Energy
 
 #Torque
-Torque:inlb*=1 inch poundf
-Torque:ftlb*=1 foot poundf
+___PUSH Torque
+inlb*=1 inch poundf
+ftlb*=1 foot poundf
+___POP Torque
 
 #Power
 VA,va,var,VAR=1 watt #may be reactive power
@@ -507,20 +535,26 @@ deltaC,deltac=1 deltaK #interval (T-T0) Celsius
 deltaF,deltaf=(1/1.8)deltaK #interval (T-T0) Fahrenheit
 *degK,degk=1 deltaK #absolute Kelvin
 *degR,degr=1 deltaR #absolute Rankine
-*Warn_temperature:degC,degc=1 deltaC #absolute Celsius, with caution
-*Warn_temperature:degF,degf=1 deltaF #absolute Fahrenheit, with caution
-Warn_temperature:absC,absc=1 deltaC #absolute Celsius, with caution
-Warn_temperature:absF,absf=1 deltaF #absolute Fahrenheit, with caution
+___PUSH Warn_temperature
+*degC,degc=1 deltaC #absolute Celsius, with caution
+*degF,degf=1 deltaF #absolute Fahrenheit, with caution
+absC,absc=1 deltaC #absolute Celsius, with caution
+absF,absf=1 deltaF #absolute Fahrenheit, with caution
+___POP Warn_temperature
 
 #Angular_velocity or Frequency
-Angular_velocity,Warn_angle:rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
-Frequency,Warn_angle:rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
-Angular_velocity,Warn_angle:rps_as_angular_velocity,rpsa*,rps*=revolution_as_angle/second
-Frequency,Warn_angle:rps_as_frequency,rpsf*,rps*=revolution_as_number/second
-Angular_velocity,Warn_angle:cps_as_angular_velocity,cpsa*,cps*=cycle_as_angle/second
-Frequency,Warn_angle:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
-Angular_velocity,Warn_angle:cpd_as_angular_velocity,cpda*,cpd*=cycle_as_angle/day
-Frequency,Warn_angle:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
+___PUSH Warn_angle,Angular_velocity
+rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
+rps_as_angular_velocity,rpsa*,rps*=revolution_as_angle/second
+cps_as_angular_velocity,cpsa*,cps*=cycle_as_angle/second
+cpd_as_angular_velocity,cpda*,cpd*=cycle_as_angle/day
+___POP Angular_velocity
+___PUSH Frequency
+rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
+rps_as_frequency,rpsf*,rps*=revolution_as_number/second
+cps_as_frequency,cpsf*,cps*=cycle_as_number/second
+cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
+___POP Frequency,Warn_angle
 
 #Money
 cent*=0.01 dollar #U.S.
@@ -528,19 +562,23 @@ cent*=0.01 dollar #U.S.
 mpg=1 mile/gallon
 rvalue,Rvalue,rval,Rval=1(sqft deltaF)/(Btu/hour) #thermal insulation
 uvalue,Uvalue,uval,Uval=1(Btu/hour)/(sqft deltaF) #inverse of Rvalue
-*Metric:baud,bps=1 bit/second #DataComm
+*Metric:bit_per_second,baud,bps=1 bit/second #DataComm
 
-Physical_constant:grav_const,G=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
-Physical_constant:mass_electron,rm_e=9.10939E-31 kilogramm #rest mass electron
-Physical_constant:mass_proton,rm_p=1.67262E-27 kilogramm #rest mass proton
-Physical_constant:mass_neutron,rm_n=1.67493E-27 kilogramm #rest mass neutron
+___PUSH Physical_constant
+grav_const,G=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
+mass_electron,rm_e=9.10939E-31 kilogramm #rest mass electron
+mass_proton,rm_p=1.67262E-27 kilogramm #rest mass proton
+mass_neutron,rm_n=1.67493E-27 kilogramm #rest mass neutron
 
-Physical_constant:permeability_vac,mu0=4 pi_as_number*1E-07 henry/meter
-Physical_constant:permittivity_vac,e0=8.85419E-12 farad/meter
+permeability_vac,mu0=4 pi_as_number*1E-07 henry/meter
+permittivity_vac,e0=8.85419E-12 farad/meter
+___POP Physical_constant
 
-Number:bakers_dozen=13
-Number:ream*=500 #paper
-Number:proof=1/200 #alcoholic content
+___PUSH Number
+bakers_dozen=13
+ream*=500 #paper
+proof=1/200 #alcoholic content
+___POP Number
 
 Metric:shake*=1E-08 second
 year_solar=3.15569E+07 second #mean solar
@@ -600,7 +638,7 @@ reyn*=1 (poundf/sqin)second
 Metric:stokes=0.0001 meter^2/second
 
 *Frequency:curie*,Ci,ci=3.7E+10/second #of radioactivity
-*SI:Frequency:becquerel*,Bq=1/second #of radioactivity
+*SI,Frequency:becquerel*,Bq=1/second #of radioactivity
 *SI:katal,kat=mole/second
 
 denier=1 gramm/(9000 meter) #textiles
@@ -697,143 +735,163 @@ pli*=17.8580 kilogramm/meter
 
 # PHYSPROP.UNI
 
-Water:d_sea_water=1.025 gramm/cc
-Water:d_water=1 gramm/cc #@ 4 degC
-Water,Thermal_conductivity:tc_water=0.6 watt/(meter deltaK) #@ 20 degC
-Water,Viscosity:visc_water=0.001 pascal second #dynamic @ 20 degC
-Water,Speed_sound:ss_water=1497 meter/second #@ 20 degC
-Water,Specific_heat_m:shm_water,sh_water=1 calorie/(gramm deltaK) #mean
-Water,Specific_heat_v:shv_water,sh_water=shm_water*d_water
-Water,Heat_fusion_m:hfm_water,hf_water=144 Btu/poundm
-Water,Heat_fusion_v:hfv_water,hf_water=hfm_water*d_water
-Water,Heat_vaporization_m:hvm_water,hv_water=956 Btu/poundm
-Water,Heat_vaporization_v:hvv_water,hv_water=hvm_water*d_water
+___PUSH Water
+d_sea_water=1.025 gramm/cc
+d_water=1 gramm/cc #@ 4 degC
+Thermal_conductivity:tc_water=0.6 watt/(meter deltaK) #@ 20 degC
+Viscosity:visc_water=0.001 pascal second #dynamic @ 20 degC
+Speed_sound:ss_water=1497 meter/second #@ 20 degC
+Specific_heat_m:shm_water,sh_water=1 calorie/(gramm deltaK) #mean
+Specific_heat_v:shv_water,sh_water=shm_water*d_water
+Heat_fusion_m:hfm_water,hf_water=144 Btu/poundm
+Heat_fusion_v:hfv_water,hf_water=hfm_water*d_water
+Heat_vaporization_m:hvm_water,hv_water=956 Btu/poundm
+Heat_vaporization_v:hvv_water,hv_water=hvm_water*d_water
+___POP Water
 
-Ice:d_ice=0.92 gramm/cc
-Ice,Specific_heat_m:shm_ice,sh_ice=0.47 Btu/(poundm deltaF)
-Ice,Specific_heat_v:shv_ice,sh_ice=shm_ice*d_ice #by volume
-Ice,Thermal_conductivity:tc_ice=2.18 watt/(meter deltaC)
+___PUSH Ice
+d_ice=0.92 gramm/cc
+Specific_heat_m:shm_ice,sh_ice=0.47 Btu/(poundm deltaF)
+Specific_heat_v:shv_ice,sh_ice=shm_ice*d_ice #by volume
+Thermal_conductivity:tc_ice=2.18 watt/(meter deltaC)
+___POP Ice
 
-Air:d_air=0.0012928 gramm/cc #@ 1 atm, 0degC
-Air,Thermal_conductivity:tc_air=0.0242 watt/(meter deltaK) #@ 0 degC
-Air,Viscosity:visc_air=1.78E-05 pascal second #dynamic @ 20 degC
-Air,Speed_sound:ss_air=1128.86 foot/second #@ 20 degC, 50% RH
-Air,Specific_heat_m:shm_air,sh_air=0.24 calorie/(gramm deltaK) #@ 0 degC
-Air,Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
+___PUSH Air
+d_air=0.0012928 gramm/cc #@ 1 atm, 0degC
+Thermal_conductivity:tc_air=0.0242 watt/(meter deltaK) #@ 0 degC
+Viscosity:visc_air=1.78E-05 pascal second #dynamic @ 20 degC
+Speed_sound:ss_air=1128.86 foot/second #@ 20 degC, 50% RH
+Specific_heat_m:shm_air,sh_air=0.24 calorie/(gramm deltaK) #@ 0 degC
+Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
+___POP Air
 
-Physical_property:d_aluminum=2.702 gramm/cc
-Physical_property:d_copper=8.92 gramm/cc
-Physical_property:d_gold=19.3 gramm/cc
-Physical_property:d_iron=7.86 gramm/cc
-Physical_property:d_lead=11.34 gramm/cc
-Physical_property:d_silver=10.5 gramm/cc
-Physical_property:d_brick=2.0 gramm/cc #hard
-Physical_property:d_concrete=2.3 gramm/cc #with stone, sand
-Physical_property:d_clay=1.8 gramm/cc #damp, plastic
-Physical_property:d_glass=2.6 gramm/cc
-Physical_property:d_sand=100 poundm/foot^3
-Physical_property:d_granite=175 poundm/foot^3
-Physical_property:d_diamond=3.3 gramm/cc
-Physical_property:d_mercury=13.5951 gramm/cc
+___PUSH Physical_property
 
-Physical_property,Specific_heat_m:shm_aluminum=0.215 calorie/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_copper=0.092 calorie/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_gold=0.03 calorie/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_iron=0.108 calorie/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_lead=0.03 calorie/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_mercury=0.140 joule/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_silver=0.235 joule/(gramm deltaC)
-Physical_property,Specific_heat_m:shm_brick=0.22 Btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_concrete=0.156 Btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_glass=0.199 Btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_sand=0.195 Btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_wood=0.65 Btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_gasoline=0.53 Btu/(poundm deltaF)
-Physical_property,Specific_heat_m:shm_kerosene=0.48 Btu/(poundm deltaF)
+d_aluminum=2.702 gramm/cc
+d_copper=8.92 gramm/cc
+d_gold=19.3 gramm/cc
+d_iron=7.86 gramm/cc
+d_lead=11.34 gramm/cc
+d_silver=10.5 gramm/cc
+d_brick=2.0 gramm/cc #hard
+d_concrete=2.3 gramm/cc #with stone, sand
+d_clay=1.8 gramm/cc #damp, plastic
+d_glass=2.6 gramm/cc
+d_sand=100 poundm/foot^3
+d_granite=175 poundm/foot^3
+d_diamond=3.3 gramm/cc
+d_mercury=13.5951 gramm/cc
 
-Physical_property,Heat_vaporization_m:hvm_gasoline,hv_gasoline=116 Btu/poundm
-Physical_property,Heat_vaporization_m:hvm_kerosene,hv_kerosene=86 Btu/poundm
-Physical_property,Heat_vaporization_m:hvm_ethanol,hv_ethanol=367 Btu/poundm
-Physical_property,Heat_vaporization_m:hvm_methanol,hv_methanol=482 Btu/poundm
+___PUSH Specific_heat_m
+shm_aluminum=0.215 calorie/(gramm deltaC)
+shm_copper=0.092 calorie/(gramm deltaC)
+shm_gold=0.03 calorie/(gramm deltaC)
+shm_iron=0.108 calorie/(gramm deltaC)
+shm_lead=0.03 calorie/(gramm deltaC)
+shm_mercury=0.140 joule/(gramm deltaC)
+shm_silver=0.235 joule/(gramm deltaC)
+shm_brick=0.22 Btu/(poundm deltaF)
+shm_concrete=0.156 Btu/(poundm deltaF)
+shm_glass=0.199 Btu/(poundm deltaF)
+shm_sand=0.195 Btu/(poundm deltaF)
+shm_wood=0.65 Btu/(poundm deltaF)
+shm_gasoline=0.53 Btu/(poundm deltaF)
+shm_kerosene=0.48 Btu/(poundm deltaF)
+___POP Specific_heat_m
 
-Physical_property,Heat_fusion_m:hfm_aluminum=171 Btu/poundm
-Physical_property,Heat_fusion_m:hfm_copper=88.2 Btu/poundm
-Physical_property,Heat_fusion_m:hfm_gold=28.7 Btu/poundm
-Physical_property,Heat_fusion_m:hfm_iron=117 Btu/poundm
-Physical_property,Heat_fusion_m:hfm_lead=10 Btu/poundm
-Physical_property,Heat_fusion_m:hfm_mercury=5.0 Btu/poundm
+___PUSH Heat_vaporization_m
+hvm_gasoline,hv_gasoline=116 Btu/poundm
+hvm_kerosene,hv_kerosene=86 Btu/poundm
+hvm_ethanol,hv_ethanol=367 Btu/poundm
+hvm_methanol,hv_methanol=482 Btu/poundm
+___POP Heat_vaporization_m
 
-Physical_property,Thermal_conductivity:tc_aluminum=238 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_copper=397 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_gold=318 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_iron=79.5 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_lead=34.7 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_mercury=8.34 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_silver=428 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_brick=0.58 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_concrete=1 watt/(meter deltaC) #stone, sand
-Physical_property,Thermal_conductivity:tc_glass=0.72 watt/(meter deltaC) #plate
-Physical_property,Thermal_conductivity:tc_wood=0.11 watt/(meter deltaC) #across grain (pine)
-Physical_property,Thermal_conductivity:tc_glasswool=0.042 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_styrofoam=0.036 watt/(meter deltaC)
-Physical_property,Thermal_conductivity:tc_earth=1 watt/ (meter deltaC) #40% water
-Physical_property,Thermal_conductivity:tc_sand=0.33 watt/(meter deltaC) #dry
-Physical_property,Thermal_conductivity:tc_gravel=0.38 watt/(meter deltaC) #dry
-Physical_property,Thermal_conductivity:tc_diamond=554 watt/(meter deltaC)
+___PUSH Heat_fusion_m
+hfm_aluminum=171 Btu/poundm
+hfm_copper=88.2 Btu/poundm
+hfm_gold=28.7 Btu/poundm
+hfm_iron=117 Btu/poundm
+hfm_lead=10 Btu/poundm
+hfm_mercury=5.0 Btu/poundm
+___POP Heat_fusion_m
 
-Physical_property:sun_power=3.92E+26 watt #total
-Physical_property:solar_const=1340 watt/meter^2 #at Earths surface
+___PUSH Thermal_conductivity
+tc_aluminum=238 watt/(meter deltaC)
+tc_copper=397 watt/(meter deltaC)
+tc_gold=318 watt/(meter deltaC)
+tc_iron=79.5 watt/(meter deltaC)
+tc_lead=34.7 watt/(meter deltaC)
+tc_mercury=8.34 watt/(meter deltaC)
+tc_silver=428 watt/(meter deltaC)
+tc_brick=0.58 watt/(meter deltaC)
+tc_concrete=1 watt/(meter deltaC) #stone, sand
+tc_glass=0.72 watt/(meter deltaC) #plate
+tc_wood=0.11 watt/(meter deltaC) #across grain (pine)
+tc_glasswool=0.042 watt/(meter deltaC)
+tc_styrofoam=0.036 watt/(meter deltaC)
+tc_earth=1 watt/ (meter deltaC) #40% water
+tc_sand=0.33 watt/(meter deltaC) #dry
+tc_gravel=0.38 watt/(meter deltaC) #dry
+tc_diamond=554 watt/(meter deltaC)
+___POP Thermal_conductivity
 
-Physical_property:d_gasoline=0.67 gramm/cc #liquid
-Physical_property:d_kerosene=0.819 gramm/cc #liquid
-Physical_property:d_propane_gas=0.00183 gramm/cc #gas
-Physical_property:d_propane_liq=0.5 gramm/cc #liquid
-Physical_property:d_oil=0.875 gramm/cc #liquid
-Physical_property:d_coal=0.7 gramm/cc #bulk
-Physical_property:d_methanol=0.810 gramm/cc #liquid
-Physical_property:d_ethanol=0.791 gramm/cc #liquid
-Physical_property:d_wood=0.55 gramm/cc #solid (pine)
+sun_power=3.92E+26 watt #total
+solar_const=1340 watt/meter^2 #at Earths surface
 
-Physical_property,Heat_combustion_m:hcm_gasoline=20750 Btu/poundm
-Physical_property,Heat_combustion_v:hcv_gasoline=d_gasoline*hcm_gasoline
-Physical_property,Heat_combustion_m:hcm_kerosene=19810 Btu/poundm
-Physical_property,Heat_combustion_v:hcv_kerosene=d_kerosene*hcm_kerosene
-Physical_property,Heat_combustion_m:hcm_propane_liq=21249 Btu/poundm
-Physical_property,Heat_combustion_v:hcv_propane_liq=d_propane_liq*hcm_propane_liq
-Physical_property,Heat_combustion_v:hcv_propane_gas=d_propane_gas*hcm_propane_liq
-Physical_property,Heat_combustion_v:hcv_natural_gas=1000 Btu/cubic foot
-Physical_property,Heat_combustion_m:hcm_oil=18500 Btu/poundm #crude oil
-Physical_property,Heat_combustion_v:hcv_oil=d_oil*hcm_oil #crude oil
-Physical_property,Heat_combustion_m:hcm_coal=13000 Btu/poundm
-Physical_property,Heat_combustion_v:hcv_coal=d_coal*hcm_coal
-Physical_property,Heat_combustion_m:hcm_methanol=9600 Btu/poundm
-Physical_property,Heat_combustion_v:hcv_methanol=d_methanol*hcm_methanol
-Physical_property,Heat_combustion_m:hcm_ethanol=12800 Btu/poundm
-Physical_property,Heat_combustion_v:hcv_ethanol=d_ethanol*hcm_ethanol
-Physical_property,Heat_combustion_m:hcm_wood=8750 Btu/poundm #most kinds (dry)
-Physical_property,Heat_combustion_v:hcv_wood=d_wood*hcm_wood #pine
+d_gasoline=0.67 gramm/cc #liquid
+d_kerosene=0.819 gramm/cc #liquid
+d_propane_gas=0.00183 gramm/cc #gas
+d_propane_liq=0.5 gramm/cc #liquid
+d_oil=0.875 gramm/cc #liquid
+d_coal=0.7 gramm/cc #bulk
+d_methanol=0.810 gramm/cc #liquid
+d_ethanol=0.791 gramm/cc #liquid
+d_wood=0.55 gramm/cc #solid (pine)
+
+Heat_combustion_m:hcm_gasoline=20750 Btu/poundm
+Heat_combustion_v:hcv_gasoline=d_gasoline*hcm_gasoline
+Heat_combustion_m:hcm_kerosene=19810 Btu/poundm
+Heat_combustion_v:hcv_kerosene=d_kerosene*hcm_kerosene
+Heat_combustion_m:hcm_propane_liq=21249 Btu/poundm
+Heat_combustion_v:hcv_propane_liq=d_propane_liq*hcm_propane_liq
+Heat_combustion_v:hcv_propane_gas=d_propane_gas*hcm_propane_liq
+Heat_combustion_v:hcv_natural_gas=1000 Btu/cubic foot
+Heat_combustion_m:hcm_oil=18500 Btu/poundm #crude oil
+Heat_combustion_v:hcv_oil=d_oil*hcm_oil #crude oil
+Heat_combustion_m:hcm_coal=13000 Btu/poundm
+Heat_combustion_v:hcv_coal=d_coal*hcm_coal
+Heat_combustion_m:hcm_methanol=9600 Btu/poundm
+Heat_combustion_v:hcv_methanol=d_methanol*hcm_methanol
+Heat_combustion_m:hcm_ethanol=12800 Btu/poundm
+Heat_combustion_v:hcv_ethanol=d_ethanol*hcm_ethanol
+Heat_combustion_m:hcm_wood=8750 Btu/poundm #most kinds (dry)
+Heat_combustion_v:hcv_wood=d_wood*hcm_wood #pine
 
 # CAPACITY OF BATTERIES
-Physical_property,Batteries:e_carb_aaa=2268 joule
-Physical_property,Batteries:e_carb_aa=5832 joule
-Physical_property,Batteries:e_carb_c=15120 joule
-Physical_property,Batteries:e_carb_d=38880 joule
-Physical_property,Batteries:e_carb_n=2376 joule
-Physical_property,Batteries:e_carb_9v=14580 joule
-Physical_property,Batteries:e_alk_aaa=5062 joule
-Physical_property,Batteries:e_alk_aa=11556 joule
-Physical_property,Batteries:e_alk_c=32400 joule
-Physical_property,Batteries:e_alk_d=72900 joule
-Physical_property,Batteries:e_alk_g=477900 joule
-Physical_property,Batteries:e_alk_n=4374 joule
-Physical_property,Batteries:e_alk_9v=19245 joule
-Physical_property,Batteries:e_nicd_aaa=777 joule
-Physical_property,Batteries:e_nicd_aa=2160 joule
-Physical_property,Batteries:e_nicd_subc=5184 joule
-Physical_property,Batteries:e_nicd_c=5184 joule
-Physical_property,Batteries:e_nicd_d=17280 joule
-Physical_property,Batteries:e_nicd_n=648 joule
-Physical_property,Batteries:e_nicd_9v=2419 joule
+___PUSH Batteries
+e_carb_aaa=2268 joule
+e_carb_aa=5832 joule
+e_carb_c=15120 joule
+e_carb_d=38880 joule
+e_carb_n=2376 joule
+e_carb_9v=14580 joule
+e_alk_aaa=5062 joule
+e_alk_aa=11556 joule
+e_alk_c=32400 joule
+e_alk_d=72900 joule
+e_alk_g=477900 joule
+e_alk_n=4374 joule
+e_alk_9v=19245 joule
+e_nicd_aaa=777 joule
+e_nicd_aa=2160 joule
+e_nicd_subc=5184 joule
+e_nicd_c=5184 joule
+e_nicd_d=17280 joule
+e_nicd_n=648 joule
+e_nicd_9v=2419 joule
+___POP Batteries
+
+___POP Physical_property
 
 TEST 1|= 1
 TEST 1|= 1
@@ -877,6 +935,7 @@ var freebaseunit = 0;
 var units = [];  // Unit
 var bases = [];  // Unit
 var all_categories = [];  // string
+var open_categories = [];  // string
 var loading = false;  // while loading the units database, all ambiguities are turned off and primary names must be used
 var deriving = false;  // while deriving units, secondary names may also be used
 var defining = false;  // while defining, don't record mismatches
@@ -2119,6 +2178,31 @@ function ParseTokens(tokens, line)
             }
             all_categories.push(tokens[1]);
 
+        // otherwise, if we are pushing a category...
+        } else if (tokens[0] == "___PUSH") {
+            for (i = 1; i < tokens.length; i++) {
+                if (tokens[i] != ',') {
+                    if (! all_categories.includes(tokens[i]) && ! LookupUnit(tokens[i])) {
+                        throw "undefined category " + tokens[i];
+                    }
+                    if (open_categories.includes(tokens[i])) {
+                        throw "category already pushed " + tokens[i];
+                    }
+                    open_categories.push(tokens[i]);
+                }
+            }
+
+        // otherwise, if we are popping a category...
+        } else if (tokens[0] == "___POP") {
+            for (i = 1; i < tokens.length; i++) {
+                if (tokens[i] != ',') {
+                    if ((j = open_categories.indexOf(tokens[i])) == -1) {
+                        throw "category not pushed " + tokens[i];
+                    }
+                    open_categories.splice(j, 1);
+                }
+            }
+
         // otherwise, if we are running test code...
         } else if (tokens[0] == "TEST") {
             if (tokens[1] == "categories") {
@@ -2146,25 +2230,29 @@ function ParseTokens(tokens, line)
         // otherwise, if we are defining or undefining a unit...
         } else if ((k = tokens.indexOf('=')) != -1) {
             var type = null;
-            var definition = line;
+            var remainder;
             var unambiguous = false;
             if (tokens[0] == "AMBIGUOUS") {
                 type = "DERIVED";
+                remainder = line.replace(/^AMBIGUOUS/, "").trim();
                 i = 1;
             } else if (tokens[0] == "DERIVED") {
                 type = tokens[0];
+                remainder = line.replace(/^DERIVED/, "").trim();
                 i = 1;
                 unambiguous = true;
             } else if (tokens[0] == "PREFIX") {
                 type = tokens[0];
+                remainder = line.replace(/^PREFIX/, "").trim();
                 i = 1;
             } else {
+                remainder = line.replace(/^ *[*]/, "").trim();
                 i = 0;
             }
             var prefixable = tokens[i][0] == '*';
             var names = [];
             var pluralizables = [];
-            var categories = [];
+            var categories = open_categories.slice(0);
 
             // gather categories and names...
             for (; i < tokens.length; i++) {
@@ -2173,11 +2261,14 @@ function ParseTokens(tokens, line)
                     break;
                 } else if (tokens[i] == ':') {
                     // end of categories
-                    categories = names.slice(0);
-                    for (j = 0; j < categories.length; j++) {
-                        if (! all_categories.includes(categories[j]) && ! LookupUnit(categories[j])) {
-                            throw "undefined category " + categories[j];
+                    for (j = 0; j < names.length; j++) {
+                        if (categories.includes(names[j])) {
+                            throw "category already pushed " + names[j];
                         }
+                        if (! all_categories.includes(names[j]) && ! LookupUnit(names[j])) {
+                            throw "undefined category " + names[j];
+                        }
+                        categories.push(names[j]);
                     }
                     names = [];
                     pluralizables = [];
@@ -2202,6 +2293,17 @@ function ParseTokens(tokens, line)
                 throw "missing name";
             }
             var subtokens = tokens.slice(i+1);
+
+            // form the definition, including open and explicit categories
+            var definition = prefixable?"*":"";
+            if (type) {
+                definition += type + " ";
+            }
+            if (categories.length) {
+                definition += categories.join(",");
+                definition += ":";
+            }
+            definition += remainder.replace(/[^:]*:/, "").trim();  // N.B. excludes prefixable and categories
 
             // if we have an expression...
             if (k+1 < tokens.length && tokens[k+1] != ':') {
@@ -2321,6 +2423,8 @@ function ParseTokens(tokens, line)
 // load the units database
 function LoadDatabase(database)
 {
+    open_categories = [];
+
     // split the database into lines
     var lines = database.split(/[\r\n]+/);
 
@@ -2362,6 +2466,10 @@ function LoadDatabase(database)
             // we only allow binary prefixes on storage units
             storagebase = i;
         }
+    }
+
+    if (open_categories.length) {
+        throw "categories not popped " + open_categories.toString();
     }
 }
 

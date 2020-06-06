@@ -1274,11 +1274,11 @@ function ParseTokens(tokens, line)
             all_categories.push(tokens[1]);
 
         // otherwise, if we are pushing a category...
-        } else if (tokens[0] == "PUSH") {
+        } else if (tokens[0] == "___PUSH") {
             for (i = 1; i < tokens.length; i++) {
                 if (tokens[i] != ',') {
-                    if (! all_categories.includes(tokens[i])) {
-                        throw "missing category " + tokens[i];
+                    if (! all_categories.includes(tokens[i]) && ! LookupUnit(tokens[i])) {
+                        throw "undefined category " + tokens[i];
                     }
                     if (open_categories.includes(tokens[i])) {
                         throw "category already pushed " + tokens[i];
@@ -1288,12 +1288,9 @@ function ParseTokens(tokens, line)
             }
 
         // otherwise, if we are popping a category...
-        } else if (tokens[0] == "POP") {
+        } else if (tokens[0] == "___POP") {
             for (i = 1; i < tokens.length; i++) {
                 if (tokens[i] != ',') {
-                    if (! all_categories.includes(tokens[i])) {
-                        throw "missing category " + tokens[i];
-                    }
                     if ((j = open_categories.indexOf(tokens[i])) == -1) {
                         throw "category not pushed " + tokens[i];
                     }
@@ -1328,7 +1325,7 @@ function ParseTokens(tokens, line)
         // otherwise, if we are defining or undefining a unit...
         } else if ((k = tokens.indexOf('=')) != -1) {
             var type = null;
-            var remainder = line;
+            var remainder;
             var unambiguous = false;
             if (tokens[0] == "AMBIGUOUS") {
                 type = "DERIVED";
@@ -1344,6 +1341,7 @@ function ParseTokens(tokens, line)
                 remainder = line.replace(/^PREFIX/, "").trim();
                 i = 1;
             } else {
+                remainder = line.replace(/^ *[*]/, "").trim();
                 i = 0;
             }
             var prefixable = tokens[i][0] == '*';
@@ -1358,11 +1356,14 @@ function ParseTokens(tokens, line)
                     break;
                 } else if (tokens[i] == ':') {
                     // end of categories
-                    categories = names.slice(0);
-                    for (j = 0; j < categories.length; j++) {
-                        if (! all_categories.includes(categories[j]) && ! LookupUnit(categories[j])) {
-                            throw "undefined category " + categories[j];
+                    for (j = 0; j < names.length; j++) {
+                        if (categories.includes(names[j])) {
+                            throw "category already pushed " + names[j];
                         }
+                        if (! all_categories.includes(names[j]) && ! LookupUnit(names[j])) {
+                            throw "undefined category " + names[j];
+                        }
+                        categories.push(names[j]);
                     }
                     names = [];
                     pluralizables = [];
