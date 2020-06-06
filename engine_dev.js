@@ -4,7 +4,7 @@
 // This is the calchemy engine; it loads the database one line at a time and then runs user command lines one at a time, returning their output.
 
 // regular expressions for string identification
-// XXX -- use typeof for value; anything for operator?
+// XXX -- token can use typeof for value; something for function call; anything for operator?
 const value_regexp_ch =       /[0-9.]/;
 const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
@@ -514,7 +514,7 @@ class Unit {
                         if (result.PiAnalysis()) {
                             // we have a winner
                             results.push(result);
-                            if (units[i].categories.includes("Warn")) {
+                            if (units[i].categories.includes("Warn_angle")) {
                                 cycle_warn = true;
                             }
                         }
@@ -603,9 +603,9 @@ function DefineBaseUnit(names, pluralizable)
 function LookupUnit(name)
 {
     // if this is a precomputed unit to make loading faster
-    if (name[0] == 'i' && name.match(/^index[0-9]/)) {
+    if (name[0] == 'x' && name.match(/^xx[0-9]/)) {
         // no need to search, just return the unit
-        return units[name.replace(/^index/, "")];
+        return units[name.replace(/^xx/, "")];
     }
     // otherwise, for all units...
     for (var i = 0; i < units.length; i++) {
@@ -860,7 +860,7 @@ function EvaluateTokens(tokens)
                 result = CleanAndPush(stack, result, op, next);
                 next = prefixunit[1];
             }
-            if (next.categories.includes("Warn")) {
+            if (next.categories.includes("Warn_angle")) {
                 cycle_warn = true;
             }
             result = CleanAndPush(stack, result, op, next);
@@ -930,20 +930,14 @@ function Singulars(name)
     return names;
 }
 
-// compare possible prefix of a unit to a singular unit name from the database
-function MatchSearch(name, i, j)
-{
-    return units[i].names[j].toLowerCase().match("^" + name.toLowerCase());
-}
-
-// compare a possibly plural unit to a singular unit name from the database
-function MatchPlural(name, i, j)
+// compare a possibly prefix or plural unit to a singular unit name from the database
+function MatchPrefixPlural(name, i, j, search)
 {
     var singular = units[i].names[j];
-    if (name == singular) {
+    if (name == singular || (search && singular.toLowerCase().match("^" + name))) {
         return true;
     }
-    if (units[i].pluralizables == null || ! units[i].pluralizables[j]) {
+    if (units[i].pluralizables == null || ! units[i].pluralizables[j] || name[name.length-1] != 's' || search) {
         return false;
     }
     if (singular.match(/.f$/)) {
@@ -981,12 +975,18 @@ function LookupUnits(name, prefixable, search)
     var more = [];
 
     // if this is a precomputed unit to make loading faster
-    if (name[0] == 'i' && name.match(/^index[0-9]/)) {
+    if (name[0] == 'x' && name.match(/^xx[0-9]/)) {
         // no need to search, just return the unit
         more.push(name);
     } else {
         // check for a unit
-
+        var name2;
+        if (search) {
+            name2 = name.toLowerCase();
+        } else {
+            name2 = name;
+        }
+        
         // for all units...
         for (var i = 0; i < units.length; i++) {
             unit = units[i];
@@ -994,14 +994,14 @@ function LookupUnits(name, prefixable, search)
             if (! prefixable || unit.prefixable) {
                 // for all appropriate unit names...
                 for (j = 0; j < unit.names.length; j++) {
-                    // if the unit name matches, by search or by plural...
-                    if (search ? MatchSearch(name, i, j) : name[0] == unit.names[j][0] && MatchPlural(name, i, j)) {
+                    // if the unit name matches, by prefix or by plural...
+                    if ((name2[0] == unit.names[j][0] || search) && MatchPrefixPlural(name2, i, j, search)) {
                         // record a matching unit
                         if (search) {
                             more.push(unit.names[j]);
                         } else {
                             // use a precomputed unit to make subsequent searching faster
-                            more.push("index"+i);
+                            more.push("xx"+i);
                         }
                     }
                     if (unit.type == "PREFIX") {
@@ -1025,7 +1025,7 @@ function LookupUnits(name, prefixable, search)
                     // if the specified name matches the prefix...
                     if (name[0] == prefix[0] && name.indexOf(prefix) == 0 && name.length > prefix.length) {
                         // prefix match
-                        var remain = name.slice(prefix.length);
+                        var remain = name2.slice(prefix.length);
                         // for all unit names...
                         for (i = 0; i < units.length; i++) {
                             var unit2 = units[i];
@@ -1037,14 +1037,14 @@ function LookupUnits(name, prefixable, search)
                                 }
                                 // for all unit names...
                                 for (j = 0; j < unit2.names.length; j++) {
-                                    // if the remainder of the specified name matches the unit, by search or by plural...
-                                    if (search ? MatchSearch(remain, i, j) : remain[0] == unit2.names[j][0] && MatchPlural(remain, i, j)) {
+                                    // if the remainder of the specified name matches the unit, by prefix or by plural...
+                                    if ((remain[0] == unit2.names[j][0] || search) && MatchPrefixPlural(remain, i, j, search)) {
                                         // record a matching prefix and unit
                                         if (search) {
                                             more.push(unit.names[jj]+unit2.names[j]);
                                         } else {
                                             // use a precomputed unit to make subsequent searching faster
-                                            more.push("index"+ii + '~' + "index"+i);
+                                            more.push("xx"+ii + '~' + "xx"+i);
                                         }
                                     }
                                 }
@@ -1067,7 +1067,6 @@ function LookupUnits(name, prefixable, search)
 
     // define a free unit to use for the remainder of the expression
     unit = DefineBaseUnit(Singulars(name), true);
-    console.log("free " + name);
     return [unit.names[0]];
 }
 
@@ -1137,7 +1136,7 @@ function AlternateTokens(tokens, n)
         // if the evaluation resulted in a dimensionless exponent...
         if (j <= 1 && ! si) {
             if (! result.PiAnalysis()) {
-                throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";
+                throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";  //OK
             }
 
             // dimensionless results are top priority

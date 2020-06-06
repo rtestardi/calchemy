@@ -13,7 +13,8 @@ CATEGORY Ice
 CATEGORY Air
 CATEGORY Batteries
 CATEGORY Speed_sound
-CATEGORY Warn
+CATEGORY Warn_angle
+CATEGORY Warn_temperature
 CATEGORY Frequency
 CATEGORY Angular_velocity
 
@@ -67,12 +68,12 @@ Number:e=2.71828182845904523
 *SI,Metric:gramm,gm,g,gram*=MASS
 *SI,Metric:second*,s,sec*=TIME
 SI,Metric:deltaK,deltak=TEMP #interval (T-T0) Kelvin
-*SI,Metric,Angle,Warn:radian*,rad=1 RADIAN
+*SI,Metric,Angle,Warn_angle:radian*,rad=1 RADIAN
 *Metric:bit*,b=STORAGE
 dollar*,$=MONEY
 *SI,Metric:ampere*,A,amp*=CURRENT
 *SI,Metric:mole*,mol=SUBSTANCE
-*SI,Metric,Frequency,Warn:hertz,Hz=1/second
+*SI,Metric,Frequency,Warn_angle:hertz,Hz=1/second
 
 #Secondary
 *Metric:liter*,L,litre*,l=1 cubic decimeter #was 1.000028 before 1964
@@ -96,10 +97,10 @@ dollar*,$=MONEY
 *Metric:Byte*,byte*,B,char*=8 bit #computer storage
 
 #Angle or Number
-Angle,Warn:cycle_as_angle,cyclea,cycle*=2 pi_as_number radian
-Number,Warn:cycle_as_number,cyclen,cycle*=1
-Angle,Warn:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2 pi_as_number radian
-Number,Warn:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
+Angle,Warn_angle:cycle_as_angle,cyclea,cycle*=2 pi_as_number radian
+Number,Warn_angle:cycle_as_number,cyclen,cycle*=1
+Angle,Warn_angle:revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2 pi_as_number radian
+Number,Warn_angle:revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -115,9 +116,9 @@ DERIVED Energy=joule
 AMBIGUOUS Torque=newton meter
 DERIVED Power=watt
 DERIVED Pressure=pascal
-DERIVED Warn:Frequency=hertz
-AMBIGUOUS Warn:Angular_velocity=radian/second
-DERIVED Warn:Angular_acceleration=radian/second^2
+DERIVED Warn_angle:Frequency=hertz
+AMBIGUOUS Warn_angle:Angular_velocity=radian/second
+DERIVED Warn_angle:Angular_acceleration=radian/second^2
 DERIVED Density=kilogramm/liter
 DERIVED Flow=liter/second
 DERIVED Heat_latent_m=joule/kilogramm
@@ -358,20 +359,20 @@ deltaC,deltac=1 deltaK #interval (T-T0) Celsius
 deltaF,deltaf=(1/1.8)deltaK #interval (T-T0) Fahrenheit
 *degK,degk=1 deltaK #absolute Kelvin
 *degR,degr=1 deltaR #absolute Rankine
-*degC,degc=1 deltaC #absolute Celsius, with caution
-*degF,degf=1 deltaF #absolute Fahrenheit, with caution
-absC,absc=1 deltaC #absolute Celsius, without caution
-absF,absf=1 deltaF #absolute Fahrenheit, without caution
+*Warn_temperature:degC,degc=1 deltaC #absolute Celsius, with caution
+*Warn_temperature:degF,degf=1 deltaF #absolute Fahrenheit, with caution
+Warn_temperature:absC,absc=1 deltaC #absolute Celsius, with caution
+Warn_temperature:absF,absf=1 deltaF #absolute Fahrenheit, with caution
 
 #Angular_velocity or Frequency
-Angular_velocity,Warn:rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
-Frequency,Warn:rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
-Angular_velocity,Warn:rps_as_angular_velocity,rpsa*,rps*=revolution_as_angle/second
-Frequency,Warn:rps_as_frequency,rpsf*,rps*=revolution_as_number/second
-Angular_velocity,Warn:cps_as_angular_velocity,cpsa*,cps*=cycle_as_angle/second
-Frequency,Warn:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
-Angular_velocity,Warn:cpd_as_angular_velocity,cpda*,cpd*=cycle_as_angle/day
-Frequency,Warn:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
+Angular_velocity,Warn_angle:rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
+Frequency,Warn_angle:rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
+Angular_velocity,Warn_angle:rps_as_angular_velocity,rpsa*,rps*=revolution_as_angle/second
+Frequency,Warn_angle:rps_as_frequency,rpsf*,rps*=revolution_as_number/second
+Angular_velocity,Warn_angle:cps_as_angular_velocity,cpsa*,cps*=cycle_as_angle/second
+Frequency,Warn_angle:cps_as_frequency,cpsf*,cps*=cycle_as_number/second
+Angular_velocity,Warn_angle:cpd_as_angular_velocity,cpda*,cpd*=cycle_as_angle/day
+Frequency,Warn_angle:cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
 
 #Money
 cent*=0.01 dollar #U.S.
