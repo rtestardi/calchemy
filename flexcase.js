@@ -1,5 +1,8 @@
 LoadRuntimeDatabase("flexcase.js", `
 CATEGORY flexcase
+
+___PUSH flexcase
+
 *a=1A
 *n=1N
 *j=1J
@@ -13,6 +16,8 @@ CATEGORY flexcase
 *hz=1Hz
 *va=1VA
 *ev=1eV
+
+___POP flexcase
 
 TEST 1|= 1
 TEST 1|= 1
