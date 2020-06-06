@@ -60,12 +60,14 @@ PREFIX exbi,Ei=1024^6 #storage
 PREFIX zebi,Zi=1024^7 #storage
 PREFIX yobi,Yi=1024^8 #storage
 ___POP Prefix
+___VERIFY
 
 ___PUSH Number
 pi=3.14159265358979323 PI
 pi_as_number,pin=3.14159265358979323
 e=2.71828182845904523
 ___POP Number
+___VERIFY
 
 #Primary
 ___PUSH Metric,SI
@@ -81,6 +83,7 @@ ___POP SI
 *bit*,b=STORAGE
 ___POP Metric
 dollar*,$=MONEY
+___VERIFY
 
 #Secondary
 ___PUSH Metric,SI
@@ -105,6 +108,7 @@ ___POP SI
 *Byte*,byte*,B,char*=8 bit #computer storage
 ___POP Metric
 *gamma*=1E-09 weber/meter^2
+___VERIFY
 
 #Angle or Number
 ___PUSH Warn_angle,Angle
@@ -115,6 +119,7 @@ ___PUSH Number
 cycle_as_number,cyclen,cycle*=1
 revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 ___POP Number,Warn_angle
+___VERIFY
 
 DERIVED Mass=kilogramm
 DERIVED Length=meter
@@ -195,6 +200,7 @@ trillion_long=1E+18 #multiplier (1E+18) as used in the U.K.
 quadrillion_long=1E+24 #multiplier (1E+24) as used in the U.K.
 quintillion_long=1E+30 #multiplier (1E+30) as used in the U.K.
 ___POP Number
+___VERIFY
 
 ___PUSH Physical_constant,SI
 dVcs=9192631770/second #transition freq of caesium 133
@@ -210,6 +216,7 @@ rydberg_const=1.09737E+07/meter
 volumetric_gas_constant,V0,=22.4141 liter/mole 
 molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
 ___POP Physical_constant
+___VERIFY
 
 ___PUSH Angle
 degree*,deg*=(1/180) pi_as_number radian
@@ -217,6 +224,7 @@ grade,grad=0.9 degree
 arcmin*=(1/60)degree
 arcsec*=(1/60)arcmin
 ___POP Angle
+___VERIFY
 
 #Time
 Metric:minute*,min*=60 second
@@ -341,6 +349,7 @@ Metric:barye*,barie*=0.1 pascal
 baryl=1 dyne/square centimeter
 Metric:pieze,pz=10000 dyne/square centimeter
 ___POP Pressure
+___VERIFY
 
 #Energy
 ___PUSH Energy
@@ -357,12 +366,14 @@ Metric:erg*=1E-07 joule #CGS
 *TOE,toe=41.868E+09 joule #tonne of oil equivalent
 *TCE,tce=29.288E+09 joule #tonne of oil equivalent
 ___POP Energy
+___VERIFY
 
 #Torque
 ___PUSH Torque
 inlb*=1 inch poundf
 ftlb*=1 foot poundf
 ___POP Torque
+___VERIFY
 
 #Power
 VA,va,var,VAR=1 watt #may be reactive power
@@ -394,6 +405,7 @@ ___PUSH Warn_temperature
 absC,absc=1 deltaC #absolute Celsius, with caution
 absF,absf=1 deltaF #absolute Fahrenheit, with caution
 ___POP Warn_temperature
+___VERIFY
 
 #Angular_velocity or Frequency
 ___PUSH Warn_angle,Angular_velocity
@@ -408,6 +420,7 @@ rps_as_frequency,rpsf*,rps*=revolution_as_number/second
 cps_as_frequency,cpsf*,cps*=cycle_as_number/second
 cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
 ___POP Frequency,Warn_angle
+___VERIFY
 
 #Money
 cent*=0.01 dollar #U.S.
@@ -426,12 +439,14 @@ mass_neutron,rm_n=1.67493E-27 kilogramm #rest mass neutron
 permeability_vac,mu0=4 pi_as_number*1E-07 henry/meter
 permittivity_vac,e0=8.85419E-12 farad/meter
 ___POP Physical_constant
+___VERIFY
 
 ___PUSH Number
 bakers_dozen=13
 ream*=500 #paper
 proof=1/200 #alcoholic content
 ___POP Number
+___VERIFY
 
 Metric:shake*=1E-08 second
 year_solar=3.15569E+07 second #mean solar
@@ -601,6 +616,7 @@ Heat_fusion_v:hfv_water,hf_water=hfm_water*d_water
 Heat_vaporization_m:hvm_water,hv_water=956 Btu/poundm
 Heat_vaporization_v:hvv_water,hv_water=hvm_water*d_water
 ___POP Water
+___VERIFY
 
 ___PUSH Ice
 d_ice=0.92 gramm/cc
@@ -608,6 +624,7 @@ Specific_heat_m:shm_ice,sh_ice=0.47 Btu/(poundm deltaF)
 Specific_heat_v:shv_ice,sh_ice=shm_ice*d_ice #by volume
 Thermal_conductivity:tc_ice=2.18 watt/(meter deltaC)
 ___POP Ice
+___VERIFY
 
 ___PUSH Air
 d_air=0.0012928 gramm/cc #@ 1 atm, 0degC
@@ -617,6 +634,7 @@ Speed_sound:ss_air=1128.86 foot/second #@ 20 degC, 50% RH
 Specific_heat_m:shm_air,sh_air=0.24 calorie/(gramm deltaK) #@ 0 degC
 Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
 ___POP Air
+___VERIFY
 
 ___PUSH Physical_property
 
@@ -745,6 +763,7 @@ e_nicd_9v=2419 joule
 ___POP Batteries
 
 ___POP Physical_property
+___VERIFY
 
 TEST 1|= 1
 TEST 1|= 1
