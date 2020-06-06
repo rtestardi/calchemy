@@ -1298,6 +1298,12 @@ function ParseTokens(tokens, line)
                 }
             }
 
+        // otherwise, if we are verifying no categories are pushed...
+        } else if (tokens[0] == "___VERIFY") {
+            if (open_categories.length) {
+                throw "categories pushed: " + open_categories.toString();
+            }
+
         // otherwise, if we are running test code...
         } else if (tokens[0] == "TEST") {
             if (tokens[1] == "categories") {
@@ -1526,6 +1532,7 @@ function LoadDatabase(database)
     // for each line of the database...
     for (var i = 0; i < lines.length; i++) {
         // tokenize, parse, and run the command line
+        //console.log(lines[i]);
         results = [];
         mismatches = [];
         errors = [];
@@ -1564,7 +1571,7 @@ function LoadDatabase(database)
     }
 
     if (open_categories.length) {
-        throw "categories not popped " + open_categories.toString();
+        throw "categories not popped: " + open_categories.toString();
     }
 }
 
