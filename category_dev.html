@@ -47,6 +47,7 @@ function Body()
             // for each name...
             for (var j = 0; j < units[i].names.length; j++) {
                 // record the name and categories
+                Sort(units[i].categories);
                 output.push("<br>" + units[i].names[j] + " = " + units[i].categories.join(' ') + " ");
             }
         }
