@@ -1,6 +1,5 @@
 var database =`
 CATEGORY SI
-CATEGORY Metric
 CATEGORY Prefix
 CATEGORY Number
 CATEGORY Angle
@@ -70,7 +69,7 @@ ___POP Number
 ___VERIFY
 
 #Primary
-___PUSH Metric,SI
+___PUSH SI
 *meter*,m,metre*=LENGTH
 *gramm,gm,g,gram*=MASS
 *second*,s,sec*=TIME
@@ -81,12 +80,11 @@ deltaK,deltak=TEMP #interval (T-T0) Kelvin
 *Frequency,Warn_angle:hertz,Hz=1/second
 ___POP SI
 *bit*,b=STORAGE
-___POP Metric
 dollar*,$=MONEY
 ___VERIFY
 
 #Secondary
-___PUSH Metric,SI
+___PUSH SI
 *newton*,N=1 kilogramm meter/second^2
 *Energy:joule*,J=1 newton meter
 *watt*,W=1 joule/second
@@ -106,7 +104,6 @@ ___POP SI
 *gauss=0.0001 weber/meter^2 #CGS
 *oersted,Oe=79.57747 ampere/meter
 *Byte*,byte*,B,char*=8 bit #computer storage
-___POP Metric
 *gamma*=1E-09 weber/meter^2
 ___VERIFY
 
@@ -173,7 +170,7 @@ DERIVED Momentum=kilogramm meter/second
 AMBIGUOUS Stiffness=newton/meter
 DERIVED Money=dollar
 
-___PUSH Number,Metric
+___PUSH Number
 percent,%=1/100
 permille=1/1000
 permyriad=1/10000
@@ -181,7 +178,6 @@ ppm*=1E-06 #parts per million
 ppb*=1E-09 #parts per billion
 ppt*=1E-12 #parts per trillion
 ppq*=1E-15 #parts per quadrillion
-___POP Metric
 dozen*=12
 gross=144
 karat*=1/24 #purity of gold (24 karat is pure)
@@ -227,9 +223,9 @@ ___POP Angle
 ___VERIFY
 
 #Time
-Metric:minute*,min*=60 second
-Metric:hour*,hr*=60 minute
-Metric:day*=24 hour
+minute*,min*=60 second
+hour*,hr*=60 minute
+day*=24 hour
 year*,yr*=365 day
 month*,mo*=(1/12)year
 week*,wk*=7 day
@@ -238,14 +234,14 @@ century*=100 year
 millennium*=1000 year
 aeon*=1E+09 year
 fortnight*=14 day
-Metric:svedberg*=1E-13 second #Sedimentation Coefficient
+svedberg*=1E-13 second #Sedimentation Coefficient
 
 #Length
-Metric:*micron*=1E-06 meter
-Metric:angstrom*=1E-10 meter
-Metric:fermi*=1E-15 meter
+*micron*=1E-06 meter
+angstrom*=1E-10 meter
+fermi*=1E-15 meter
 *parsec*=3.0857E+16 meter
-Metric:au=1.49598E+11 meter
+au=1.49598E+11 meter
 mile_nautical,nmi=1852 meter
 inch*,in=2.54 centimeter
 mil*=(1/1000)inch
@@ -268,28 +264,28 @@ slug*=14593.9 gramm
 grain*=(1/7000)poundm
 pennyweight,dwt=24 grain #troy
 hundredweight,cwt=100 poundm #avoirdupois
-Metric:carat*,ct=200 milligramm #mass of gems
+carat*,ct=200 milligramm #mass of gems
 *Physical_constant:amu,dalton=1.66053906660E-24 gramm #unified atomic mass unit
 tonm,ton*=2000 poundm
 tonm_long,ton_long=2240 poundm #imperial (U.K.)
-*Metric:tonnem,tonm_metric,tonne*,ton_metric=1E+06 gramm #metric ton
+*tonnem,tonm_metric,tonne*,ton_metric=1E+06 gramm #metric ton
 
 #Force
 poundal*,pdl=1 foot poundm/second^2
 kip*=1000 poundm*gravity
-Metric:dyne*=1E-05 newton
+dyne*=1E-05 newton
 *pond*=1 gramm*gravity
 *gramf,gf,g,gram*=1 gramm*gravity
 poundf,lbf,lb*,pound*=1 poundm*gravity
 ouncef,ozf,oz*,ounce*=1 ouncem*gravity
 tonf,ton*=1 tonm*gravity
 tonf_long,ton_long=2240 poundm*gravity #imperial (U.K.)
-*Metric:tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gramm*gravity #metric ton
+*tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gramm*gravity #metric ton
 
 #Area
-Metric:are=100 square meter
-Metric:decare,daa,dunam,stremma=1000 square meter
-Metric:hectare*,ha=10000 square meter
+are=100 square meter
+decare,daa,dunam,stremma=1000 square meter
+hectare*,ha=10000 square meter
 sqin=1 square inch
 sqft=1 square foot
 sqyd=1 square yard
@@ -334,33 +330,33 @@ galileo*=0.01 meter/second^2
 #Pressure
 ___PUSH Pressure
 *torr=(101325/760)pascal
-*Metric:bar=100000 pascal
-Metric:metre_sea_water,msw=10 kilopascal
+*bar=100000 pascal
+metre_sea_water,msw=10 kilopascal
 mb=millibar #pressure in millibar
 atmosphere*,atm=101325 pascal #standard atmospheric pressure
 psi=1 poundf/square inch
 ksi=1000 poundf/square inch
-Metric:mmHg,mmhg=133.3224 pascal #pressure (barometric)
+mmHg,mmhg=133.3224 pascal #pressure (barometric)
 inHg,inhg=mmHg * inch/millimeter
 Hg,hg=mmHg/millimeter #density of mercury for pressure calculations
 inWc,inwc,inH2O=248.84 pascal #inches water column at 60 degF
 H2O=inWc/inch #density of water for pressure calculations
-Metric:barye*,barie*=0.1 pascal
+barye*,barie*=0.1 pascal
 baryl=1 dyne/square centimeter
-Metric:pieze,pz=10000 dyne/square centimeter
+pieze,pz=10000 dyne/square centimeter
 ___POP Pressure
 ___VERIFY
 
 #Energy
 ___PUSH Energy
-*Metric:electronvolt*,eV=1.60218E-19 joule
-*Metric:calorie*,cal=4.184 joule
-*Metric:watthour*,Wh,wh=3600 joule #watt hour
+*electronvolt*,eV=1.60218E-19 joule
+*calorie*,cal=4.184 joule
+*watthour*,Wh,wh=3600 joule #watt hour
 foodcal,cal_food,Cal,Calorie*=1 kilocalorie #food package label energy
 Btu*,BTU*,btu*=1055.06 joule #international table
 therm*=105.4804E+06 joule #US
 quad*=1.05505585262E+18 joule
-Metric:erg*=1E-07 joule #CGS
+erg*=1E-07 joule #CGS
 *ton_explosive,tTNT=4.184E+09 joule #ton of TNT equivalent
 *BOE,boe=6.12E+09 joule #barrel of oil equivalent
 *TOE,toe=41.868E+09 joule #tonne of oil equivalent
@@ -391,7 +387,7 @@ gpd=1 gallon/day
 lps=1 liter/second
 lpm=1 liter/minute
 lph=1 liter/hour
-Metric:sverdrup*,Sv =1E6 cubic meter/second #oceanography
+sverdrup*,Sv =1E6 cubic meter/second #oceanography
 
 #Temperature
 deltaR,deltar=(1/1.8)deltaK #interval (T-T0) Rankine
@@ -428,7 +424,7 @@ cent*=0.01 dollar #U.S.
 mpg=1 mile/gallon
 rvalue,Rvalue,rval,Rval=1(sqft deltaF)/(Btu/hour) #thermal insulation
 uvalue,Uvalue,uval,Uval=1(Btu/hour)/(sqft deltaF) #inverse of Rvalue
-*Metric:bit_per_second,baud,bps=1 bit/second #DataComm
+*bit_per_second,baud,bps=1 bit/second #DataComm
 
 ___PUSH Physical_constant
 grav_const,G=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
@@ -448,7 +444,7 @@ proof=1/200 #alcoholic content
 ___POP Number
 ___VERIFY
 
-Metric:shake*=1E-08 second
+shake*=1E-08 second
 year_solar=3.15569E+07 second #mean solar
 cron*=3.156E+13 second
 
@@ -470,9 +466,9 @@ sthen*=1E+08 dyne
 
 circ_inch*=(pi_as_number/4)sqin #area 1 inch diam
 circ_mil*=pi_as_number*2.5E-07 sqin #area 1 mil diam
-Metric:barn*=1E-28 meter^2
-Metric:shed*=1E-24 barn
-Metric:outhouse*=1E-06 barn
+barn*=1E-28 meter^2
+shed*=1E-24 barn
+outhouse*=1E-06 barn
 
 ton_ship=40 cuft #sea freight
 ton_reg=100 cuft #capacity of ships
@@ -491,7 +487,7 @@ gill_imp=5 floz_imp #U.K.
 bushel_imp=2219.36 cuin #U.K.
 peck_imp=(1/4)bushel_imp #U.K.
 
-Metric:benz=1 meter/second
+benz=1 meter/second
 leo*=10 meter/second^2
 
 Energy:therm_eec=1.05506E+08 joule #European Economic Community
@@ -501,9 +497,9 @@ Energy:rydberg*=13.6054 electronvolt
 
 frigorie*=50 Btu/minute #cooling equipment (Europe)
 
-Metric:poise=0.1 pascal second #CGS
+poise=0.1 pascal second #CGS
 reyn*=1 (poundf/sqin)second
-Metric:stokes=0.0001 meter^2/second
+stokes=0.0001 meter^2/second
 
 *Frequency:curie*,Ci,ci=3.7E+10/second #of radioactivity
 *SI,Frequency:becquerel*,Bq=1/second #of radioactivity
@@ -522,8 +518,8 @@ clausius=1 joule/(mole deltaK)
 entropy_unit=1 calorie/(mole deltaK)
 
 rhe*=10/(pascal second) #inverse dynamic viscosity
-Metric:dioptre*,diopter*=1/meter
-Metric:kayser*=100/meter
+dioptre*,diopter*=1/meter
+kayser*=100/meter
 
 year_sidereal=3.15582E+07 second
 day_sidereal=8.61641E+04 second
