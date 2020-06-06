@@ -35,7 +35,7 @@ The following examples provide a brief introduction to some of Calchemy's featur
 
 To perform a simple unit conversion, such as 3 meters converted to inches, you could enter the equation:
 
-**3 meter ? inch**
+[**3 meter ? inch**](https://rtestardi.github.io/calchemy/calchemy.html?3%20meter%20%3F%20inch)
 
 Calchemy would respond:
 
@@ -44,7 +44,7 @@ Calchemy would respond:
 To calculate the required horsepower for a motor which could raise a 2000 lbf elevator to the top of a 10 story building (assuming 12 feet per story) in 1 minute,
 you could enter the equation:
 
-**2000 lbf * (10 * 12 feet) / (1 minute) ? horsepower**
+[**2000 lbf * (10 * 12 feet) / (1 minute) ? horsepower**](https://rtestardi.github.io/calchemy/calchemy.html?2000%20lbf%20*%20%2810%20*%2012%20feet%29%20/%20%281%20minute%29%20%3F%20horsepower)
 
 Indicating that you want to multiply 2000 pounds force by 10 times 12 feet, divide that by 1 minute, and then express the final result in horsepower.
 Calchemy would respond:
@@ -53,7 +53,7 @@ Calchemy would respond:
 
 If, on the other hand, you had made a mistake in the original equation and left out the "/ (1 minute)":
 
-**2000 lbf * (10 * 12 feet) ? horsepower**
+[**2000 lbf * (10 * 12 feet) ? horsepower**](https://rtestardi.github.io/calchemy/calchemy.html?2000%20lbf%20*%20%2810%20*%2012%20feet%29%20%3F%20horsepower)
 
 Calchemy would have responded with a Dimensional Mismatch indication containing:
 
@@ -63,7 +63,7 @@ Indicating that the left hand side of the equation was missing a factor of 1/Tim
 
 Calchemy can also be used as a simple dimensionless calculator by eliminating the "?" and result unit from the equation. For example, you could enter the equation:
 
-**2+3*5**
+[**2+3*5**](https://rtestardi.github.io/calchemy/calchemy.html?2+3*5)
 
 Calchemy would respond with the algebraically correct answer:
 
@@ -73,12 +73,12 @@ Calchemy would respond with the algebraically correct answer:
 
 You could also enter the original equation in the following less explicit form:
 
-**2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower**
+[**2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower**](https://rtestardi.github.io/calchemy/calchemy.html?2000%20lb%3B%2010%20stories%3B%2012%20feet/story%3B%201%20minute%20%3F%20horsepower)
 
 Indicating that you want to "combine" 2000 pounds, 10 stories, 12 feet/story, and 1 minute in such a way that the equation is dimensionally correct,
 and then express the final result in horsepower. Calchemy would again respond:
 
-*&gt; 2000 poundf * 10 story * (12 foot / story) / (1 minute) ? horsepower*
+*&gt; 2000 poundf * 10 stories * (12 foot / stories) / (1 minute) ? horsepower*
 <br>**= 7.27273 horsepower**
 
 Notice above that Calchemy will always show you how it is interpreting your equations, with a line that begins with "&gt;".
