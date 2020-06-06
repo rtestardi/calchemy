@@ -30,6 +30,7 @@ var freebaseunit = 0;
 var units = [];  // Unit
 var bases = [];  // Unit
 var all_categories = [];  // string
+var open_categories = [];  // string
 var loading = false;  // while loading the units database, all ambiguities are turned off and primary names must be used
 var deriving = false;  // while deriving units, secondary names may also be used
 var defining = false;  // while defining, don't record mismatches
@@ -1272,6 +1273,34 @@ function ParseTokens(tokens, line)
             }
             all_categories.push(tokens[1]);
 
+        // otherwise, if we are pushing a category...
+        } else if (tokens[0] == "PUSH") {
+            for (i = 1; i < tokens.length; i++) {
+                if (tokens[i] != ',') {
+                    if (! all_categories.includes(tokens[i])) {
+                        throw "missing category " + tokens[i];
+                    }
+                    if (open_categories.includes(tokens[i])) {
+                        throw "category already pushed " + tokens[i];
+                    }
+                    open_categories.push(tokens[i]);
+                }
+            }
+
+        // otherwise, if we are popping a category...
+        } else if (tokens[0] == "POP") {
+            for (i = 1; i < tokens.length; i++) {
+                if (tokens[i] != ',') {
+                    if (! all_categories.includes(tokens[i])) {
+                        throw "missing category " + tokens[i];
+                    }
+                    if ((j = open_categories.indexOf(tokens[i])) == -1) {
+                        throw "category not pushed " + tokens[i];
+                    }
+                    open_categories.splice(j, 1);
+                }
+            }
+
         // otherwise, if we are running test code...
         } else if (tokens[0] == "TEST") {
             if (tokens[1] == "categories") {
@@ -1299,17 +1328,20 @@ function ParseTokens(tokens, line)
         // otherwise, if we are defining or undefining a unit...
         } else if ((k = tokens.indexOf('=')) != -1) {
             var type = null;
-            var definition = line;
+            var remainder = line;
             var unambiguous = false;
             if (tokens[0] == "AMBIGUOUS") {
                 type = "DERIVED";
+                remainder = line.replace(/^AMBIGUOUS/, "").trim();
                 i = 1;
             } else if (tokens[0] == "DERIVED") {
                 type = tokens[0];
+                remainder = line.replace(/^DERIVED/, "").trim();
                 i = 1;
                 unambiguous = true;
             } else if (tokens[0] == "PREFIX") {
                 type = tokens[0];
+                remainder = line.replace(/^PREFIX/, "").trim();
                 i = 1;
             } else {
                 i = 0;
@@ -1317,7 +1349,7 @@ function ParseTokens(tokens, line)
             var prefixable = tokens[i][0] == '*';
             var names = [];
             var pluralizables = [];
-            var categories = [];
+            var categories = open_categories.slice(0);
 
             // gather categories and names...
             for (; i < tokens.length; i++) {
@@ -1355,6 +1387,17 @@ function ParseTokens(tokens, line)
                 throw "missing name";
             }
             var subtokens = tokens.slice(i+1);
+
+            // form the definition, including open and explicit categories
+            var definition = prefixable?"*":"";
+            if (type) {
+                definition += type + " ";
+            }
+            if (categories.length) {
+                definition += categories.join(",");
+                definition += ":";
+            }
+            definition += remainder.replace(/[^:]*:/, "").trim();  // N.B. excludes prefixable and categories
 
             // if we have an expression...
             if (k+1 < tokens.length && tokens[k+1] != ':') {
@@ -1474,6 +1517,8 @@ function ParseTokens(tokens, line)
 // load the units database
 function LoadDatabase(database)
 {
+    open_categories = [];
+
     // split the database into lines
     var lines = database.split(/[\r\n]+/);
 
@@ -1515,6 +1560,10 @@ function LoadDatabase(database)
             // we only allow binary prefixes on storage units
             storagebase = i;
         }
+    }
+
+    if (open_categories.length) {
+        throw "categories not popped " + open_categories.toString();
     }
 }
 
