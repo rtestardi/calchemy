@@ -11,7 +11,7 @@ It also checks your equations to ensure that they are always dimensionally corre
 
 Calchemy does not send any of your information or equations or results over the Internet. Calchemy does not use cookies, though it does use "other site data" in your browser for persistence of the History List.
 
-N.B. The history list is cleared when you clear your browser cookies and other site data.
+N.B. The persistent history list is cleared when you clear your browser cookies and other site data.
 
 You can verify Calchemy's operation by clicking the "Test" button.
 
