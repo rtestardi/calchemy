@@ -103,7 +103,7 @@ class Unit {
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
         this.interpretation = (names == undefined) ? "" : names[0];  // string
-        // this.dimension is calculated after instantiation only for SI results
+        this.dimension = "";  // string, only for SI results
     }
 
     // pi analysis; check if orders of PI and RADIAN are within limits
@@ -1147,7 +1147,6 @@ function AlternateTokens(tokens, n)
             }
 
             // dimensionless results are top priority
-            result.dimension = "";
             results.push(result);
 
         // otherwise, if the evaluation resulted in a mismatch of non-free units...
