@@ -14,8 +14,8 @@ const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const xunit_regexp_head =   /^[_A-Za-z$%:][_A-Za-z0-9$%:]*/;
-const xunit_regexp_tail =    /[_A-Za-z$%:][_A-Za-z0-9$%:]*$/;
+const xunit_regexp_head =   /^[:_A-Za-z$%][_A-Za-z0-9$%:]*/;
+const xunit_regexp_tail =    /[:_A-Za-z$%][_A-Za-z0-9$%:]*$/;
 const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^]/g;
 const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
@@ -36,7 +36,6 @@ var deriving = false;  // while deriving units, secondary names may also be used
 var defining = false;  // while defining, don't record mismatches
 var evaluating = false;  // while evaluating units, free units may be used
 var testing = false;  // while testing, don't prompt for equation values
-var si = false;  // request to display mismatch result in SI format
 var storagebase;  // may be undefined
 var database_tests = "";
 
@@ -104,7 +103,7 @@ class Unit {
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
         this.interpretation = (names == undefined) ? "" : names[0];  // string
-        // this.dimension is calculated after instantiation only for SI results
+        this.dimension = "";  // string, only for SI results
     }
 
     // pi analysis; check if orders of PI and RADIAN are within limits
@@ -723,7 +722,7 @@ function CleanAndPush(stack, result, op, next)
     assert(prec.hasOwnProperty(op));
 
     // handle stacked operator precedence and associativity; clean stack as needed
-    if (result != null) {
+    if (result != null || op == 'zz') {
         while (stack.length) {
             // get the top operation on the stack
             var stacked = stack[stack.length-1];
@@ -737,7 +736,14 @@ function CleanAndPush(stack, result, op, next)
             }
             // pop and clean
             stacked = stack.pop();
-            result = stacked.result.Operate(stacked.op, result);
+            if (result != null) {
+                // perform the stacked operation
+                result = stacked.result.Operate(stacked.op, result);
+            } else {
+                // SI result requested thru '?' with no rhs; no operation
+                assert(stacked.op == '?');
+                result = stacked.result;
+            }
         }
     }
 
@@ -763,11 +769,12 @@ function EvaluateTokens(tokens)
     var j;
     var subtokens;
     var stack = [];
+    var token = null;
     var result = null;
 
     // for all tokens in the equation...
     for (var i = 0; i < tokens.length; i++) {
-        var token = tokens[i];
+        token = tokens[i];
         // if the token is a function call...
         if (functions.hasOwnProperty(token)) {
             if (token == "per") {
@@ -889,7 +896,7 @@ function EvaluateTokens(tokens)
         }
     }
 
-    if (result == null) {
+    if (result == null && token != '?') {
         throw "missing expression";
     }
 
@@ -1135,7 +1142,7 @@ function AlternateTokens(tokens, n)
             j = -1;
         }
         // if the evaluation resulted in a dimensionless exponent...
-        if (j <= 1 && ! si) {
+        if (j <= 1) {
             if (! result.PiAnalysis()) {
                 throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";  //OK
             }
@@ -1148,22 +1155,22 @@ function AlternateTokens(tokens, n)
             // second priority are mismatches or SI or dimension calculations
 
             var strings = [];
-            var question = tokens.includes('?');
+            var question = tokens.indexOf('?');
 
             // if "expression ? unit" was entered...
-            if (question) {
+            if (question != -1 && tokens.length > question+1) {
                 // the user requested a unit and we mismatched; show what was missing as "1/dimension"
-                strings = result.Dimension(question);
+                strings = result.Dimension(question != -1);
 
             // otherwise, if "expression ?" was entered...
-            } else if (si) {
+            } else if (question != -1) {
                 // the user requested an SI result; show the SI result as "coefficient dimension"
                 results = results.concat(result.SI());
 
             // "expression" was entered...
             } else {
                 // the user requested a dimension; show what was evaluated as "dimension"
-                strings = result.Dimension(question);
+                strings = result.Dimension(question != -1);
             }
 
             // record the result as a mismatch
@@ -1596,29 +1603,31 @@ function RunLine(line)
     var success = true;
 
     // capture the result dimension
-    var question = line.indexOf('?');
     var dimension;
+    var question = line.indexOf('?');
     if (question == -1) {
+        // dimensionless requests have no dimension
         dimension = "";
     } else {
+        // normal requests get dimension from command line
         dimension = " " + line.slice(question+1).replace(/[#].*/, "").trim();
     }
 
-    // tokenize, parse, and run the command line
+    // tokenize the command line
     results = [];
     mismatches = [];
     errors = [];
     defines = false;
     undefines = false;
-
-    si = false;
     var tokens = TokenizeLine(line);
-    // remove trailing '?' for si or filter request
+
+    // identify SI requests
+    var si = false;
     if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
         si = true;
-        tokens.pop();
     }
 
+    // parse and run the command line
     ParseTokens(tokens, line);
 
     // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
@@ -1630,7 +1639,11 @@ function RunLine(line)
 
         // format the results we will output, appending the captured dimension we parsed from the command line
         for (j = 0; j < results.length; j++) {
-            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + (si?" "+results[j].dimension:dimension);  // N.B. * 1 removes trailing 0's from toPrecision()
+            if (si) {
+                // SI requests get dimension from result
+                dimension = " " + results[j].dimension;
+            }
+            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
             var answer = answers.indexOf(string);
             if (answer == -1) {
                 interpretations[answers.length] = [Simplify(results[j].interpretation)];
