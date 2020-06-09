@@ -646,8 +646,9 @@ function ShowUnitsByCategory(category, bydimension)  // or "All Units"
     // finally look for SI units
     for (i = 0; i < units.length; i++) {
         if (units[i].type == "DERIVED" && units[i].names[0] == category) {
-            if (! names.includes(units[i].names[j])) {
-                names.push(units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim());
+            var name = units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim();
+            if (! names.includes(name)) {
+                names.push(name);
             }
         }
     }
