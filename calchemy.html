@@ -1694,11 +1694,12 @@ function EvaluateTokens(tokens)
     var j;
     var subtokens;
     var stack = [];
+    var token = null;
     var result = null;
 
     // for all tokens in the equation...
     for (var i = 0; i < tokens.length; i++) {
-        var token = tokens[i];
+        token = tokens[i];
         // if the token is a function call...
         if (functions.hasOwnProperty(token)) {
             if (token == "per") {
