@@ -4212,11 +4212,11 @@ The following examples illustrate this:
 <p><b>name* = expression</b>
 
 <h1 id='ui'>User Interface</h1>
-<p>Less frequently used buttons are at the top of the user interface and more frequently used buttons are at the bottom of the user interface, near the Equation Line.
+<p>Less frequently used buttons are at the top of the user interface; more frequently used buttons are at the bottom of the user interface, near the Equation Line.
 
 <h2 id='history'>History List</h2>
 <p>The History List is near the top of the user interface and grows to include all your calculated equations and results;
-initially, the history list contains only the words, "loading database ... database loaded".
+initially, the history list contains only the words, "database loaded".
 <p>Equations and results in the history list are hyperlinks which you can click/tap to re-enter the equation or result into the Equation Line, as a form of history recall.
 <p>The history list also contains unit category names or unit names you have searched for (also as hyperlinks) as well as unit details, examples, equations, and online help.
 <p>Each entry in the history list can be deleted by clicking/tapping its &lt;Delete&gt; button;
@@ -4233,11 +4233,25 @@ and transfer it and its results to the History List.
 <p>You can use the &lt;Up Arrow&gt; and &lt;Down Arrow&gt; keys to recall previous equations and results from the history list.
 
 <h2 id='buttons'>Buttons</h2>
-The following Buttons are at the top or bottom of the user interface:
+<p>The following less frequently used Buttons are at the top of the user interface:
 <dl>
-<dt>&lt;Bottom&gt;</dt><dd>Scroll to the bottom of the user interface.</dd>
+<dt>&lt;Test&gt;</dt><dd>Run the internal tests to confirm proper javascript operation.</dd>
+<dt>&lt;Example&gt;</dt><dd>Copy an example equation into the equation line.</dd>
+<dt>&lt;Copy&gt;</dt><dd>Copy the history list and equation line to the clipboard.</dd>
+<dt>&lt;Paste&gt;</dt><dd>Paste the contents of the clipboard into the equation line, evaluating one equation at a time, stopping if an error occurs.
+<br>N.B. to use this feature, the calchemy html file must be accessed either thru https or locally, and you must be running Chrome or New Edge.</dd>
+<dt>&lt;Load&gt;</dt><dd>Load an additional runtime text units database from the local computer or javascript units database from the location of calchemy.html.</dd>
+<dt>&lt;Help&gt;</dt><dd>Display this internal online help.</dd>
+<p>
 <dt>&lt;Delete All&gt;</dt><dd>Delete all entries in the history list.</dd>
+<dt>&lt;Bottom&gt;</dt><dd>Scroll to the bottom of the user interface.</dd>
+</dl>
+<p>The following Buttons are in the middle of the user interface, within the history list:
+<dl>
 <dt>&lt;Delete&gt;</dt><dd>Delete an entry in the history list.</dd>
+</dl>
+<p>The following more frequently used Buttons are at the bottom of the user interface:
+<dl>
 <dt>&lt;Enter&gt;</dt><dd>Evaluate the equation or definition in the equation line.</dd>
 <dt>&lt;Clear&gt;</dt><dd>Clear the equation line.</dd>
 <dt>&lt;Find Units&gt;</dt><dd>If a portion of a unit is at the the cursor of the equation line, display all possible unit names that match the portion;
@@ -4245,16 +4259,9 @@ otherwise, display all unit category names;
 click/tap a unit category name to display all unit names in the category;
 click/tap a unit name to enter its name into the equation line at the cursor.</dd>
 <dt>&lt;Unit Details&gt;</dt><dd>Display the unit details (definition and dimension) for the unit at the cursor of the equation line.</dd>
-<dt>&lt;Copy&gt;</dt><dd>Copy the history list and equation line to the clipboard.</dd>
-<dt>&lt;Paste&gt;</dt><dd>Paste the contents of the clipboard into the equation line, evaluating one equation at a time, stopping if an error occurs.
-<br>N.B. to use this feature, the calchemy html file must be accessed either thru https or locally, and you must be running Chrome or New Edge.</dd>
-<dt>&lt;Example&gt;</dt><dd>Copy an example equation into the equation line.</dd>
 <dt>&lt;Equations&gt;</dt><dd>Display a list of equation groups.
 Click/tap an equation group to display all equations in the group.
 Click/tap an equation to enter it into the equation line at the cursor.</dd>
-<dt>&lt;Load&gt;</dt><dd>Load an additional runtime text units database from the local computer or javascript units database from the location of calchemy.html.</dd>
-<dt>&lt;Test&gt;</dt><dd>Run the internal tests to confirm proper javascript operation.</dd>
-<dt>&lt;Help&gt;</dt><dd>Display this internal online help.</dd>
 <dt>&lt;Top&gt;</dt><dd>Scroll to the top of the user interface.</dd>
 </dl>
 
