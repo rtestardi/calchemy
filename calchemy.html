@@ -116,7 +116,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16</p>
+v1.16a</p>
 </td>
 </tr></table>
 
@@ -2814,6 +2814,9 @@ function LoadRuntimeDatabase(name, text)
 function Body()
 {
     try {
+        // capture our query string
+        var url = document.URL;
+
         // recall our results history
         var temp = localStorage["calchemy.results"];
         document.getElementById("results").innerHTML = temp != undefined ? temp : "";
@@ -2839,13 +2842,13 @@ function Body()
         }
 
         // if we have a query string...
-        var index = document.URL.indexOf('?');
+        var index = url.indexOf('?');
         if (index != -1) {
             offset_warn = false;
             cycle_warn = false;
 
             // pretend the user entered the query string thru the UI
-            document.getElementById("equation").value = window.unescape(document.URL.slice(index+1));
+            document.getElementById("equation").value = window.unescape(url.slice(index+1));
             Enter();
 
             // reset url
