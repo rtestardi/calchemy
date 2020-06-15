@@ -98,7 +98,7 @@ class Unit {
         this.pluralizables = (pluralizables == undefined) ? [] : pluralizables.slice(0);  // array of booleans
         this.coefficient = (coefficient == undefined) ? NaN : coefficient;  // floating point
         this.exponents = (exponents == undefined) ? [] : exponents;  // array of integers
-        this.type = (type == undefined) ? null : type;  // null || "BASE" || "DERIVED" || "PREFIX"
+        this.type = (type == undefined) ? null : type;  // null || "BASE" || "DERIVED" || "PREFIX" || "VALUE"
         this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
         this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
         this.definition = (definition == undefined) ? "" : definition;  // string
@@ -181,6 +181,25 @@ class Unit {
             }
             if (op != ':' && op != '^' && rhs.type == "DERIVED") {
                 throw "specify value for " + rhs.names[0];
+            }
+        }
+
+        var offset = 0;
+        if (this.type == "VALUE" && op == ' ') {
+            if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
+                offset = 273.15;
+                offset_warn = true;
+            } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
+                offset = 459.67;
+                offset_warn = true;
+            }
+        } else if (op == '?') {
+            if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
+                offset = 273.15;
+                offset_warn = true;
+            } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
+                offset = 459.67;
+                offset_warn = true;
             }
         }
 
@@ -320,15 +339,7 @@ class Unit {
             case '@':  // solve by dimensional analysis: l*r
                 // multiply coefficients; add exponents
                 // if this is an offset temperature being entered, instantly convert from offset temperature to absolute temperature
-                var offset = 0;
-                if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
-                    offset = 273.15;
-                    offset_warn = true;
-                } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
-                    offset = 459.67;
-                    offset_warn = true;
-                }
-                unit.coefficient = (this.coefficient+offset) * rhs.coefficient;
+                unit.coefficient = (this.coefficient + offset) * rhs.coefficient;
                 for (i = 0; i < maxbaseunits; i++) {
                     unit.exponents[i] = this.exponents[i] + rhs.exponents[i];
                 }
@@ -339,15 +350,8 @@ class Unit {
             case '&':  // solve by dimensional analysis: l/r
             case '?':
                 // divide coefficients; subtract exponents
-                unit.coefficient = this.coefficient / rhs.coefficient;
                 // if this is an offset temperature being computed, instantly convert from absolute temperature back to offset temperature
-                if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
-                    unit.coefficient -= 273.15;
-                    offset_warn = true;
-                } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
-                    unit.coefficient -= 459.67;
-                    offset_warn = true;
-                }
+                unit.coefficient = (this.coefficient / rhs.coefficient) - offset;
                 for (i = 0; i < maxbaseunits; i++) {
                     unit.exponents[i] = this.exponents[i] - rhs.exponents[i];
                 }
@@ -395,7 +399,7 @@ class Unit {
                     if (this.type == "BASE") {
                         throw "specify value for " + this.names[0];  //OK
                     } else {
-                        throw "incompatible units :" + rhs.names[0];  //OK
+                        throw "incompatible units :" + rhs.interpretation;  //OK
                     }
                 }
                 unit.coefficient = this.coefficient;
@@ -689,6 +693,7 @@ function Value(token)
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;  //OK
     }
+    unit.type = "VALUE";
     return unit;
 }
 
