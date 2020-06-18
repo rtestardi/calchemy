@@ -74,6 +74,8 @@ function MatchParen(tokens, i)
             if (! stack.length) {
                 return j;
             }
+        } else if (tokens[j] == '?') {
+            throw "? not allowed in parentheses";
         }
     }
     throw "unmatched parenthesis " + opens[stack[stack.length-1]];
