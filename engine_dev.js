@@ -74,8 +74,6 @@ function MatchParen(tokens, i)
             if (! stack.length) {
                 return j;
             }
-        } else if (tokens[j] == '?') {
-            throw "? not allowed in parentheses";
         }
     }
     throw "unmatched parenthesis " + opens[stack[stack.length-1]];
@@ -273,12 +271,22 @@ class Unit {
             } else {
                 if (op == '?') {
                     // no need for deferred parenthesis at the outermost operation
-                    unit.interpretation = this.interpretation + " ? " + rhs.interpretation;
+                    if (offset) {
+                        unit.interpretation = "(" + this.interpretation + " ? " + rhs.interpretation.replace(/(abs|deg)/, "delta") + ") - " + offset;
+                    } else {
+                        unit.interpretation = this.interpretation + " ? " + rhs.interpretation;
+                    }
+                    dividing = true;
                 } else if (op == ':') {
                     // dimensional filter
                     unit.interpretation = this.interpretation;
                 } else {
-                    var interpretation = this.interpretation;
+                    var interpretation;
+                    if (offset) {
+                        interpretation = "(" + this.interpretation + " + " + offset + ")";
+                    } else {
+                        interpretation = this.interpretation;
+                    }
                     if (this.multiplying || this.dividing || op == '^') {
                         // add the deferred or required parenthesis for the lhs now
                         interpretation = Parenthesize(interpretation);
@@ -289,7 +297,11 @@ class Unit {
                     }
                     if (display != null) {
                         // normal infix operations
-                        unit.interpretation = interpretation + display + rhs.interpretation;
+                        if (offset) {
+                            unit.interpretation = interpretation + display + rhs.interpretation.replace(/(abs|deg)/, "delta");
+                        } else {
+                            unit.interpretation = interpretation + display + rhs.interpretation;
+                        }
                         if (adding) {
                             // add required parenthesis now
                             unit.interpretation = Parenthesize(unit.interpretation);
@@ -1610,14 +1622,25 @@ function RunLine(line)
     var success = true;
 
     // capture the result dimension
-    var dimension;
-    var question = line.indexOf('?');
-    if (question == -1) {
-        // dimensionless requests have no dimension
-        dimension = "";
-    } else {
-        // normal requests get dimension from command line
-        dimension = " " + line.slice(question+1).replace(/[#].*/, "").trim();
+    var dimension = "";
+    var ncline = line.replace(/[#].*/, "");
+    var question = ncline.indexOf('?');
+    if (question != -1) {
+        // normal requests get dimension from command line, up to the first unmatched close parenthesis
+        dimension = ncline.slice(question+1);
+        var i;
+        var n = 0;
+        for (i = 0; i < dimension.length; i++) {
+            if (opens.indexOf(dimension[i]) != -1) {
+                n++;
+            } else if (closes.indexOf(dimension[i]) != -1) {
+                if (! n) {
+                    break;
+                }
+                n--;
+            }
+        }
+        dimension = " " + dimension.slice(0, i);
     }
 
     // tokenize the command line

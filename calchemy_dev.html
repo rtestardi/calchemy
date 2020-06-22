@@ -116,7 +116,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16c</p>
+v1.16d</p>
 </td>
 </tr></table>
 
@@ -1111,6 +1111,8 @@ var tests =`
     21 inches * 0.25 acre ? gallons | = 142560 gallons
     gal^.33333333 | [Length]
     square mm * 1000^2 ? square m | = 1 square m
+    (3kg?lb)-3 | > (3 kilo~gramm ? poundm) - 3, > (3 kilo~gramf ? poundf) - 3, = 3.61387 lb
+    (3kg?(lb))-3 | > (3 kilo~gramm ? poundm) - 3, > (3 kilo~gramf ? poundf) - 3, = 3.61387 (lb)
 
     # free units and plurals
     2 dogs * 1 cat/dog ? cats | = 2 cats
@@ -1194,8 +1196,10 @@ var tests =`
     area,power=
 
     # temperatures
-    25 degC ? degF | = 77 degF , Caution: Calculation involves offset temperature units; see Calchemy Help.
-    77 degF ? degC | = 25 degC
+    25 degC ? degF | > ((25 + 273.15) deltaC ? deltaF) - 459.67, = 77 degF , Caution: Calculation involves offset temperature units; see Calchemy Help.
+    77 degF ? degC | > ((77 + 459.67) deltaF ? deltaC) - 273.15, = 25 degC
+    25 absC ? absF | = 77 absF
+    77 absF ? absC | = 25 absC
 
     # si  -- XXX seems weird these are passed up as mismatch string with "= "...
     lb? | = 0.453592 kilogramm,= 4.44822 newton
@@ -1354,7 +1358,6 @@ var tests =`
     ?? | ? may only occur once
     :: | expected a value before :
     == | = may only occur once
-    {1?1} | ? not allowed in parentheses
     ww:q=1 | undefined category ww
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
     1/sqrt(23 mi:li) | incompatible units :li
