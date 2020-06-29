@@ -116,7 +116,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16d</p>
+v1.16e</p>
 </td>
 </tr></table>
 
@@ -1378,10 +1378,12 @@ class Unit {
 
         // look for single dimension matches, possibly inverted
         var i;
-        var cont = false;
+        var j;
+        var cont;
         var string = (question?"Dimensional Mismatch ":"") + "[";
 
         // for uninverted and then inverted...
+        cont = false;
         for (var invert = 0; invert < 2; invert++) {
             // report ^-1 if the number of inversions is odd
             var xor = Boolean(question)!=Boolean(invert);
@@ -1403,29 +1405,35 @@ class Unit {
             }
         }
 
-        // if we found a single dimension match...
-        if (cont) {
-            // return it
-            string += "]";
-            strings.push("> " + Simplify(this.interpretation));
-            strings.push(string);
-            return strings;
+        // count the number of non-0 dimensions
+        j = 0;
+        for (i = 2; i < nextbaseunit; i++) {
+            if (this.exponents[i]) {
+                j += Math.abs(this.exponents[i]);
+            }
         }
 
-        // otherwise, we have to match individual base dimensions and powers
-
-        // for each base unit beyond PI and RADIAN...
-        for (i = 2; i < nextbaseunit; i++) {
-            // if the exponent is non-0...
-            var remaining = this.exponents[i]*(question?-1:1);
-            if (remaining) {
-                // format its name
-                if (cont) {
-                    // multiply if more than one
-                    string += "*";
+        // if we don't have a matching derived dimension or there is more than one non-0 dimension...
+        if (! cont || j > 1) {
+            // also match individual base dimensions and powers
+            if (cont) {
+                // "or" if more than one
+                string += " or ";
+            }
+            // for each base unit beyond PI and RADIAN...
+            cont = false;
+            for (i = 2; i < nextbaseunit; i++) {
+                // if the exponent is non-0...
+                var remaining = this.exponents[i]*(question?-1:1);
+                if (remaining) {
+                    // format its name
+                    if (cont) {
+                        // multiply if more than one
+                        string += "*";
+                    }
+                    string += bases[i].names[0] + (remaining!=1?"^"+remaining:"");
+                    cont = true;
                 }
-                string += bases[i].names[0] + (remaining!=1?"^"+remaining:"");
-                cont = true;
             }
         }
 
@@ -3575,11 +3583,11 @@ var tests =`
     -foot*2 ? foot | = -2 foot
     0+foot | [Length]
     0-foot | [Length]
-    cal per (gm deltaK) | [Specific_heat_m]
-    1/3*cal per (gm deltaK) | [Specific_heat_m]
-    1/(3 cal per (gm deltaK)) | [Specific_heat_m^-1]
-    m per sec per sec | [Acceleration]
-    1/(m per sec per sec) | [Acceleration^-1]
+    cal per (gm deltaK) | [Specific_heat_m or LENGTH^2*TIME^-2*TEMP^-1]
+    1/3*cal per (gm deltaK) | [Specific_heat_m or LENGTH^2*TIME^-2*TEMP^-1]
+    1/(3 cal per (gm deltaK)) | [Specific_heat_m^-1 or LENGTH^-2*TIME^2*TEMP]
+    m per sec per sec | [Acceleration or LENGTH*TIME^-2]
+    1/(m per sec per sec) | [Acceleration^-1 or LENGTH^-1*TIME^2]
 
     # functions
     3 3 | = 9
@@ -3614,7 +3622,7 @@ var tests =`
     speed_of_light ? meter/second | = 299792000 meter/second
     speed_of_light ? mph | = 670617000 mph
     2;3 | = 6, = 0.666667, = 1.5, = 0.166667
-    lb | [Mass], [Force]
+    lb | [Mass], [Force or MASS*LENGTH*TIME^-2]
     ft | [Length]
     21 inches * 0.25 acre ? gallons | = 142560 gallons
     gal^.33333333 | [Length]
@@ -3645,11 +3653,11 @@ var tests =`
     foo | uncanceled free unit foo
     boo=
     boo=ft lb
-    boo | [MASS*LENGTH], [Energy or Torque]
+    boo | [MASS*LENGTH], [Energy or Torque or MASS*LENGTH^2*TIME^-2]
     boo=
     boo | uncanceled free unit boo
     boo = ft lb : Torque
-    boo | [Energy or Torque]
+    boo | [Energy or Torque or MASS*LENGTH^2*TIME^-2]
     boo=
     boo | uncanceled free unit boo
     goo=
@@ -3668,7 +3676,7 @@ var tests =`
     abc = 2
     abc | = 1, = 2
     abc=2lb
-    TEST details abc | === unit details abc ===, abc=1 [], abc=2 [], abc=2lb [Mass], abc=2lb [Force]
+    TEST details abc | === unit details abc ===, abc=1 [], abc=2 [], abc=2lb [Mass], abc=2lb [Force or MASS*LENGTH*TIME^-2]
     abc | > abc, = 1, > abc, = 2
     abc=:Force
     abc | = 1, = 2
@@ -3712,7 +3720,7 @@ var tests =`
     # si  -- XXX seems weird these are passed up as mismatch string with "= "...
     lb? | = 0.453592 kilogramm,= 4.44822 newton
     1? | = 1
-    3 foot/(2 second) | [Speed]
+    3 foot/(2 second) | [Speed or LENGTH*TIME^-1]
     3 foot/(2 second) ? | = 0.4572 meter/second
     3 lbf * 3 foot ? | = 12.2024 joule, = 12.2024 newton meter
     joule*meter | [MASS*LENGTH^3*TIME^-2]
@@ -3739,9 +3747,9 @@ var tests =`
     kgm? | = 1 kilogramm
     1 kgm?1 | Dimensional Mismatch [Mass^-1]
     kgm? | = 1 kilogramm
-    kg | [Mass], [Force]
+    kg | [Mass], [Force or MASS*LENGTH*TIME^-2]
     kg? | = 1 kilogramm, = 9.80665 newton
-    kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1]
+    kg?1 | Dimensional Mismatch [Mass^-1], Dimensional Mismatch [Force^-1 or MASS^-1*LENGTH^-1*TIME^2]
     kg? | = 1 kilogramm, = 9.80665 newton
     pi*radian | unexpected exponents of pi and radian; use pi_as_number or pin to escape
     pi_as_number*radian | > pi_as_number * radian, = 3.14159
@@ -3749,15 +3757,15 @@ var tests =`
     10.4889 ft lb ? |>10.4889foot poundm?,=1.45014kilogramm*meter,>10.4889foot poundf?[Energy],=14.221joule,>10.4889foot poundf?[Torque],=14.221newton meter
 
     # interpretations
-    1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1]
+    1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
     1/2*feet * 2 meters ? | > (1 / 2) * foot * 2 meter ? [Area], = 0.3048 meter^2
     1/sqrt(23mH * 10uF)? |>1/(23milli~henry*10micro~farad)^0.5?[Frequency],=2085.14hertz,>1/(23milli~henry*10micro~farad)^0.5?[Angular_velocity],=2085.14radian/second
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
-    2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1]
+    2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
     --3 | > 0-(0-3), = 3
-    cal/(gm deltaK) | > calorie/(gramm deltaK), [Specific_heat_m]
+    cal/(gm deltaK) | > calorie/(gramm deltaK), [Specific_heat_m or LENGTH^2*TIME^-2*TEMP^-1]
     1/cal/(gm deltaK) |> (1 / calorie) / (gramm deltaK), [MASS^-2*LENGTH^-2*TIME^2*TEMP^-1]
-    1/(cal/(gm deltaK)) | > 1 / (calorie/(gramm deltaK)), [Specific_heat_m^-1]
+    1/(cal/(gm deltaK)) | > 1 / (calorie/(gramm deltaK)), [Specific_heat_m^-1 or LENGTH^-2*TIME^2*TEMP]
     (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
     foo=lb | > poundm, > poundf, defined
     foo=2;3 | > 2 * 3, > 2 / 3, > (2)^-1 * 3, > (2 * 3)^-1, defined
@@ -3778,8 +3786,8 @@ var tests =`
     Area:1 | incompatible units :1
     1:Area | incompatible units :Area
     1:m^2 | incompatible units :(meter)^2
-    Area?1 | Dimensional Mismatch [Fuel_efficiency or Area^-1]
-    1?Area | Dimensional Mismatch [Area or Fuel_efficiency^-1]
+    Area?1 | Dimensional Mismatch [Fuel_efficiency or Area^-1 or LENGTH^-2]
+    1?Area | Dimensional Mismatch [Area or Fuel_efficiency^-1 or LENGTH^2]
     abc:Area | specify value for abc
     Area:abc | incompatible units :abc
 
@@ -3825,7 +3833,7 @@ var tests =`
     3 cal per (gm deltaK) - (3 * cal)/(gm * deltaK) ? | = 0 joule/(kilogramm*deltaK)
 
     # unit help
-    TEST details lb | === unit details lb ===,poundm,lbm,lb*,pound*=453.592 gramm [Mass], poundf,lbf,lb*,pound*=1 poundm*gravity [Force]
+    TEST details lb | === unit details lb ===,poundm,lbm,lb*,pound*=453.592 gramm [Mass], poundf,lbf,lb*,pound*=1 poundm*gravity [Force or MASS*LENGTH*TIME^-2]
     TEST details ft | === unit details ft ===,foot,ft,feet=12 inch [Length]
     TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix,SI:kilo,k=1E+03*Byte*,byte*,B,char*=8 bit #computer storage [Storage]
     TEST byname lb | === units by name lb ===,lb,lbf,lbm
