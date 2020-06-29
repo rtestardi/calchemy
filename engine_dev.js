@@ -448,10 +448,12 @@ class Unit {
 
         // look for single dimension matches, possibly inverted
         var i;
-        var cont = false;
+        var j;
+        var cont;
         var string = (question?"Dimensional Mismatch ":"") + "[";
 
         // for uninverted and then inverted...
+        cont = false;
         for (var invert = 0; invert < 2; invert++) {
             // report ^-1 if the number of inversions is odd
             var xor = Boolean(question)!=Boolean(invert);
@@ -473,29 +475,35 @@ class Unit {
             }
         }
 
-        // if we found a single dimension match...
-        if (cont) {
-            // return it
-            string += "]";
-            strings.push("> " + Simplify(this.interpretation));
-            strings.push(string);
-            return strings;
+        // count the number of non-0 dimensions
+        j = 0;
+        for (i = 2; i < nextbaseunit; i++) {
+            if (this.exponents[i]) {
+                j += Math.abs(this.exponents[i]);
+            }
         }
 
-        // otherwise, we have to match individual base dimensions and powers
-
-        // for each base unit beyond PI and RADIAN...
-        for (i = 2; i < nextbaseunit; i++) {
-            // if the exponent is non-0...
-            var remaining = this.exponents[i]*(question?-1:1);
-            if (remaining) {
-                // format its name
-                if (cont) {
-                    // multiply if more than one
-                    string += "*";
+        // if we don't have a matching derived dimension or there is more than one non-0 dimension...
+        if (! cont || j > 1) {
+            // also match individual base dimensions and powers
+            if (cont) {
+                // "or" if more than one
+                string += " or ";
+            }
+            // for each base unit beyond PI and RADIAN...
+            cont = false;
+            for (i = 2; i < nextbaseunit; i++) {
+                // if the exponent is non-0...
+                var remaining = this.exponents[i]*(question?-1:1);
+                if (remaining) {
+                    // format its name
+                    if (cont) {
+                        // multiply if more than one
+                        string += "*";
+                    }
+                    string += bases[i].names[0] + (remaining!=1?"^"+remaining:"");
+                    cont = true;
                 }
-                string += bases[i].names[0] + (remaining!=1?"^"+remaining:"");
-                cont = true;
             }
         }
 
