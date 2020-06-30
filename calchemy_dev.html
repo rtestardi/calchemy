@@ -116,7 +116,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16e</p>
+v1.16f</p>
 </td>
 </tr></table>
 
@@ -1157,14 +1157,15 @@ var tests =`
     Mass | [Mass]
     abc=
     abc=1
-    abc = 2
+    abc += 2
     abc | = 1, = 2
-    abc=2lb
+    abc+=2lb
     TEST details abc | === unit details abc ===, abc=1 [], abc=2 [], abc=2lb [Mass], abc=2lb [Force or MASS*LENGTH*TIME^-2]
     abc | > abc, = 1, > abc, = 2
-    abc=:Force
+    abc-=2lb:Force
     abc | = 1, = 2
-    abc= :1
+    abc-=1
+    abc-=2
     abc | [Mass]
     abc=
     person; person; person | uncanceled free unit person
@@ -1362,7 +1363,6 @@ var tests =`
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
     1/sqrt(23 mi:li) | incompatible units :li
     1/sqrt(23 mi,li) | bad token ,
-    q=:** | bad unit filter
     foot+0 | addition of dissimilar units
     foot-0 | subtraction of dissimilar units
 `;
@@ -1717,13 +1717,13 @@ The following examples illustrate this:
 <h1 id='definition'>Definition Syntax</h1>
 <p>Basic Calchemy definitions are of the form:
 <p><b>name = expression</b>
-<p>Where <b>name</b> is the name of the unit whose definition is to be added and <b>expression</b> is the arithmetic expression you want evaluated.
-<p>To limit definitions using a dimensional filter, use the form:
-<p><b>name = expression : filter</b>
+<p>Where <b>name</b> is the name of the unit you want defined and <b>expression</b> is the arithmetic expression you want the unit defined to.
 <p>To undefine all definitions of a unit name, use the form:
 <p><b>name =</b>
-<p>To limit undefinitions using a dimensional filter, use the form:
-<p><b>name = : filter</b>
+<p>To add an additional (overloaded) definition to a unit, use the form:
+<p><b>name += expression</b>
+<p>To remove a specific (overloaded) definition from a unit, use the form:
+<p><b>name -= expression</b>
 <p>Note when using unit definitions:
 <ul>
 <li>units may have multiple definitions,</li>

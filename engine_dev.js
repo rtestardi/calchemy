@@ -160,6 +160,12 @@ class Unit {
         return true;
     }
 
+    // test if dimensions are equal
+    Equal(unit)
+    {
+        return this.Compatible(unit, false) && this.coefficient == unit.coefficient;
+    }
+
     // perform an operation on a unit and return the resulting result
     Operate(op, rhs, derivedok)
     {
@@ -1381,7 +1387,7 @@ function ParseTokens(tokens, line)
                 remainder = line.replace(/^PREFIX/, "").trim();
                 i = 1;
             } else {
-                remainder = line.replace(/^ *[*]/, "").trim();
+                remainder = line.replace(/^ *[*]/, "").replace(/[+][=]/, '=').trim();
                 i = 0;
             }
             var prefixable = tokens[i][0] == '*';
@@ -1389,9 +1395,24 @@ function ParseTokens(tokens, line)
             var pluralizables = [];
             var categories = open_categories.slice(0);
 
+            var add = false;
+            var remove = false;
+            var stop = k;
+            if (! loading) {
+                // if we are adding a definition or undefinition...
+                if (k > 0 && tokens[k-1] == '+') {
+                    add = true;
+                    stop--;
+                // otherwise, if we are removing a definition or undefinition...
+                } else if (k > 0 && tokens[k-1] == '-') {
+                    remove = true;
+                    stop--;
+                }
+            }
+
             // gather categories and names...
             for (; i < tokens.length; i++) {
-                if (tokens[i] == '=') {
+                if (i == stop) {
                     // end of names
                     break;
                 } else if (tokens[i] == ':') {
@@ -1427,7 +1448,7 @@ function ParseTokens(tokens, line)
             if (! i) {
                 throw "missing name";
             }
-            var subtokens = tokens.slice(i+1);
+            var subtokens = tokens.slice(k+1);
 
             // form the definition, including open and explicit categories
             var definition = prefixable?"*":"";
@@ -1440,9 +1461,37 @@ function ParseTokens(tokens, line)
             }
             definition += remainder.replace(/[^:]*:/, "").trim();  // N.B. excludes prefixable and categories
 
+            if (! loading && ! add && ! remove) {
+                // for all units...
+                // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
+                for (i = units.length-1; i >= 0; i--) {
+                    // if the unit is not a base/derived/ambiguous/prefix unit...
+                    if (units[i].type == null) {
+                        // for all unit names...
+                        for (j = units[i].names.length-1; j >= 0; j--) {
+                            // for all names being undefined...
+                            for (k = 0; k < names.length; k++) {
+                                // if the unit name matches...
+                                if (units[i].names[j] == names[k]) {
+                                    // delete the unit name!
+                                    units[i].names.splice(j, 1);
+                                    units[i].pluralizables.splice(j, 1);
+                                }
+                            }
+                            // if we deleted all names from a unit...
+                            if (units[i].names.length == 0) {
+                                // delete the unit itself!
+                                units.splice(i, 1);
+                            }
+                        }
+                    }
+                }
+                undefines = true;
+            }
+
             // if we have an expression...
-            if (k+1 < tokens.length && tokens[k+1] != ':') {
-                // define unit names
+            if (k+1 < tokens.length) {
+                undefines = false;
                 // if we are loading the database...
                 if (loading) {
                     deriving = (type == "DERIVED");
@@ -1476,61 +1525,50 @@ function ParseTokens(tokens, line)
                 }
 
                 // for all results...
-                for (j = 0; j < results.length; j++) {
-                    // define a new unit!
-                    unit = new Unit(names, pluralizables, results[j].coefficient, results[j].exponents, type, prefixable, categories, definition);
-                    // if we are not loading the database...
-                    if (! loading) {
-                        if (! mismatches.includes("> " + Simplify(results[j].interpretation))) {
-                            // record the interpretation of the definition
-                            mismatches.push("> " + Simplify(results[j].interpretation));
-                        }
-                    }
-                    Object.freeze(unit);
-                    units.push(unit);
-                    defines = true;
-                }
-                if (defines) {
-                    results = [];
-                }
-            } else {
-                // undefine unit names
-                var filter = null;
-                // if a filtering dimension is specified...
-                if (k+1 < tokens.length && tokens[k+1] == ':') {
-                    // evaluate the dimension
-                    var dimtokens = tokens.slice(k+2);
-                    try {
-                        filter = EvaluateTokens(dimtokens);
-                    } catch (error) {
-                        throw "bad unit filter";
-                    }
-                }
-
-                undefines = true;
-                // for all units...
-                // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
-                for (i = units.length-1; i >= 0; i--) {
-                    // if the unit is compatible with the filter and is not a base/derived/ambiguous/prefix unit...
-                    if (units[i].Compatible(filter, false) && units[i].type == null) {
-                        // for all unit names...
-                        for (j = units[i].names.length-1; j >= 0; j--) {
-                            // for all names being undefined...
-                            for (k = 0; k < names.length; k++) {
-                                // if the unit name matches...
-                                if (units[i].names[j] == names[k]) {
-                                    // delete the unit name!
-                                    units[i].names.splice(j, 1);
-                                    units[i].pluralizables.splice(j, 1);
+                for (var r = 0; r < results.length; r++) {
+                    if (remove) {
+                        // undefine an existing unit
+                        // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
+                        for (i = units.length-1; i >= 0; i--) {
+                            // if the unit is not a base/derived/ambiguous/prefix unit...
+                            if (units[i].type == null) {
+                                // for all unit names...
+                                for (j = units[i].names.length-1; j >= 0; j--) {
+                                    // for all names being undefined...
+                                    for (k = 0; k < names.length; k++) {
+                                        // if the unit name matches and the definition matches...
+                                        if (units[i].names[j] == names[k] && units[i].Equal(results[r])) {
+                                            // delete the unit name!
+                                            units[i].names.splice(j, 1);
+                                            units[i].pluralizables.splice(j, 1);
+                                        }
+                                    }
+                                    // if we deleted all names from a unit...
+                                    if (units[i].names.length == 0) {
+                                        // delete the unit itself!
+                                        units.splice(i, 1);
+                                    }
                                 }
                             }
-                            // if we deleted all names from a unit...
-                            if (units[i].names.length == 0) {
-                                // delete the unit itself!
-                                units.splice(i, 1);
+                        }
+                        undefines = true;
+                    } else {
+                        // define a new unit!
+                        unit = new Unit(names, pluralizables, results[r].coefficient, results[r].exponents, type, prefixable, categories, definition);
+                        // if we are not loading the database...
+                        if (! loading) {
+                            if (! mismatches.includes("> " + Simplify(results[r].interpretation))) {
+                                // record the interpretation of the definition
+                                mismatches.push("> " + Simplify(results[r].interpretation));
                             }
                         }
+                        Object.freeze(unit);
+                        units.push(unit);
+                        defines = true;
                     }
+                }
+                if (defines || undefines) {
+                    results = [];
                 }
             }
 
