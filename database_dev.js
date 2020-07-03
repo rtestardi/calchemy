@@ -584,10 +584,10 @@ Energy:btu_mean=1055.87 joule
 Energy:btu_thermochem=1054.35 joule
 Energy:duty*=1.35582 joule
 
-hp_metric=75 kilogramf meter/second
-hp_boiler=9809.50 watt #bigger that hp
-hp_electric=746.0 watt
-hp_water=746.043 watt
+horsepower_metric,hp_metric,PS=75 kilogramf meter/second
+horsepower_boiler,hp_boiler=9809.50 watt #bigger that hp
+horsepower_electric,hp_electric=746.0 watt
+horsepower_water,hp_water=746.043 watt
 manpower=(1/10)horsepower
 
 admiralty_knot*=6080 foot/hour
