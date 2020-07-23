@@ -425,7 +425,7 @@ mpg=1 mile/gallon
 rvalue,Rvalue,rval,Rval=1(sqft deltaF)/(Btu/hour) #thermal insulation
 uvalue,Uvalue,uval,Uval=1(Btu/hour)/(sqft deltaF) #inverse of Rvalue
 *bit_per_second,baud,bps=1 bit/second #DataComm
-*byte_per_second,Bps=1 byte/second #Storage
+*byte_per_second,Bps=1 Byte/second #Storage
 
 ___PUSH Physical_constant
 grav_const,G=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
