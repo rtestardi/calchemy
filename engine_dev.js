@@ -160,10 +160,23 @@ class Unit {
         return true;
     }
 
-    // test if dimensions are equal
+    // test if units are equal (so we can undefine specifically)
     Equal(unit)
     {
         return this.Compatible(unit, false) && this.coefficient == unit.coefficient;
+    }
+
+    // test if unit is ambiguous with others (so we don't define one ambiguously unintentionally)
+    Ambiguous()
+    {
+        for (var i = 0; i < units.length; i++) {
+            if (units[i].type == "DERIVED") {
+                if (this.Compatible(units[i], false)) {
+                    return units[i];
+                }
+            }
+        }
+        return null;
     }
 
     // perform an operation on a unit and return the resulting result
@@ -432,19 +445,6 @@ class Unit {
         }
 
         return unit;
-    }
-
-    // look for an ambiguous/compatible unit (so we don't define one ambiguously unintentionally)
-    Ambiguous()
-    {
-        for (var i = 0; i < units.length; i++) {
-            if (units[i].type == "DERIVED") {
-                if (this.Compatible(units[i], false)) {
-                    return units[i];
-                }
-            }
-        }
-        return null;
     }
 
     // format a unit as a dimension string
