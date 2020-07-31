@@ -116,27 +116,13 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16k</p>
+v1.16m</p>
 </td>
 </tr></table>
 
 <script>
 'use strict';
 var custom = null;
-// Coverage test:
-//   reload, <Delete All>, <Test>
-//   1, <Clear>, 11, <Enter>, 2, <Enter>
-//   <Find Units>, Water, abc, <Unit Details>, visc_water, <Enter>
-//   f, <Find Units>, furlong, <Unit Details>, <Enter>
-//   <Delete> -- all but numbers
-//   <Up-arrow>, <Up-arrow>, <Up-arrow>, <Up-arrow>, <Enter>
-//   <Down-arrow>, <Enter>
-//   <Copy>, <Paste>
-//   <Examples>, 1 cup, <Enter>
-//   <Help>, 3 meter ? inch, <Enter>, <Delete>, <Delete>
-//   1&2, <Enter>, Recall 1&2, <Enter>
-// 97.7%
-
 // XXX -- for IE, replace template strings with concatenation, replace .includes with .indexOf != -1, class likely has to be removed, too
 
 // database format:
@@ -147,8 +133,7 @@ var custom = null;
 //   DERIVED <names> = <expression>  -- define coefficient and exponents for a derived dimension name (cannot be undefined)
 //   AMBIGUOUS <names> = <expression>  -- like derived, but called out for extra testing (cannot be undefined)
 //   PREFIX <names> = <expression>  -- define coefficient for a prefix name (cannot be undefined)
-//   [*]<names> = <expression> [? <dimension>]  -- define a unit (* = unit is prefixable)
-//   <names> = [? <expression>]  -- undefine a unit
+//   [*]<names> [+-]= <expression>  -- define or undefine a unit (* = unit is prefixable)
 //
 //   <names> format:
 //     [<category|dimension>[, ...]:]<name>[*][, ...]  -- unit names (* = name is pluralizable)
