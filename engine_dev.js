@@ -414,6 +414,9 @@ class Unit {
                 }
                 unit.coefficient = this.coefficient + rhs.coefficient;
                 unit.exponents = rhs.exponents;
+                if (op == '>') {
+                    unit.type = rhs.type;  // preserve for unary
+                }
                 break;
 
             case '<':  // unary
@@ -424,6 +427,9 @@ class Unit {
                 }
                 unit.coefficient = this.coefficient - rhs.coefficient;
                 unit.exponents = rhs.exponents;
+                if (op == '<') {
+                    unit.type = rhs.type;  // preserve for unary
+                }
                 break;
 
             case ':':
