@@ -39,6 +39,8 @@ var testing = false;  // while testing, don't prompt for equation values
 var storagebase;  // may be undefined
 var database_tests = "";
 
+var invert_warn = false;  // auto-invert left-hand-side
+
 var offset_warn = false;  // degC, absC, degF, absF
 var offset_warned = false;
 var cycle_warn = false;  // category Angle
@@ -222,6 +224,12 @@ class Unit {
             }
         }
 
+        var invert = false;
+        if (op == '?' && ! this.Compatible(rhs, false) && this.Compatible(rhs, true)) {
+            // auto-invert left-hand-side
+            invert = true;
+        }
+
         // if we are not loading the database...
         if (! loading) {
             var display = null;
@@ -289,6 +297,10 @@ class Unit {
                 unit.interpretation = this.interpretation + display + rhs.interpretation;
             } else {
                 if (op == '?') {
+                    if (invert) {
+                        // auto-invert left-hand-side
+                        this.interpretation = Parenthesize(this.interpretation) + " ^ -1";
+                    }
                     // no need for deferred parenthesis at the outermost operation
                     if (offset) {
                         unit.interpretation = "(" + this.interpretation + " ? " + rhs.interpretation.replace(/(abs|deg)/, "delta") + ") - " + offset;
@@ -382,6 +394,13 @@ class Unit {
             case '/':
             case '&':  // solve by dimensional analysis: l/r
             case '?':
+                if (invert) {
+                    // auto-invert left-hand-side
+                    this.coefficient = 1/this.coefficient;
+                    for (i = 0; i < maxbaseunits; i++) {
+                        this.exponents[i] = -this.exponents[i];
+                    }
+                }
                 // divide coefficients; subtract exponents
                 // if this is an offset temperature being computed, instantly convert from absolute temperature back to offset temperature
                 unit.coefficient = (this.coefficient / rhs.coefficient) - offset;
@@ -1661,6 +1680,9 @@ function Quality(interpretation)
             return 0;  // low
         }
     }
+    if (interpretation.match(/ [^] [-]1 [?]/)) {
+        return 0;  // low
+    }
     if (interpretation.match(/[^][-]1/)) {
         return 1;  // medium
     }
@@ -1701,6 +1723,7 @@ function RunLine(line)
     errors = [];
     defines = false;
     undefines = false;
+    invert_warn = false;
     var tokens = TokenizeLine(line);
 
     // identify SI requests
@@ -1761,6 +1784,10 @@ function RunLine(line)
             if (best >= minimum) {
                 for (k = 0; k < interpretations[j].length; k++) {
                     if (Quality(interpretations[j][k]) >= best) {
+                        if (interpretations[j][k].match(/ [^] [-]1 [?]/)) {
+                            // we auto-inverted left-hand-side
+                            invert_warn = true;
+                        }
                         output.push("> " + interpretations[j][k]);
                     }
                 }
