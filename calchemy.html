@@ -116,7 +116,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16r</p>
+v1.16s</p>
 </td>
 </tr></table>
 
@@ -407,7 +407,7 @@ grain*=(1/7000)poundm
 pennyweight,dwt=24 grain #troy
 hundredweight,cwt=100 poundm #avoirdupois
 carat*,ct=200 milligramm #mass of gems
-*Physical_constant:amu,dalton=1.66053906660E-24 gramm #unified atomic mass unit
+*amu,dalton=1.66053906660E-24 gramm #unified atomic mass unit
 tonm,ton*=2000 poundm
 tonm_long,ton_long=2240 poundm #imperial (U.K.)
 *tonnem,tonm_metric,tonne*,ton_metric=1E+06 gramm #metric ton
@@ -735,10 +735,9 @@ manpower=(1/10)horsepower
 
 admiralty_knot*=6080 foot/hour
 kine*=0.01 meter/second
-
 celo*=0.3048 meter/second^2
-
 pli*=17.8580 kilogramm/meter
+
 
 # PHYSPROP.UNI
 
@@ -790,64 +789,8 @@ d_glass=2.6 gramm/cc
 d_sand=100 poundm/foot^3
 d_granite=175 poundm/foot^3
 d_diamond=3.3 gramm/cc
+d_wood=0.55 gramm/cc #solid (pine)
 d_mercury=13.5951 gramm/cc
-
-___PUSH Specific_heat_m
-shm_aluminum=0.215 calorie/(gramm deltaC)
-shm_copper=0.092 calorie/(gramm deltaC)
-shm_gold=0.03 calorie/(gramm deltaC)
-shm_iron=0.108 calorie/(gramm deltaC)
-shm_lead=0.03 calorie/(gramm deltaC)
-shm_mercury=0.140 joule/(gramm deltaC)
-shm_silver=0.235 joule/(gramm deltaC)
-shm_brick=0.22 Btu/(poundm deltaF)
-shm_concrete=0.156 Btu/(poundm deltaF)
-shm_glass=0.199 Btu/(poundm deltaF)
-shm_sand=0.195 Btu/(poundm deltaF)
-shm_wood=0.65 Btu/(poundm deltaF)
-shm_gasoline=0.53 Btu/(poundm deltaF)
-shm_kerosene=0.48 Btu/(poundm deltaF)
-___POP Specific_heat_m
-
-___PUSH Heat_vaporization_m
-hvm_gasoline,hv_gasoline=116 Btu/poundm
-hvm_kerosene,hv_kerosene=86 Btu/poundm
-hvm_ethanol,hv_ethanol=367 Btu/poundm
-hvm_methanol,hv_methanol=482 Btu/poundm
-___POP Heat_vaporization_m
-
-___PUSH Heat_fusion_m
-hfm_aluminum=171 Btu/poundm
-hfm_copper=88.2 Btu/poundm
-hfm_gold=28.7 Btu/poundm
-hfm_iron=117 Btu/poundm
-hfm_lead=10 Btu/poundm
-hfm_mercury=5.0 Btu/poundm
-___POP Heat_fusion_m
-
-___PUSH Thermal_conductivity
-tc_aluminum=238 watt/(meter deltaC)
-tc_copper=397 watt/(meter deltaC)
-tc_gold=318 watt/(meter deltaC)
-tc_iron=79.5 watt/(meter deltaC)
-tc_lead=34.7 watt/(meter deltaC)
-tc_mercury=8.34 watt/(meter deltaC)
-tc_silver=428 watt/(meter deltaC)
-tc_brick=0.58 watt/(meter deltaC)
-tc_concrete=1 watt/(meter deltaC) #stone, sand
-tc_glass=0.72 watt/(meter deltaC) #plate
-tc_wood=0.11 watt/(meter deltaC) #across grain (pine)
-tc_glasswool=0.042 watt/(meter deltaC)
-tc_styrofoam=0.036 watt/(meter deltaC)
-tc_earth=1 watt/ (meter deltaC) #40% water
-tc_sand=0.33 watt/(meter deltaC) #dry
-tc_gravel=0.38 watt/(meter deltaC) #dry
-tc_diamond=554 watt/(meter deltaC)
-___POP Thermal_conductivity
-
-sun_power=3.92E+26 watt #total
-solar_const=1340 watt/meter^2 #at Earths surface
-
 d_gasoline=0.67 gramm/cc #liquid
 d_kerosene=0.819 gramm/cc #liquid
 d_propane_gas=0.00183 gramm/cc #gas
@@ -856,26 +799,130 @@ d_oil=0.875 gramm/cc #liquid
 d_coal=0.7 gramm/cc #bulk
 d_methanol=0.810 gramm/cc #liquid
 d_ethanol=0.791 gramm/cc #liquid
-d_wood=0.55 gramm/cc #solid (pine)
 
-Heat_combustion_m:hcm_gasoline=20750 Btu/poundm
-Heat_combustion_v:hcv_gasoline=d_gasoline*hcm_gasoline
-Heat_combustion_m:hcm_kerosene=19810 Btu/poundm
-Heat_combustion_v:hcv_kerosene=d_kerosene*hcm_kerosene
-Heat_combustion_m:hcm_propane_liq=21249 Btu/poundm
-Heat_combustion_v:hcv_propane_liq=d_propane_liq*hcm_propane_liq
-Heat_combustion_v:hcv_propane_gas=d_propane_gas*hcm_propane_liq
-Heat_combustion_v:hcv_natural_gas=1000 Btu/cubic foot
-Heat_combustion_m:hcm_oil=18500 Btu/poundm #crude oil
-Heat_combustion_v:hcv_oil=d_oil*hcm_oil #crude oil
-Heat_combustion_m:hcm_coal=13000 Btu/poundm
-Heat_combustion_v:hcv_coal=d_coal*hcm_coal
-Heat_combustion_m:hcm_methanol=9600 Btu/poundm
-Heat_combustion_v:hcv_methanol=d_methanol*hcm_methanol
-Heat_combustion_m:hcm_ethanol=12800 Btu/poundm
-Heat_combustion_v:hcv_ethanol=d_ethanol*hcm_ethanol
-Heat_combustion_m:hcm_wood=8750 Btu/poundm #most kinds (dry)
-Heat_combustion_v:hcv_wood=d_wood*hcm_wood #pine
+___PUSH Specific_heat_m
+shm_aluminum,sh_aluminum=0.215 calorie/(gramm deltaC)
+shm_copper,sh_copper=0.092 calorie/(gramm deltaC)
+shm_gold,sh_gold=0.03 calorie/(gramm deltaC)
+shm_iron,sh_iron=0.108 calorie/(gramm deltaC)
+shm_lead,sh_lead=0.03 calorie/(gramm deltaC)
+shm_silver,sh_silver=0.235 joule/(gramm deltaC)
+shm_brick,sh_brick=0.22 Btu/(poundm deltaF)
+shm_concrete,sh_concrete=0.156 Btu/(poundm deltaF)
+shm_clay,sh_clay=0.92 joule/(gramm deltaC)
+shm_glass,sh_glass=0.199 Btu/(poundm deltaF)
+shm_sand,sh_sand=0.195 Btu/(poundm deltaF)
+shm_granite,sh_granite=0.79 joule/(gramm deltaC)
+shm_diamond,sh_diamond=0.63 joule/(gramm deltaC)
+shm_wood,sh_wood=0.65 Btu/(poundm deltaF)
+shm_mercury,sh_mercury=0.140 joule/(gramm deltaC)
+shm_gasoline,sh_gasoline=0.53 Btu/(poundm deltaF)
+shm_kerosene,sh_kerosene=0.48 Btu/(poundm deltaF)
+___POP Specific_heat_m
+
+___PUSH Specific_heat_v
+shv_aluminum,sh_aluminum=shm_aluminum*d_aluminum
+shv_copper,sh_copper=shm_copper*d_copper
+shv_gold,sh_gold=shm_gold*d_gold
+shv_iron,sh_iron=shm_iron*d_iron
+shv_lead,sh_lead=shm_lead*d_lead
+shv_silver,sh_silver=shm_silver*d_silver
+shv_brick,sh_brick=shm_brick*d_brick
+shv_concrete,sh_concrete=shm_concrete*d_concrete
+shv_clay,sh_clay=shm_clay*d_clay
+shv_glass,sh_glass=shm_glass*d_glass
+shv_sand,sh_sand=shm_sand*d_sand
+shv_granite,sh_granite=shm_granite*d_granite
+shv_diamond,sh_diamond=shm_diamond*d_diamond
+shv_wood,sh_wood=shm_wood*d_wood
+shv_mercury,sh_mercury=shm_mercury*d_mercury
+shv_gasoline,sh_gasoline=shm_gasoline*d_gasoline
+shv_kerosene,sh_kerosene=shm_kerosene*d_kerosene
+___POP Specific_heat_v
+
+___PUSH Heat_vaporization_m
+hvm_gasoline,hv_gasoline=116 Btu/poundm
+hvm_kerosene,hv_kerosene=86 Btu/poundm
+hvm_ethanol,hv_ethanol=367 Btu/poundm
+hvm_methanol,hv_methanol=482 Btu/poundm
+___POP Heat_vaporization_m
+
+___PUSH Heat_vaporization_v
+hvv_gasoline,hv_gasoline=hvm_gasoline*d_gasoline
+hvv_kerosene,hv_kerosene=hvm_kerosene*d_kerosene
+hvv_ethanol,hv_ethanol=hvm_ethanol*d_ethanol
+hvv_methanol,hv_methanol=hvm_methanol*d_methanol
+___POP Heat_vaporization_v
+
+___PUSH Heat_fusion_m
+hfm_aluminum,hf_aluminum=171 Btu/poundm
+hfm_copper,hf_copper=88.2 Btu/poundm
+hfm_gold,hf_gold=28.7 Btu/poundm
+hfm_iron,hf_iron=117 Btu/poundm
+hfm_lead,hf_lead=10 Btu/poundm
+hfm_silver,hf_silver=105 joule/gramm
+hfm_diamond,hf_diamond=5300 joule/gramm
+hfm_mercury,hf_mercury,=5.0 Btu/poundm
+___POP Heat_fusion_m
+
+___PUSH Heat_fusion_v
+hfv_aluminum,hf_aluminum=hfm_aluminum*d_aluminum
+hfv_copper,hf_copper=hfm_copper*d_copper
+hfv_gold,hf_gold=hfm_gold*d_gold
+hfv_iron,hf_iron=hfm_iron*d_iron
+hfv_lead,hf_lead=hfm_lead*d_lead
+hfv_silver,hf_silver=hfm_silver*d_silver
+hfv_diamond,hf_diamond=hfm_diamond*d_diamond
+hfv_mercury,hf_mercury=hfm_mercury*d_mercury
+___POP Heat_fusion_v
+
+___PUSH Thermal_conductivity
+tc_aluminum=238 watt/(meter deltaC)
+tc_copper=397 watt/(meter deltaC)
+tc_gold=318 watt/(meter deltaC)
+tc_iron=79.5 watt/(meter deltaC)
+tc_lead=34.7 watt/(meter deltaC)
+tc_silver=428 watt/(meter deltaC)
+tc_brick=0.58 watt/(meter deltaC)
+tc_concrete=1 watt/(meter deltaC) #stone, sand
+tc_glass=0.72 watt/(meter deltaC) #plate
+tc_wood=0.11 watt/(meter deltaC) #across grain (pine)
+tc_sand=0.33 watt/(meter deltaC) #dry
+tc_gravel=0.38 watt/(meter deltaC) #dry
+tc_diamond=554 watt/(meter deltaC)
+tc_mercury=8.34 watt/(meter deltaC)
+tc_glasswool=0.042 watt/(meter deltaC)
+tc_styrofoam=0.036 watt/(meter deltaC)
+tc_earth=1 watt/(meter deltaC) #40% water
+___POP Thermal_conductivity
+
+sun_power=3.92E+26 watt #total
+solar_const=1340 watt/meter^2 #at Earths surface
+
+___PUSH Heat_combustion_m
+hcm_gasoline,hc_gasoline=20750 Btu/poundm
+hcm_kerosene,hc_kerosene=19810 Btu/poundm
+hcm_propane_liq,hc_propane_liq=21249 Btu/poundm
+hcm_oil,hc_oil=18500 Btu/poundm #crude oil
+hcm_coal,hc_coal=13000 Btu/poundm
+hcm_methanol,hc_methanol=9600 Btu/poundm
+hcm_ethanol,hc_ethanol=12800 Btu/poundm
+hcm_wood,hc_wood=8750 Btu/poundm #most kinds (dry)
+___POP Heat_combustion_m
+
+___PUSH Heat_combustion_v
+hcv_gasoline,hc_gasoline=d_gasoline*hcm_gasoline
+hcv_kerosene,hc_kerosene=d_kerosene*hcm_kerosene
+hcv_propane_liq,hc_propane_liq=d_propane_liq*hcm_propane_liq
+hcv_propane_gas,hc_propane_gas=d_propane_gas*hcm_propane_liq
+hcv_oil,hc_oil=d_oil*hcm_oil #crude oil
+hcv_coal,hc_coal=d_coal*hcm_coal
+hcv_methanol,hc_methanol=d_methanol*hcm_methanol
+hcv_ethanol,hc_ethanol=d_ethanol*hcm_ethanol
+hcv_wood,hc_wood=d_wood*hcm_wood #pine
+hcv_natural_gas=1000 Btu/cubic foot
+___POP Heat_combustion_v
+
 
 # CAPACITY OF BATTERIES
 ___PUSH Batteries
@@ -903,6 +950,7 @@ ___POP Batteries
 
 ___POP Physical_property
 ___VERIFY
+
 
 TEST 1|= 1
 TEST 1|= 1
