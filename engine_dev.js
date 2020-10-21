@@ -9,7 +9,7 @@ const value_regexp_ch =       /[0-9.]/;
 const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)][^^]/g;
+const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)][^^ ]/g;
 const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
@@ -17,7 +17,7 @@ const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const xunit_regexp_head =   /^[:_A-Za-z$%][_A-Za-z0-9$%:]*/;
 const xunit_regexp_tail =    /[:_A-Za-z$%][_A-Za-z0-9$%:]*$/;
 const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^]/g;
+const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^ ]/g;
 const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
 const opens = "([{";
 const closes = ")]}";
@@ -296,23 +296,25 @@ class Unit {
                 assert(display != null);
                 unit.interpretation = this.interpretation + display + rhs.interpretation;
             } else {
+                var interpretation;
                 if (op == '?') {
                     if (invert) {
                         // auto-invert left-hand-side
-                        this.interpretation = Parenthesize(this.interpretation) + " ^ -1";
+                        interpretation = Parenthesize(this.interpretation) + " ^ -1";
+                    } else {
+                        interpretation = this.interpretation;
                     }
                     // no need for deferred parenthesis at the outermost operation
                     if (offset) {
-                        unit.interpretation = "(" + this.interpretation + " ? " + rhs.interpretation.replace(/(abs|deg)/, "delta") + ") - " + offset;
+                        unit.interpretation = "(" + interpretation + " ? " + rhs.interpretation.replace(/(abs|deg)/, "delta") + ") - " + offset;
                     } else {
-                        unit.interpretation = this.interpretation + " ? " + rhs.interpretation;
+                        unit.interpretation = interpretation + " ? " + rhs.interpretation;
                     }
                     dividing = true;
                 } else if (op == ':') {
                     // dimensional filter
                     unit.interpretation = this.interpretation;
                 } else {
-                    var interpretation;
                     if (offset) {
                         interpretation = "(" + this.interpretation + " + " + offset + ")";
                     } else {
@@ -394,18 +396,19 @@ class Unit {
             case '/':
             case '&':  // solve by dimensional analysis: l/r
             case '?':
-                if (invert) {
-                    // auto-invert left-hand-side
-                    this.coefficient = 1/this.coefficient;
-                    for (i = 0; i < maxbaseunits; i++) {
-                        this.exponents[i] = -this.exponents[i];
-                    }
-                }
                 // divide coefficients; subtract exponents
                 // if this is an offset temperature being computed, instantly convert from absolute temperature back to offset temperature
-                unit.coefficient = (this.coefficient / rhs.coefficient) - offset;
+                if (invert) {
+                    unit.coefficient = (1 / this.coefficient / rhs.coefficient) - offset;
+                } else {
+                    unit.coefficient = (this.coefficient / rhs.coefficient) - offset;
+                }
                 for (i = 0; i < maxbaseunits; i++) {
-                    unit.exponents[i] = this.exponents[i] - rhs.exponents[i];
+                    if (invert) {
+                        unit.exponents[i] = - this.exponents[i] - rhs.exponents[i];
+                    } else {
+                        unit.exponents[i] = this.exponents[i] - rhs.exponents[i];
+                    }
                 }
                 break;
 
@@ -1672,16 +1675,16 @@ function LoadDatabase(database)
     }
 }
 
-// low quality results contain mix of angles and numbers; high quality results do not contain solve by dimensional analysis ^-1
+// low quality results contain mix of angles and numbers or auto-inversion; high quality results do not contain solve by dimensional analysis ^-1
 function Quality(interpretation)
 {
-    if (interpretation.match(/_as_number/) || interpretation.match(/_as_frequency/)) {
-        if (interpretation.match(/_as_angle/) || interpretation.match(/_as_angular_velocity/)) {
-            return 0;  // low
+    if (interpretation.match(/_as_number/) || interpretation.match(/(_as_f|[[]F)requency/)) {
+        if (interpretation.match(/_as_angle/) || interpretation.match(/(_as_a|[[]A)ngular_velocity/)) {
+            return 0.0;  // low
         }
     }
     if (interpretation.match(/ [^] [-]1 [?]/)) {
-        return 0;  // low
+        return 0.1;  // low
     }
     if (interpretation.match(/[^][-]1/)) {
         return 1;  // medium
@@ -1764,7 +1767,7 @@ function RunLine(line)
         var minimum = 0;
         for (j = 0; j < answers.length; j++) {
             for (k = 0; k < interpretations[j].length; k++) {
-                if (Quality(interpretations[j][k]) > 0) {
+                if (Quality(interpretations[j][k]) >= 1) {
                     // we won't print low quality results at all if there are any non-low quality results
                     minimum = 1;
                 }
@@ -1777,13 +1780,13 @@ function RunLine(line)
             var current;
             for (k = 0; k < interpretations[j].length; k++) {
                 if ((current = Quality(interpretations[j][k])) > best) {
-                    // we won't print medium quality interpretations if there are high-quality interpretations
+                    // we only print the best quality interpretations for a given result
                     best = current;
                 }
             }
             if (best >= minimum) {
                 for (k = 0; k < interpretations[j].length; k++) {
-                    if (Quality(interpretations[j][k]) >= best) {
+                    if (Quality(interpretations[j][k]) == best) {
                         if (interpretations[j][k].match(/ [^] [-]1 [?]/)) {
                             // we auto-inverted left-hand-side
                             invert_warn = true;
