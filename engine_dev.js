@@ -1764,12 +1764,13 @@ function RunLine(line)
             }
         }
 
+        var current;
         var minimum = 0;
         for (j = 0; j < answers.length; j++) {
             for (k = 0; k < interpretations[j].length; k++) {
-                if (Quality(interpretations[j][k]) >= 1) {
+                if ((current = Quality(interpretations[j][k])) > minimum) {
                     // we won't print low quality results at all if there are any non-low quality results
-                    minimum = 1;
+                    minimum = Math.min(current, 1);
                 }
             }
         }
@@ -1777,7 +1778,6 @@ function RunLine(line)
         // generate merged answers and interpretations
         for (j = 0; j < answers.length; j++) {
             var best = 0;
-            var current;
             for (k = 0; k < interpretations[j].length; k++) {
                 if ((current = Quality(interpretations[j][k])) > best) {
                     // we only print the best quality interpretations for a given result

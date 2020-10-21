@@ -116,7 +116,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16t</p>
+v1.16u</p>
 </td>
 </tr></table>
 
@@ -1238,6 +1238,8 @@ var tests =`
     # auto-inversion
     3 sec ? Hz | > (3 second) ^ -1 ? hertz, = 0.333333 Hz, Caution: Calculation auto-inverted left-hand-side.
     3 mL/50 meter ? mpg | > (3 milli~liter / (50 meter)) ^ -1 ? mpg, = 39.2024 mpg, Caution: Calculation auto-inverted left-hand-side.
+    rpm ? minute/revolution | > (rpm_as_angular_velocity) ^ -1 ? minute / revolution_as_angle, > (rpm_as_frequency) ^ -1 ? minute / revolution_as_number, = 1 minute/revolution,`+
+    `Caution: Calculation auto-inverted left-hand-side.
     rpm?|> rpm_as_angular_velocity ? [Angular_velocity], = 0.10472 radian/second, > rpm_as_frequency ? [Frequency], = 0.0166667 hertz
 
     # interpretations
