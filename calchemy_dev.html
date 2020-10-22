@@ -25,6 +25,7 @@ table,tr,td { margin: 0px; padding: 0px; }
 .i4 { filter: grayscale(75%) opacity(75%); }
 hr { height: 2px; }
 body,html { margin: 0px; }
+#columns { column-width: 300px; column-count: 8; }
 </style>
 </head>
 
@@ -116,7 +117,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.16u</p>
+v1.16v</p>
 </td>
 </tr></table>
 
@@ -652,10 +653,11 @@ function ShowUnitsByCategory(category, bydimension)  // or "All Units"
 
     // compute the list of hyperlinked units
     Sort(names);
-    var html = "";
+    var html = "<br><div id='columns'>";
     for (i = 0; i < names.length; i++) {
-        html += "<br>" + History(names[i]);
+        html += History(names[i]) + "<br>";
     }
+    html += "</div>";
 
     // append a deletable chunk to the results list with the units list
     Chunk("=== units in category " + category + " ===", html);
@@ -677,10 +679,11 @@ function ShowUnitsByName(name)
 
     // compute the list of hyperlinked units
     Sort(namesets);
-    var html = "";
+    var html = "<br><div id='columns'>";
     for (i = 0; i < namesets.length; i++) {
-        html += "<br>" + History(namesets[i]);
+        html += History(namesets[i]) + "<br>";
     }
+    html += "</div>";
 
     // append a deletable chunk to the results list with the units list
     Chunk("=== units by name " + name + " ===", html);
@@ -707,10 +710,12 @@ function ShowCategories()
 
     // compute the list of hyperlinked categories and dimensions
     Sort(categories);
-    var html = "<br><a href=\"javascript:ShowUnitsByCategory('All Units')\">All Units</a>";
+    var html = "<div id='columns'>";
+    html += "<a href=\"javascript:ShowUnitsByCategory('All Units')\">All Units</a>";
     for (i = 0; i < categories.length; i++) {
         html += "<br>" + "<a href=\"javascript:ShowUnitsByCategory('" + categories[i] + "')\">" + categories[i] + "</a>";
     }
+    html += "</div>";
 
     // append a deletable chunk to the results list with the categories list
     Chunk("=== unit categories ===", html);
