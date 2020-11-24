@@ -421,6 +421,7 @@ ___VERIFY
 #Money
 cent*=0.01 dollar #U.S.
 
+mAh,mah=0.001 ampere hour
 mpg=1 mile/gallon
 rvalue,Rvalue,rval,Rval=1(sqft deltaF)/(Btu/hour) #thermal insulation
 uvalue,Uvalue,uval,Uval=1(Btu/hour)/(sqft deltaF) #inverse of Rvalue
@@ -782,14 +783,16 @@ hcv_natural_gas=1000 Btu/cubic foot
 ___POP Heat_combustion_v
 
 
-# CAPACITY OF BATTERIES
 ___PUSH Batteries
+# energy capacity of batteries
+
 e_carb_aaa=2268 joule
 e_carb_aa=5832 joule
 e_carb_c=15120 joule
 e_carb_d=38880 joule
 e_carb_n=2376 joule
 e_carb_9v=14580 joule
+
 e_alk_aaa=5062 joule
 e_alk_aa=11556 joule
 e_alk_c=32400 joule
@@ -797,6 +800,7 @@ e_alk_d=72900 joule
 e_alk_g=477900 joule
 e_alk_n=4374 joule
 e_alk_9v=19245 joule
+
 e_nicd_aaa=777 joule
 e_nicd_aa=2160 joule
 e_nicd_subc=5184 joule
@@ -804,6 +808,41 @@ e_nicd_c=5184 joule
 e_nicd_d=17280 joule
 e_nicd_n=648 joule
 e_nicd_9v=2419 joule
+
+e_nimh_aaa=3456 joule
+e_nimh_aa=8640 joule
+e_nimh_c=21600 joule
+e_nimh_d=43200 joule
+e_nimh_9v=7560 joule
+
+e_liion_14500=10656 joule
+e_liion_18650=45288 joule
+e_liion_21700=66600 joule
+e_liion_26650=73260 joule
+
+# voltage of batteries by chemistry
+v_carb_bat=1.5 volt
+v_alk_bat=1.5 volt
+v_nicd_bat=1.2 volt
+v_nimh_bat=1.2 volt
+v_liion_bat=3.7 volt
+
+# energy density by volume of batteries by chemistry
+edv_carb_bat=549214 joule/liter
+edv_alk_bat=1300000 joule/liter
+edv_nicd_bat=504000 joule/liter
+edv_nimh_bat=1460000 joule/liter
+edv_liion_bat=2630000 joule/liter
+edv_leadacid_bat=560000 joule/liter
+
+# energy density by mass of batteries by chemistry
+edm_carb_bat=130000 joule/kilogramm
+edm_alk_bat=480000 joule/kilogramm
+edm_nicd_bat=270000  joule/kilogramm
+edm_nimh_bat=410000 joule/kilogramm
+edm_liion_bat=875000 joule/kilogramm
+edm_leadacid_bat=170000 joule/kilogramm
+
 ___POP Batteries
 
 ___POP Physical_property
