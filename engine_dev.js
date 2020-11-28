@@ -1003,7 +1003,7 @@ function Singulars(name)
 function MatchPrefixPlural(name, i, j, search)
 {
     var singular = units[i].names[j];
-    if (name == singular || (search && singular.toLowerCase().match("^" + name))) {
+    if (name == singular || (search && singular.toLowerCase().match("^" + name + "|_" + name))) {
         return true;
     }
     if (units[i].pluralizables == null || ! units[i].pluralizables[j] || name[name.length-1] != 's' || search) {
