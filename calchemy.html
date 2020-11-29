@@ -117,7 +117,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.17c</p>
+v1.17d</p>
 </td>
 </tr></table>
 
@@ -2004,10 +2004,10 @@ function Singulars(name)
 }
 
 // compare a possibly prefix or plural unit to a singular unit name from the database
-function MatchPrefixPlural(name, i, j, search)
+function MatchPrefixPlural(name, i, j, search, searchremain)
 {
     var singular = units[i].names[j];
-    if (name == singular || (search && singular.toLowerCase().match("^" + name + "|_" + name + "|" + name + "$|" + name + "_"))) {
+    if (name == singular || (search && singular.toLowerCase().match("^" + name + (searchremain ? "" : "|_" + name + "|" + name + "$|" + name + "_")))) {
         return true;
     }
     if (units[i].pluralizables == null || ! units[i].pluralizables[j] || name[name.length-1] != 's' || search) {
@@ -2068,7 +2068,7 @@ function LookupUnits(name, prefixable, search)
                 // for all appropriate unit names...
                 for (j = 0; j < unit.names.length; j++) {
                     // if the unit name matches, by prefix or by plural...
-                    if ((name2[0] == unit.names[j][0] || search) && MatchPrefixPlural(name2, i, j, search)) {
+                    if ((name2[0] == unit.names[j][0] || search) && MatchPrefixPlural(name2, i, j, search, false)) {
                         // record a matching unit
                         if (search) {
                             more.push(unit.names[j]);
@@ -2111,7 +2111,7 @@ function LookupUnits(name, prefixable, search)
                                 // for all unit names...
                                 for (j = 0; j < unit2.names.length; j++) {
                                     // if the remainder of the specified name matches the unit, by prefix or by plural...
-                                    if ((remain[0] == unit2.names[j][0] || search) && MatchPrefixPlural(remain, i, j, search)) {
+                                    if ((remain[0] == unit2.names[j][0] || search) && MatchPrefixPlural(remain, i, j, search, true)) {
                                         // record a matching prefix and unit
                                         if (search) {
                                             more.push(unit.names[jj]+unit2.names[j]);
@@ -4006,8 +4006,8 @@ var tests =`
     TEST details ft | === unit details ft ===,foot,ft,feet=12 inch [Length]
     TEST details kilobyte | === unit details kilobyte ===,PREFIX Prefix,SI:kilo,k=1E+03*Byte*,byte*,B,char*=8 bit #computer storage [Storage]
     TEST byname lb | === units by name lb ===,ftlb,inlb,lb,lbf,lbm
-    TEST byname ft | === units by name ft ===,bdft,cuft,fbit,fbit_per_second,felectronvolt,fkat,ft,fT,ftce,fTCE,ftesla,ftlb,ftoe,fTOE,fton_explosive,fton_metric,`+
-    `ftonf_metric,ftonm_metric,ftonne,ftonnef,ftonnem,ftorr,ftTNT,fvolt,fwatt,sqft    
+    TEST byname ft | === units by name ft ===,bdft,cuft,ft,fT,ftce,fTCE,ftesla,ftlb,ftoe,fTOE,fton_explosive,fton_metric,ftonf_metric,ftonm_metric,ftonne,`+
+    `ftonnef,ftonnem,ftorr,ftTNT,sqft
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte,kilobyte_per_second
     TEST byname U | === units by name U ===,amu,au,btu,Btu,BTU,btu_mean,btu_thermochem,bu,chu,entropy_unit,uval,Uval,uvalue,Uvalue
     TEST byname wc | === units by name wc ===,inwc,inWc,wc,Wc
