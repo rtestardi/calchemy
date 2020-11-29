@@ -1000,10 +1000,10 @@ function Singulars(name)
 }
 
 // compare a possibly prefix or plural unit to a singular unit name from the database
-function MatchPrefixPlural(name, i, j, search)
+function MatchPrefixPlural(name, i, j, search, searchremain)
 {
     var singular = units[i].names[j];
-    if (name == singular || (search && singular.toLowerCase().match("^" + name + "|_" + name + "|" + name + "$|" + name + "_"))) {
+    if (name == singular || (search && singular.toLowerCase().match("^" + name + (searchremain ? "" : "|_" + name + "|" + name + "$|" + name + "_")))) {
         return true;
     }
     if (units[i].pluralizables == null || ! units[i].pluralizables[j] || name[name.length-1] != 's' || search) {
@@ -1064,7 +1064,7 @@ function LookupUnits(name, prefixable, search)
                 // for all appropriate unit names...
                 for (j = 0; j < unit.names.length; j++) {
                     // if the unit name matches, by prefix or by plural...
-                    if ((name2[0] == unit.names[j][0] || search) && MatchPrefixPlural(name2, i, j, search)) {
+                    if ((name2[0] == unit.names[j][0] || search) && MatchPrefixPlural(name2, i, j, search, false)) {
                         // record a matching unit
                         if (search) {
                             more.push(unit.names[j]);
@@ -1107,7 +1107,7 @@ function LookupUnits(name, prefixable, search)
                                 // for all unit names...
                                 for (j = 0; j < unit2.names.length; j++) {
                                     // if the remainder of the specified name matches the unit, by prefix or by plural...
-                                    if ((remain[0] == unit2.names[j][0] || search) && MatchPrefixPlural(remain, i, j, search)) {
+                                    if ((remain[0] == unit2.names[j][0] || search) && MatchPrefixPlural(remain, i, j, search, true)) {
                                         // record a matching prefix and unit
                                         if (search) {
                                             more.push(unit.names[jj]+unit2.names[j]);
