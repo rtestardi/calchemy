@@ -117,7 +117,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.17e</p>
+v1.17f</p>
 </td>
 </tr></table>
 
@@ -4192,35 +4192,35 @@ var help =`
     <li><a href=#basic>Basic Features</a></li>
     <li><a href=#advanced>Advanced Features</a>
     <ul>
-        <li><a href=#solve>Solve By Dimensional Analysis</a>
-        <li><a href=#overload>Overloaded Units</a>
-        <li><a href=#free>Free Units</a>
-        <li><a href=#plural>Pluralized Units</a>
-    </ul>
-</ul>
-<li><a href=#syntax>Equation Syntax</a></li>
+        <li><a href=#solve>Solve By Dimensional Analysis</a></li>
+        <li><a href=#overload>Overloaded Units</a></li>
+        <li><a href=#free>Free Units</a></li>
+        <li><a href=#plural>Pluralized Units</a></li>
+    </ul></li>
+</ul></li>
+<li><a href=#syntax>Equation Syntax</a>
+<ul>
+    <li><a href=#operators>Operators</a></li>
+    <li><a href=#functions>Functions</a></li>
+</ul></li>
 <li><a href=#definition>Definition Syntax</a></li>
-<li>
-<a href=#ui>User Interface</a>
+<li><a href=#ui>User Interface</a>
 <ul>
     <li><a href=#history>History List</a></li>
     <li><a href=#line>Equation Line</a></li>
     <li><a href=#buttons>Buttons</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href=#examples>Examples</a></li>
 <li><a href=#database>Database Notes</a>
 <ul>
     <li><a href=#custom>Custom Database</a></li>
     <li><a href=#runtime>Runtime Database</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href=#cautions>Cautions</a>
 <ul>
     <li><a href=#cycle>Units of Cycle or Revolution</a></li>
     <li><a href=#offset>Offset Temperature Units</a></li>
-</ul>
-</li>
+</ul></li>
 <li><a href=#info>For More Information</a></li>
 </ul>
 
@@ -4293,6 +4293,15 @@ This, again, allows you to enter equations in a more natural format.
 <p><b>expression</b>
 <p>To evaluate an expression with a dimensionally consistent (though possibly wrong, see <a href=#cautions>Cautions</a>) SI result unit chosen by Calchemy, use the form:
 <p><b>expression ?</b>
+
+<p>You can enter a comment into your result history by preceding it with a pound sign, like:
+<p><b># comment ...</b>
+<p>You can enter multiple equations on the same line by separating then with an ampersand, like:
+<p><b>equation1 &amp; equation2 ...</b>
+<p>You can also enter equations directly from the calchemy.html URL, by using <b><i>URL encoding</i></b> after the query '?', like:
+<p>.../calchemy.html?<b><i>urlequation</i></b>
+
+<h2 id='operators'>Operators</h2>
 <p>Equations may contain the following binary operators (listed in decreasing order of precedence):
 <table border=1>
 <tr><td>Operator...</td><td>Meaning...</td></tr>
@@ -4336,7 +4345,8 @@ The following table illustrates these rules:
 <p>Parentheses (or brackets or braces) can be used to explicitly override the default precedences and associativities, and group operations.
 <p>When in doubt, it is always best to parenthesize!
 
-<p>Calchemy also supports the following high-precedence functions:
+<h2 id='functions'>Functions</h2>
+<p>Equations may also contain the following high-precedence functions:
 <table border=1>
 <tr><td>Function...</td><td>Meaning...</td></tr>
 <tr><td>sqrt(x)</td><td>square root of x</td></tr>
@@ -4383,7 +4393,7 @@ The following examples illustrate this:
 <p><a href="javascript:Hyperlink('log(100)')">log(100)</a>
 <br>= 2
  
-<p>Calchemy also understands the following modifiers to allow you to enter units in a more natural format.
+<p>Calchemy also understands the following functional modifiers to allow you to enter units in a more natural format.
 <table border=1>
 <tr><td>This...</td><td>Is the same as ...</td></tr>
 <tr><td>square u</td><td>u^2</td></tr>
@@ -4392,13 +4402,6 @@ The following examples illustrate this:
 <p>For example, the following are both equivalent:
 <p><a href="javascript:Hyperlink('3 meters^2')">3 meters^2</a>
 <p><a href="javascript:Hyperlink('3 square meters')">3 square meters</a>
-
-<p>You can enter a comment into your result history by preceding it with a pound sign, like:
-<p><b># comment ...</b>
-<p>You can enter multiple equations on the same line by separating then with an ampersand, like:
-<p><b>equation1 &amp; equation2 ...</b>
-<p>You can also enter equations directly from the calchemy.html URL, by using <b><i>URL encoding</i></b> after the query '?', like:
-<p>.../calchemy.html?<b><i>urlequation</i></b>
 
 <h1 id='definition'>Definition Syntax</h1>
 <p>Basic Calchemy definitions are of the form:
