@@ -200,7 +200,7 @@ class Unit {
             if (this.type == "DERIVED") {
                 throw "specify value for " + this.names[0];
             }
-            if (op != ':' && op != '^' && rhs.type == "DERIVED") {
+            if (op != ':' && op != "pow" && op != '^' && rhs.type == "DERIVED") {
                 throw "specify value for " + rhs.names[0];
             }
         }
@@ -249,8 +249,9 @@ class Unit {
                     display = '-';
                     adding = true;
                     break;
+                case "pow":
                 case '^':
-                    display = op;
+                    display = '^';
                     break;
                 case ' ':
                     display = op;
@@ -320,7 +321,7 @@ class Unit {
                     } else {
                         interpretation = this.interpretation;
                     }
-                    if (this.multiplying || this.dividing || op == '^') {
+                    if (this.multiplying || this.dividing || op == "pow" || op == '^') {
                         // add the deferred or required parenthesis for the lhs now
                         interpretation = Parenthesize(interpretation);
                     }
@@ -365,6 +366,7 @@ class Unit {
         }
 
         switch (op) {
+            case "pow":
             case '^':
                 // raise coefficient to dimensionless power; multiply exponents by power
                 unit.coefficient = Math.pow(this.coefficient, rhs.coefficient);
@@ -758,6 +760,7 @@ var prec = {
     '~':    3,  // left-to-right associativity  (prefix multiplication)
     '>':    2,  // right-to-left associativity  (unary +)
     '<':    2,  // right-to-left associativity  (unary -)
+    "pow":  1,  // left-to-right associativity  (square, cube, sqrt)
     '^':    1,  // right-to-left associativity
     ' ':    0,  // left-to-right associativity  (implied multiplication)
     "per": -1,  // left-to-right associativity  (unit division)
@@ -862,11 +865,11 @@ function EvaluateTokens(tokens)
                 }
                 result = CleanAndPush(stack, result, ' ', unit);
                 if (token == "square") {
-                    result = CleanAndPush(stack, result, '^', Value("2"));
+                    result = CleanAndPush(stack, result, "pow", Value("2"));
                 } else if (token == "cubic") {
-                    result = CleanAndPush(stack, result, '^', Value("3"));
+                    result = CleanAndPush(stack, result, "pow", Value("3"));
                 } else if (token == "sqrt") {
-                    result = CleanAndPush(stack, result, '^', Value("0.5"));
+                    result = CleanAndPush(stack, result, "pow", Value("0.5"));
                 } else {
                     var interpretation = token + "{" + result.interpretation + "}";
                     // check that argument is dimensionless beyond PI and RADIAN...

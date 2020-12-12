@@ -117,7 +117,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.17f</p>
+v1.17g</p>
 </td>
 </tr></table>
 
@@ -1070,6 +1070,13 @@ var tests =`
     m per sec per sec | [Acceleration or LENGTH*TIME^-2]
     1/(m per sec per sec) | [Acceleration^-1 or LENGTH^-1*TIME^2]
 
+    # power precedence and interpretation
+    square meter^3 | > ((meter)^2)^3, [LENGTH^6]
+    2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
+    2 meter^2 | > 2 (meter)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
+    sqrt acre ^2 | > ((acre)^0.5)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
+    cubic meter^2 | > ((meter)^3)^2, [LENGTH^6]
+
     # functions
     3 3 | = 9
     square 2 | = 4
@@ -1252,7 +1259,6 @@ var tests =`
     1/2*feet * 2 meters ? | > (1 / 2) * foot * 2 meter ? [Area], = 0.3048 meter^2
     1/sqrt(23mH * 10uF)? |>1/(23milli~henry*10micro~farad)^0.5?[Frequency],=2085.14hertz,>1/(23milli~henry*10micro~farad)^0.5?[Angular_velocity],=2085.14radian/second
     20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
-    2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
     --3 | > 0-(0-3), = 3
     cal/(gm deltaK) | > calorie/(gramm deltaK), [Specific_heat_m or LENGTH^2*TIME^-2*TEMP^-1]
     1/cal/(gm deltaK) |> (1 / calorie) / (gramm deltaK), [MASS^-2*LENGTH^-2*TIME^2*TEMP^-1]
