@@ -8,8 +8,9 @@ It also checks your equations to ensure that they are always dimensionally corre
 
 **Calchemy now runs as javascript, entirely in your web browser -- just open [calchemy.html](https://rtestardi.github.io/calchemy/calchemy.html) and start having fun!**
 (For the latest and greatest development bits that may still have significant bugs, you can open [calchemy_dev.html](https://rtestardi.github.io/calchemy/calchemy_dev.html).)
-
-Calchemy does not send any of your information or equations or results over the Internet. Calchemy does not use cookies, though it does use "other site data" in your browser for persistence of the History List.
+Calchemy does not send any of your information or equations or results over the Internet.
+Calchemy can run entirely offline if you copy calchemy.html to a local folder.
+Calchemy does not use cookies, though it does use "other site data" in your browser for persistence of the History List.
 
 N.B. The persistent history list is cleared when you clear your browser cookies and other site data.
 
@@ -23,9 +24,10 @@ Always double-check your answers!
 * calchemy_dev.html -- bits under development, html only
 * database_dev.js -- bits under development, database only
 * demo_dev.html -- demo bits showing interface to database and engine
-* elements.js -- optional runtime database for element properties
+* elements.js -- optional runtime database with element properties
 * engine_dev.js -- bits under development, engine only
 * flexcase.js -- optional runtime database to relax SI upper case abbreviation requirements
+* materials.js -- optional runtime database with material properties
 * publish.ps1 -- script to merge calchemy_dev.html, database_dev.js, and engine_dev.js into calchemy.html
 * solarsys.js -- optional runtime database with solar system units
 
