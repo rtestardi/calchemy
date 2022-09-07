@@ -65,7 +65,7 @@ Indicating that the left hand side of the equation was missing a factor of 1/Tim
 
 Calchemy can also be used as a simple dimensionless calculator by eliminating the "?" and result unit from the equation. For example, you could enter the equation:
 
-[**2+3*5**](https://rtestardi.github.io/calchemy/calchemy.html?2+3*5)
+[**2+3\*5**](https://rtestardi.github.io/calchemy/calchemy.html?2+3*5)
 
 Calchemy would respond with the algebraically correct answer:
 
