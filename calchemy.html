@@ -3567,6 +3567,8 @@ var equations =`
     [Inductance] + [Inductance] ? [Inductance]  # series inductors | = 2 [Inductance]
     1/(1/[Inductance] + 1/[Inductance]) ? [Inductance]  # parallel inductors | = 0.5 [Inductance]
     0.5 [Inductance] [Current]^2 ? [Energy]  # inductor energy | = 0.5 [Energy]
+    1/2 pi ([Resistance] [Capacitance]) ? [f:Frequency]  # frequency cutoff of RC filter | = 0.159155 [f:Frequency]
+    1/([Resistance] [Capacitance]) ? [omega:Angular_velocity]  # angular velocity cutoff of RC filter | = 1 [omega:Angular_velocity]
     1/2 pi sqrt([Inductance] [Capacitance]) ? [f:Frequency]  # frequency of LC oscillator | = 0.159155 [f:Frequency]
     1/sqrt([Inductance] [Capacitance]) ? [omega:Angular_velocity]  # angular velocity of LC oscillator | = 1 [omega:Angular_velocity]
 
