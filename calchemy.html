@@ -3211,7 +3211,9 @@ function UpDown(up)
 function Clear()
 {
     // reset url
-    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+    if (! testing) {
+        window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+    }
 
     document.getElementById("equation").value = "";
     Scroll();
