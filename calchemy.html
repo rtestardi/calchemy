@@ -117,7 +117,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2020 Ken Burgess and Rich Testardi.
-v1.17k</p>
+v1.20</p>
 </td>
 </tr></table>
 
@@ -2946,7 +2946,9 @@ function Delete(tag)
     }
 
     // reset url
-    window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+    if (! testing) {
+        window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+    }
     Scroll(true);
 }
 
