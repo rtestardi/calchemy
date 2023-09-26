@@ -1,5 +1,5 @@
 // Calchemy (tm); Math Magic; http://www.calchemy.com
-// Copyright (c) 1988-2020 Ken Burgess and Rich Testardi.
+// Copyright (c) 1988-2023 Ken Burgess and Rich Testardi.
 
 // This is the calchemy engine; it loads the database one line at a time and then runs user command lines one at a time, returning their output.
 

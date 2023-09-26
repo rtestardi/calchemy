@@ -110,4 +110,4 @@ The "stories" and "story" units also illustrate that Calchemy understands basic 
 
 Visit us on the web at: [http://www.calchemy.com/](http://www.calchemy.com/)
 
-Copyright © 1988-2020 Ken Burgess and Rich Testardi.
+Copyright © 1988-2023 Ken Burgess and Rich Testardi.
