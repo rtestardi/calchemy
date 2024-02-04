@@ -53,27 +53,27 @@ body,html { margin: 0px; }
 <br>
 <table id=keys class='table1' hidden=true><tr>
 <td>
-    <button type='button' onclick="Hyperlink(' ');">&nbsp</button>
-    <button type='button' onclick="Hyperlink('0');">0</button>
-    <button type='button' onclick="Hyperlink('1');">1</button>
-    <button type='button' onclick="Hyperlink('2');">2</button>
-    <button type='button' onclick="Hyperlink('3');">3</button>
-    <button type='button' onclick="Hyperlink('4');">4</button>
-    <button type='button' onclick="Hyperlink('5');">5</button>
-    <button type='button' onclick="Hyperlink('6');">6</button>
-    <button type='button' onclick="Hyperlink('7');">7</button>
-    <button type='button' onclick="Hyperlink('8');">8</button>
-    <button type='button' onclick="Hyperlink('9');">9</button>
-    <button type='button' onclick="Hyperlink('+');">+</button>
-    <button type='button' onclick="Hyperlink('-');">-</button>
-    <button type='button' onclick="Hyperlink('*');">*</button>
-    <button type='button' onclick="Hyperlink('/');">/</button>
-    <button type='button' onclick="Hyperlink('^');">^</button>
-    <button type='button' onclick="Hyperlink(';');">;</button>
-    <button type='button' onclick="Hyperlink(':');">:</button>
-    <button type='button' onclick="Hyperlink('(');">(</button>
-    <button type='button' onclick="Hyperlink(')');">)</button>
-    <button type='button' onclick="Hyperlink('?');">?</button>
+    <button type='button' onclick="Hyperlink(' ', false);">&nbsp</button>
+    <button type='button' onclick="Hyperlink('0', false);">0</button>
+    <button type='button' onclick="Hyperlink('1', false);">1</button>
+    <button type='button' onclick="Hyperlink('2', false);">2</button>
+    <button type='button' onclick="Hyperlink('3', false);">3</button>
+    <button type='button' onclick="Hyperlink('4', false);">4</button>
+    <button type='button' onclick="Hyperlink('5', false);">5</button>
+    <button type='button' onclick="Hyperlink('6', false);">6</button>
+    <button type='button' onclick="Hyperlink('7', false);">7</button>
+    <button type='button' onclick="Hyperlink('8', false);">8</button>
+    <button type='button' onclick="Hyperlink('9', false);">9</button>
+    <button type='button' onclick="Hyperlink('+', false);">+</button>
+    <button type='button' onclick="Hyperlink('-', false);">-</button>
+    <button type='button' onclick="Hyperlink('*', false);">*</button>
+    <button type='button' onclick="Hyperlink('/', false);">/</button>
+    <button type='button' onclick="Hyperlink('^', false);">^</button>
+    <button type='button' onclick="Hyperlink(';', false);">;</button>
+    <button type='button' onclick="Hyperlink(':', false);">:</button>
+    <button type='button' onclick="Hyperlink('(', false);">(</button>
+    <button type='button' onclick="Hyperlink(')', false);">)</button>
+    <button type='button' onclick="Hyperlink('?', false);">?</button>
 </td>
 </tr></table>
 <table class='table1'><tr>
@@ -565,13 +565,13 @@ function Clear()
 }
 
 // the user clicked a hyperlink; enter text into the user equation, possibly replacing the word at the cursor
-function Hyperlink(string)
+function Hyperlink(string, replace=true)
 {
     var equation = document.getElementById("equation");
     var start = equation.selectionStart;
     var end = equation.selectionEnd;
     // if we are properly inside a word...
-    if (start > 0 && equation.value.slice(start-1, end).match(unit_regexp_all) || end < equation.value.length-1 && equation.value.slice(start, end+1).match(unit_regexp_all)) {
+    if (replace && start > 0 && equation.value.slice(start-1, end).match(unit_regexp_all) || end < equation.value.length-1 && equation.value.slice(start, end+1).match(unit_regexp_all)) {
         // find the start and end of the word at the cursor
         var match = equation.value.slice(0, start).match(unit_regexp_tail);
         if (match) {
