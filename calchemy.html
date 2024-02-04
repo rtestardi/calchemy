@@ -51,6 +51,29 @@ body,html { margin: 0px; }
 <p id='results'></p>
 <input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false'/>
 <br>
+<table id=keys class='table1' hidden=true><tr>
+<td>
+    <button type='button' onclick="Hyperlink('0');">0</button>
+    <button type='button' onclick="Hyperlink('1');">1</button>
+    <button type='button' onclick="Hyperlink('2');">2</button>
+    <button type='button' onclick="Hyperlink('3');">3</button>
+    <button type='button' onclick="Hyperlink('4');">4</button>
+    <button type='button' onclick="Hyperlink('5');">5</button>
+    <button type='button' onclick="Hyperlink('6');">6</button>
+    <button type='button' onclick="Hyperlink('7');">7</button>
+    <button type='button' onclick="Hyperlink('8');">8</button>
+    <button type='button' onclick="Hyperlink('9');">9</button>
+    <button type='button' onclick="Hyperlink('+');">+</button>
+    <button type='button' onclick="Hyperlink('-');">-</button>
+    <button type='button' onclick="Hyperlink('*');">*</button>
+    <button type='button' onclick="Hyperlink('^');">^</button>
+    <button type='button' onclick="Hyperlink(';');">;</button>
+    <button type='button' onclick="Hyperlink(':');">:</button>
+    <button type='button' onclick="Hyperlink('/');">/</button>
+    <button type='button' onclick="Hyperlink('(');">(</button>
+    <button type='button' onclick="Hyperlink(')');">)</button>
+</td>
+</tr></table>
 <table class='table1'><tr>
 <td>
     <button type='button' onclick="Enter();" id='enter'>Enter</button>
@@ -58,6 +81,7 @@ body,html { margin: 0px; }
     <button type='button' onclick="Units();">Find Units</button>
     <button type='button' onclick="Details();">Unit Details</button>
     <button type='button' onclick="Equations();">Equations</button>
+    <button type='button' onclick="document.getElementById('keys').hidden = !document.getElementById('keys').hidden;">Keys</button>
 </td>
 <td style='text-align: right'>
     <button type='button' onclick="window.scrollTo(0, 0);">Top</button>
@@ -117,7 +141,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2023 Ken Burgess and Rich Testardi.
-v1.20</p>
+v1.21</p>
 </td>
 </tr></table>
 
