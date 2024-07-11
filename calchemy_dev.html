@@ -149,7 +149,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2024 Ken Burgess and Rich Testardi.
-v1.21</p>
+v1.22</p>
 </td>
 </tr></table>
 
@@ -230,7 +230,7 @@ function History(text)
     if (html.match(/[#]/)) {
         html = html.replace(/[#]/, "<i class='i4'>#").replace(/$/, "</i>");
     }
-    return "<a href=\"javascript:Hyperlink('" + text.replace(/^= /, "") + "')\">" + html + "</a>";
+    return "<a href=\"javascript:Hyperlink('" + text.replace("'", "\\'").replace(/^= /, "") + "')\">" + html + "</a>";
 }
 
 var lasttag = "";
