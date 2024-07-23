@@ -23,7 +23,7 @@ table,tr,td { margin: 0px; padding: 0px; }
 .table1,.table2 { width: 100%; }
 .td3 { width: 4%; vertical-align: bottom; }
 .i4 { filter: grayscale(75%) opacity(75%); }
-.key { padding: 15px 15px 15px 15px; }
+.key { padding: 15px 15px 15px 15px; width: 50px }
 hr { height: 2px; }
 body,html { margin: 0px; }
 #columns { column-width: 300px; column-count: 8; }
@@ -65,11 +65,10 @@ body,html { margin: 0px; }
     <button type='button' class='key' onclick="Hyperlink('7', false);">7</button>
     <button type='button' class='key' onclick="Hyperlink('8', false);">8</button>
     <button type='button' class='key' onclick="Hyperlink('9', false);">9</button>
+    <button type='button' class='key' onclick="Hyperlink('.', false);">.</button>
 </td>
 </tr><tr>
 <td>
-    <button type='button' class='key' onclick="Hyperlink('.', false);">.</button>
-    <button type='button' class='key' onclick="Hyperlink('_', false);">_</button>
     <button type='button' class='key' onclick="Hyperlink('+', false);">+</button>
     <button type='button' class='key' onclick="Hyperlink('-', false);">-</button>
     <button type='button' class='key' onclick="Hyperlink('*', false);">*</button>
@@ -79,6 +78,7 @@ body,html { margin: 0px; }
     <button type='button' class='key' onclick="Hyperlink(':', false);">:</button>
     <button type='button' class='key' onclick="Hyperlink('(', false);">(</button>
     <button type='button' class='key' onclick="Hyperlink(')', false);">)</button>
+    <button type='button' class='key' onclick="Hyperlink('_', false);">_</button>
     <button type='button' class='key' onclick="Hyperlink('?', false);">?</button>
 </td>
 </tr></table>
