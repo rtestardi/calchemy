@@ -379,7 +379,7 @@ function SnoopAndDelete(tag)
     var lines = mid.split("<br>");
     var snoops = [];
     for (var i = 0; i < lines.length; i++) {
-        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ");
+        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ").replace(/&nbsp;keep/g, "");
         if (snoop.trim().length) {
             snoops.push(snoop);
         }
