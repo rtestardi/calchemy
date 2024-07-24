@@ -421,11 +421,10 @@ function Body()
         // load the units database
         loading = true;
         LoadDatabase(database);
+        loading = false;
 
         // replay all checked results
         ReplayAllChecked(temp);
-
-        loading = false;
 
         number = units.length - number;
         Chunk("database", "loaded " + number + " units");
