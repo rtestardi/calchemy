@@ -54,7 +54,7 @@ body,html { margin: 0px; }
 <br>
 <table id=keys class='table1' hidden=true><tr>
 <td>
-    <button type='button' class='key' onclick="Hyperlink(' ', false);">&nbsp</button>
+    <button type='button' class='key' onclick="Hyperlink(' ', false);">&nbsp;</button>
     <button type='button' class='key' onclick="Hyperlink('0', false);">0</button>
     <button type='button' class='key' onclick="Hyperlink('1', false);">1</button>
     <button type='button' class='key' onclick="Hyperlink('2', false);">2</button>
@@ -149,7 +149,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2024 Ken Burgess and Rich Testardi.
-v1.22</p>
+v1.23</p>
 </td>
 </tr></table>
 
@@ -2914,6 +2914,22 @@ function History(text)
     return "<a href=\"javascript:Hyperlink('" + text.replace("'", "\\'").replace(/^= /, "") + "')\">" + html + "</a>";
 }
 
+function Check(tag)
+{
+    var checkbox = document.getElementById(tag);
+    if (checkbox.outerHTML.match(/checked/)) {
+        checkbox.checked = true;
+        checkbox.outerHTML = checkbox.outerHTML.replace(/ *checked/, "");
+    } else {
+        checkbox.checked = false;
+        checkbox.outerHTML = checkbox.outerHTML.replace(/ *>/, " checked>");
+    }
+
+    // update our results history
+    var save = document.getElementById("results").innerHTML.trim();  // XXX -- why space when empty?
+    localStorage["calchemy.results"] = save;
+}
+
 var lasttag = "";
 
 // append a tagged html chunk to allow results to be deleted
@@ -2936,10 +2952,12 @@ function Chunk(label, result)
     // create the chunk as a searchable comment preceded by a horizontal line and followed by a table with a delete button to the right
     var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated below
     var head = "<table><tr><td>";
-    var button = "</td><td class='td3'><button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
+    var td = "</td><td class='td3'>";
+    var checkbox = "<input type='checkbox' id=\"" + tag + "\" onclick='Check(\"" + tag + "\")'>&nbsp;keep</input>";
+    var button = "<button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
     var tail = "</td></tr></table>";
 
-    document.getElementById("results").innerHTML += hrtag + head + label + result + button + tail;
+    document.getElementById("results").innerHTML += hrtag + head + label + result + td + checkbox + button + tail;
     first = true;
     if (lasttag == "") {
         lasttag = tag;
@@ -2950,8 +2968,22 @@ function Chunk(label, result)
 function Delete(tag)
 {
     if (tag == "all") {
-        // delete all chunks
-        document.getElementById("results").innerHTML = "";
+        // delete all unchecked chunks
+        var temp = document.getElementById("results").innerHTML;
+        var keep = "";
+        var hrtag = "<hr><!--";
+        while (temp.length) {
+            var index = temp.indexOf(hrtag, 1);
+            if (index == -1) {
+                index = temp.length;
+            }
+            var maybe = temp.slice(0, index);
+            if (maybe.match(/checked/)) {
+                keep += maybe;
+            }
+            temp = temp.slice(index);
+        }
+        document.getElementById("results").innerHTML = keep;
     } else {
         // find the requested chunk in the results
         var head;
@@ -2984,6 +3016,26 @@ function Delete(tag)
     Scroll(true);
 }
 
+function ReplayAllChecked(temp)
+{
+    var hrtag = "<hr><!--";
+    while (temp.length) {
+        var index = temp.indexOf(hrtag, 1);
+        if (index == -1) {
+            index = temp.length;
+        }
+        var replay = temp.slice(0, index);
+        if (replay.match(/checked/)) {
+            var hyperlink = replay.replace(/.*javascript:Hyperlink\('/, "");
+            hyperlink = hyperlink.replace(/'\)">.*<\/a>.*/, "");
+            if (hyperlink.match(/=/)) {
+                LoadDatabase(hyperlink);
+            }
+        }
+        temp = temp.slice(index);
+    }
+}
+
 // snoop the test results and delete tagged html results
 function SnoopAndDelete(tag)
 {
@@ -3008,7 +3060,7 @@ function SnoopAndDelete(tag)
     var lines = mid.split("<br>");
     var snoops = [];
     for (var i = 0; i < lines.length; i++) {
-        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ");
+        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ").replace(/&nbsp;keep/g, "");
         if (snoop.trim().length) {
             snoops.push(snoop);
         }
@@ -3042,13 +3094,18 @@ function Body()
 
         // recall our results history
         var temp = localStorage["calchemy.results"];
-        document.getElementById("results").innerHTML = temp != undefined ? temp : "";
+        temp = temp != undefined ? temp : "";
+        document.getElementById("results").innerHTML = temp;
 
         var number = units.length;
 
         // load the units database
         loading = true;
         LoadDatabase(database);
+
+        // replay all checked results
+        ReplayAllChecked(temp);
+
         loading = false;
 
         number = units.length - number;
@@ -3064,18 +3121,20 @@ function Body()
             Chunk("custom", "loaded " + number + " units");
         }
 
-        // if we have a query string...
-        var index = url.indexOf('?');
-        if (index != -1) {
-            offset_warn = false;
-            cycle_warn = false;
+        if (performance.navigation.type != performance.navigation.TYPE_RELOAD) {
+            // if we have a query string...
+            var index = url.indexOf('?');
+            if (index != -1) {
+                offset_warn = false;
+                cycle_warn = false;
 
-            // pretend the user entered the query string thru the UI
-            document.getElementById("equation").value = window.unescape(url.slice(index+1));
-            Enter();
+                // pretend the user entered the query string thru the UI
+                document.getElementById("equation").value = window.unescape(url.slice(index+1));
+                Enter();
 
-            // reset url
-            window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+                // reset url
+                window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
+            }
         }
     } catch (error) {
         document.getElementById("status").innerHTML += error;
@@ -3258,7 +3317,8 @@ function Hyperlink(string, replace=true)
     var start = equation.selectionStart;
     var end = equation.selectionEnd;
     // if we are properly inside a word...
-    if (replace && start > 0 && equation.value.slice(start-1, end).match(unit_regexp_all) || end < equation.value.length-1 && equation.value.slice(start, end+1).match(unit_regexp_all)) {
+    if (replace && start > 0 && equation.value.slice(start-1, end).match(unit_regexp_all) ||
+        end < equation.value.length-1 && equation.value.slice(start, end+1).match(unit_regexp_all)) {
         // find the start and end of the word at the cursor
         var match = equation.value.slice(0, start).match(unit_regexp_tail);
         if (match) {
