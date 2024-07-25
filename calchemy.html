@@ -2944,7 +2944,7 @@ function Chunk(label, result)
         tag = label.replace(/ /g, "");
         label = label + " ";
     }
-    Delete(tag);
+    var checked = Delete(tag);
     if (result == undefined) {
         result = "";
     }
@@ -2962,11 +2962,15 @@ function Chunk(label, result)
     if (lasttag == "") {
         lasttag = tag;
     }
+    if (checked) {
+        Check(tag);
+    }
 }
 
 // the user clicked a Delete button; delete tagged html results
 function Delete(tag)
 {
+    var checked = false;
     if (tag == "all") {
         // delete all unchecked chunks
         var temp = document.getElementById("results").innerHTML;
@@ -3000,9 +3004,11 @@ function Delete(tag)
             index = mid.indexOf(nexthr);
             if (index != -1) {
                 tail = mid.slice(index);
+                mid = mid.slice(0, index);
             } else {
                 tail = "";
             }
+            checked = mid.match(/checked/);
             // update the results
             document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
             cursor = 0;
@@ -3014,6 +3020,7 @@ function Delete(tag)
         window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
     }
     Scroll(true);
+    return checked;
 }
 
 function ReplayAllChecked(temp)
