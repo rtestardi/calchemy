@@ -149,7 +149,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2024 Ken Burgess and Rich Testardi.
-v1.24</p>
+v1.25</p>
 </td>
 </tr></table>
 
@@ -344,11 +344,17 @@ function ReplayAllChecked(temp)
             index = temp.length;
         }
         var replay = temp.slice(0, index);
-        if (replay.match(/checked/) && replay.match(/.*javascript:Hyperlink\('/)) {
-            var hyperlink = replay.replace(/.*javascript:Hyperlink\('/, "");
-            hyperlink = hyperlink.replace(/'\)">.*<\/a>.*/, "");
-            if (hyperlink.match(/=/)) {
-                LoadDatabase(hyperlink);
+        if (replay.match(/checked/)) {
+            if (replay.match(/.*javascript:Hyperlink\('/)) {
+                var hyperlink = replay.replace(/.*javascript:Hyperlink\('/, "");
+                hyperlink = hyperlink.replace(/'\)">.*<\/a>.*/, "");
+                if (hyperlink.match(/=/)) {
+                    LoadDatabase(hyperlink);
+                }
+            } else if (replay.match(/[.]js loaded [0-9]/)) {
+                var database = replay.replace(/ loaded [0-9].*/, "");
+                database = database.replace(/.*>/, "");
+                LoadRemote(database);
             }
         }
         temp = temp.slice(index);
