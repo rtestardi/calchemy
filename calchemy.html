@@ -149,7 +149,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2024 Ken Burgess and Rich Testardi.
-v1.27</p>
+v1.28</p>
 </td>
 </tr></table>
 
@@ -2917,7 +2917,7 @@ function History(text)
 function Check(tag)
 {
     var checkbox = document.getElementById(tag);
-    if (checkbox.outerHTML.match(/checked/)) {
+    if (checkbox.outerHTML.match(/checked[=>]/)) {
         checkbox.checked = true;
         checkbox.outerHTML = checkbox.outerHTML.replace(/ *checked/, "");
     } else {
@@ -2982,7 +2982,7 @@ function Delete(tag)
                 index = temp.length;
             }
             var maybe = temp.slice(0, index);
-            if (maybe.match(/checked/)) {
+            if (maybe.match(/checked[=>]/)) {
                 keep += maybe;
             }
             temp = temp.slice(index);
@@ -3008,7 +3008,7 @@ function Delete(tag)
             } else {
                 tail = "";
             }
-            checked = mid.match(/checked/);
+            checked = mid.match(/checked[=>]/);
             // update the results
             document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
             cursor = 0;
@@ -3032,8 +3032,8 @@ function ReplayAllChecked(temp)
             index = temp.length;
         }
         var replay = temp.slice(0, index);
-        if (replay.match(/checked/)) {
-            if (replay.match(/.*javascript:Hyperlink\('/)) {
+        if (replay.match(/checked[=>]/)) {
+            if (replay.match(/.*javascript:Hyperlink\('/) && ! replay.match(/===/)) {
                 var hyperlink = replay.replace(/.*javascript:Hyperlink\('/, "");
                 hyperlink = hyperlink.replace(/'\)">.*<\/a>.*/, "");
                 if (hyperlink.match(/=/)) {
