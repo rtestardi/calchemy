@@ -153,7 +153,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2025 Ken Burgess and Rich Testardi.
-v1.29</p>
+v1.30</p>
 </td>
 </tr></table>
 
@@ -3249,7 +3249,7 @@ function Enter()
             }
 
             // record output (even if there is an error, so the user can recall failed commands)
-            if (lines.length > 1 && line.trim().length && ! testing) {
+            if (((lines.length > 1 && line.trim().length && success) || (! success)) && ! testing) {
                 xx = History(line);
                 htmls.push("<br>" + History(line) + html);
             } else if (html.length) {
