@@ -21,9 +21,9 @@ html,button,input { font: 36px Arial, Helvetica, sans-serif; padding: 15px 10px 
 img { padding: 0px; margin: 10px 10px 0px 0px; }
 table,tr,td { margin: 0px; padding: 0px; }
 .table1,.table2 { width: 100%; }
-.td3 { width: 4%; vertical-align: bottom; }
+.td3 { width: 4%; vertical-align: bottom; text-align: right }
 .i4 { filter: grayscale(75%) opacity(75%); }
-.key { padding: 15px 15px 15px 15px; width: 50px }
+.key { padding: 15px 15px 15px 15px; width: 60px }
 hr { height: 2px; }
 body,html { margin: 0px; }
 #columns { column-width: 300px; column-count: 8; }
@@ -50,8 +50,9 @@ body,html { margin: 0px; }
 </tr></table>
 <input type='file' id='file' style='display: none'>
 <p id='results'></p>
-<input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false'/>
+<input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' type='search'/>
 <br>
+<!--
 <table id=keys class='table1' hidden=true><tr>
 <td>
     <button type='button' class='key' onclick="Hyperlink(' ', false);">&nbsp;</button>
@@ -78,10 +79,13 @@ body,html { margin: 0px; }
     <button type='button' class='key' onclick="Hyperlink(':', false);">:</button>
     <button type='button' class='key' onclick="Hyperlink('(', false);">(</button>
     <button type='button' class='key' onclick="Hyperlink(')', false);">)</button>
+    <button type='button' class='key' onclick="Hyperlink('$', false);">$</button>
+    <button type='button' class='key' onclick="Hyperlink('%', false);">%</button>
     <button type='button' class='key' onclick="Hyperlink('_', false);">_</button>
     <button type='button' class='key' onclick="Hyperlink('?', false);">?</button>
 </td>
 </tr></table>
+-->
 <table class='table1'><tr>
 <td>
     <button type='button' onclick="Enter();" id='enter'>Enter</button>
@@ -89,7 +93,7 @@ body,html { margin: 0px; }
     <button type='button' onclick="Units();">Find Units</button>
     <button type='button' onclick="Details();">Unit Details</button>
     <button type='button' onclick="Equations();">Equations</button>
-    <button type='button' onclick="document.getElementById('keys').hidden = !document.getElementById('keys').hidden;">Keys</button>
+    <!-- <button type='button' onclick="document.getElementById('keys').hidden = !document.getElementById('keys').hidden;">Keys</button> -->
 </td>
 <td style='text-align: right'>
     <button type='button' onclick="window.scrollTo(0, 0);">Top</button>
@@ -148,8 +152,8 @@ TizRp1vRZxotHiwvrjGFbdhAYd0TcY9M44YQ5hb+kmc+/uOM9hMlztFEXuTCwpBzs8s8JcgaAFcf869A
 nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
-<p id='copyright'>Copyright &copy; 1988-2024 Ken Burgess and Rich Testardi.
-v1.28</p>
+<p id='copyright'>Copyright &copy; 1988-2025 Ken Burgess and Rich Testardi.
+v1.29</p>
 </td>
 </tr></table>
 
@@ -2901,7 +2905,7 @@ function Scroll(noscroll)
 function Break(output)
 {
     // allow breaks periodically
-    return output.match(/(.{1,20})/g).join("<wbr>");
+    return output.match(/(.{0,20})/g).join("<wbr>");
 }
 
 // convert text to hyperlinked html for the history list
@@ -2914,15 +2918,16 @@ function History(text)
     return "<a href=\"javascript:Hyperlink('" + text.replace("'", "\\'").replace(/^= /, "") + "')\">" + html + "</a>";
 }
 
-function Check(tag)
+function Keep(tag)
 {
-    var checkbox = document.getElementById(tag);
-    if (checkbox.outerHTML.match(/checked[=>]/)) {
-        checkbox.checked = true;
-        checkbox.outerHTML = checkbox.outerHTML.replace(/ *checked/, "");
+    var keep = document.getElementById("k" + tag);
+    var del = document.getElementById("d" + tag);
+    if (keep.outerHTML.match(/Unkeep[<]/)) {
+        keep.outerHTML = keep.outerHTML.replace(/Unkeep[<]/, "Keep<");
+        del.hidden = false;
     } else {
-        checkbox.checked = false;
-        checkbox.outerHTML = checkbox.outerHTML.replace(/ *>/, " checked>");
+        keep.outerHTML = keep.outerHTML.replace(/Keep[<]/, "Unkeep<");
+        del.hidden = true;
     }
 
     // update our results history
@@ -2944,7 +2949,7 @@ function Chunk(label, result)
         tag = label.replace(/ /g, "");
         label = label + " ";
     }
-    var checked = Delete(tag);
+    var kept = Delete(tag);
     if (result == undefined) {
         result = "";
     }
@@ -2953,26 +2958,26 @@ function Chunk(label, result)
     var hrtag = "<hr><!--" + tag + "-->";  // N.B. duplicated below
     var head = "<table><tr><td>";
     var td = "</td><td class='td3'>";
-    var checkbox = "<input type='checkbox' id=\"" + tag + "\" onclick='Check(\"" + tag + "\")'>&nbsp;keep</input>";
-    var button = "<button type='button' style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
+    var del = "<button type='button' id=\"d" + tag + "\" style='margin: 0px;' onclick='Delete(\"" + tag + "\")'>Delete</button>";
+    var keep = "<button type='button' id=\"k" + tag + "\" style='margin: 0px;' onclick='Keep(\"" + tag + "\")'>Keep</button>";
     var tail = "</td></tr></table>";
 
-    document.getElementById("results").innerHTML += hrtag + head + label + result + td + checkbox + button + tail;
+    document.getElementById("results").innerHTML += hrtag + head + label + result + td + del + keep + tail;
     first = true;
     if (lasttag == "") {
         lasttag = tag;
     }
-    if (checked) {
-        Check(tag);
+    if (kept) {
+        Keep(tag);
     }
 }
 
 // the user clicked a Delete button; delete tagged html results
 function Delete(tag)
 {
-    var checked = false;
+    var kept = false;
     if (tag == "all") {
-        // delete all unchecked chunks
+        // delete all kept chunks
         var temp = document.getElementById("results").innerHTML;
         var keep = "";
         var hrtag = "<hr><!--";
@@ -2982,7 +2987,7 @@ function Delete(tag)
                 index = temp.length;
             }
             var maybe = temp.slice(0, index);
-            if (maybe.match(/checked[=>]/)) {
+            if (maybe.match(/Unkeep[<]/)) {
                 keep += maybe;
             }
             temp = temp.slice(index);
@@ -3008,7 +3013,7 @@ function Delete(tag)
             } else {
                 tail = "";
             }
-            checked = mid.match(/checked[=>]/);
+            kept = mid.match(/Unkeep[<]/);
             // update the results
             document.getElementById("results").innerHTML = head.trim() + " " + tail.trim();
             cursor = 0;
@@ -3020,10 +3025,10 @@ function Delete(tag)
         window.history.pushState("", "", window.location.href.replace(/[?#].*/, ""));
     }
     Scroll(true);
-    return checked;
+    return kept;
 }
 
-function ReplayAllChecked(temp)
+function ReplayAllKept(temp)
 {
     var hrtag = "<hr><!--";
     while (temp.length) {
@@ -3032,7 +3037,7 @@ function ReplayAllChecked(temp)
             index = temp.length;
         }
         var replay = temp.slice(0, index);
-        if (replay.match(/checked[=>]/)) {
+        if (replay.match(/Unkeep[<]/)) {
             if (replay.match(/.*javascript:Hyperlink\('/) && ! replay.match(/===/)) {
                 var hyperlink = replay.replace(/.*javascript:Hyperlink\('/, "");
                 hyperlink = hyperlink.replace(/'\)">.*<\/a>.*/, "");
@@ -3073,7 +3078,7 @@ function SnoopAndDelete(tag)
     var lines = mid.split("<br>");
     var snoops = [];
     for (var i = 0; i < lines.length; i++) {
-        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ").replace(/&nbsp;keep/g, "");
+        var snoop = lines[i].replace(/<wbr>/g, "").replace(/<\/?[^>]+>/g, " ").replace(/ Delete /g, " ").replace(/ Unkeep/g, "").replace(/ Keep/g, "");
         if (snoop.trim().length) {
             snoops.push(snoop);
         }
@@ -3117,8 +3122,8 @@ function Body()
         LoadDatabase(database);
         loading = false;
 
-        // replay all checked results
-        ReplayAllChecked(temp);
+        // replay all kept results
+        ReplayAllKept(temp);
 
         number = units.length - number;
         Chunk("database", "loaded " + number + " units");
@@ -3206,10 +3211,10 @@ function Enter()
         var htmls = [];
 
         for (var k = 0; k < lines.length; k++) {
-            // parse the requested dimension from the command line
+            // parse the requested equation from the command line
             var line = lines[k];
 
-            // run the command line
+            // run the equation
             var results = RunLine(line);
             success = results.success;
             var output = results.output;
@@ -3243,8 +3248,9 @@ function Enter()
                 cycle_warned = true;
             }
 
-            // record output
-            if (lines.length > 1 && line.trim().length && success && ! testing) {
+            // record output (even if there is an error, so the user can recall failed commands)
+            if (lines.length > 1 && line.trim().length && ! testing) {
+                xx = History(line);
                 htmls.push("<br>" + History(line) + html);
             } else if (html.length) {
                 htmls.push(html);
@@ -4585,13 +4591,14 @@ click/tap an example equation to enter it into the equation line at the cursor.<
 <br>N.B. to use this feature, the calchemy html file must be accessed either thru https or locally, and you must be running Chrome or New Edge.</dd>
 <dt>&lt;Load&gt;</dt><dd>Load an additional runtime text units database from the local computer or javascript units database from the location of calchemy.html.</dd>
 <dt>&lt;Help&gt;</dt><dd>Display this internal online help.</dd>
-<dt>&lt;Delete All&gt;</dt><dd>Delete all entries in the history list, except those whose "keep" checkbox is checked.</dd>
+<dt>&lt;Delete All&gt;</dt><dd>Delete all entries in the history list, except those whose "Keep" button is selected.</dd>
 <dt>&lt;Bottom&gt;</dt><dd>Scroll to the bottom of the user interface.</dd>
 </dl>
 <p>The following Buttons are in the middle of the user interface, within the history list:
 <dl>
 <dt>&lt;keep&gt;</dt><dd>Keep an entry in the history list, so it is not deleted by &lt;Delete All&gt;, and also re-evaluate it after page load or refresh.</dd>
-<dt>&lt;Delete&gt;</dt><dd>Delete an entry in the history list.</dd>
+<dt>&lt;Unkeep&gt;</dt><dd>Unkeep a kept entry in the history list.</dd>
+<dt>&lt;Delete&gt;</dt><dd>Delete an (unkept) entry in the history list.</dd>
 </dl>
 <p>The following more frequently used Buttons are at the bottom of the user interface:
 <dl>
