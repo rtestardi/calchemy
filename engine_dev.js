@@ -22,7 +22,7 @@ const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
 const opens = "([{";
 const closes = ")]}";
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
-const functions = { "square":1, "cubic":1, "sqrt":1, "sin":1, "cos":1, "tan":1, "asn":1, "acs":1, "atn":1, "ln":1, "log":1, "exp":1, "per":1 };
+const functions = { "square":1, "cubic":1, "sqrt":1, "cbrt":1, "sin":1, "cos":1, "tan":1, "asn":1, "acs":1, "atn":1, "ln":1, "log":1, "exp":1, "per":1 };
 
 // this is our units database
 var nextbaseunit = 0;
@@ -760,7 +760,7 @@ var prec = {
     '~':    3,  // left-to-right associativity  (prefix multiplication)
     '>':    2,  // right-to-left associativity  (unary +)
     '<':    2,  // right-to-left associativity  (unary -)
-    "pow":  1,  // left-to-right associativity  (square, cube, sqrt)
+    "pow":  1,  // left-to-right associativity  (square, cube, sqrt, cbrt)
     '^':    1,  // right-to-left associativity
     ' ':    0,  // left-to-right associativity  (implied multiplication)
     "per": -1,  // left-to-right associativity  (unit division)
@@ -870,6 +870,8 @@ function EvaluateTokens(tokens)
                     result = CleanAndPush(stack, result, "pow", Value("3"));
                 } else if (token == "sqrt") {
                     result = CleanAndPush(stack, result, "pow", Value("0.5"));
+                } else if (token == "cbrt") {
+                    result = CleanAndPush(stack, result, "pow", Value("0.3333333333333333"));
                 } else {
                     var interpretation = token + "{" + result.interpretation + "}";
                     // check that argument is dimensionless beyond PI and RADIAN...
