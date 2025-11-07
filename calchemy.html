@@ -1842,7 +1842,7 @@ function CleanAndPush(stack, result, op, next)
             stacked = stack.pop();
             if (result != null) {
                 // perform the stacked operation
-                result = stacked.result.Operate(stacked.op, result);
+                result = stacked.result.Operate(stacked.op, result, false);
             } else {
                 // SI result requested thru '?' with no rhs; no operation
                 assert(stacked.op == '?');
