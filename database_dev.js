@@ -206,7 +206,7 @@ electron_charge*,qe=1.602176634E-19 ampere second
 boltzmann_const,k=1.380649E-23 joule/deltaK
 avogadros_num,Na=6.02214076E+23/mole
 ___POP SI
-gravity,grav=9.80665 meter/second^2 #standard acceleration of Earth's gravity
+gravity,grav,g=9.80665 meter/second^2 #standard acceleration of Earth's gravity
 stef_boltz_const=5.67051E-08 watt/(meter^2 deltaK^4)
 rydberg_const=1.09737E+07/meter
 volumetric_gas_constant,V0,=22.4141 liter/mole 
