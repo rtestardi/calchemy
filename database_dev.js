@@ -322,6 +322,7 @@ fps=1 foot/second
 fpm=1 foot/minute
 mph=1 mile/hour
 kph=1 kilometer/hour
+kps=1 kilometer/second
 mach=340 meter/second
 
 #Acceleration
