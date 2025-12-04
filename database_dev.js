@@ -636,6 +636,8 @@ ___VERIFY
 
 ___PUSH Physical_property
 
+Speed_sound:ss_steel=5920 meter/second
+
 d_aluminum=2.702 gramm/cc
 d_copper=8.92 gramm/cc
 d_gold=19.3 gramm/cc
