@@ -338,6 +338,7 @@ atmosphere*,atm=101325 pascal #standard atmospheric pressure
 psi=1 poundf/square inch
 ksi=1000 poundf/square inch
 mmHg,mmhg=133.3224 pascal #pressure (barometric)
+cmHg,cmhg=mmHg * centimeter/millimeter
 inHg,inhg=mmHg * inch/millimeter
 Hg,hg=mmHg/millimeter #density of mercury for pressure calculations
 inWc,inwc,inH2O=248.84 pascal #inches water column at 60 degF
