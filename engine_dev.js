@@ -9,6 +9,7 @@ const value_regexp_ch =       /[0-9.]/;
 const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+const value_regexp_all =     /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
 const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)][^^ ]/g;
 const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
@@ -81,13 +82,35 @@ function MatchParen(tokens, i)
     throw "unmatched parenthesis " + opens[stack[stack.length-1]];
 }
 
+var nextp = 0;
+
 // add parenthesis around an interpretation if they are not already there
-function Parenthesize(interpretation)
+function Parenthesize(interpretation, force = false)
 {
-    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
+    // if the interpretation is already parenthesized...
+    if (opens.indexOf(interpretation[0]) != -1 && MatchParen(interpretation, 0) == interpretation.length-1) {
         return interpretation;
     }
-    return "(" + interpretation + ")";
+
+    if (force) {
+        // back to () for functions
+        nextp = 0;
+    }
+
+    // alternate parens (), [], {}, around the interpretation
+    var pinterpretation = opens[nextp] + interpretation + closes[nextp];
+    nextp = (nextp + 1)%opens.length;
+    return pinterpretation;
+}
+
+// simplify an equation interpretation
+function Simplify(interpretation)
+{
+    // if the entire interpretation is parenthesized...
+    if (opens.indexOf(interpretation[0]) != -1 && MatchParen(interpretation, 0) == interpretation.length-1) {
+        interpretation = interpretation.slice(1, interpretation.length-1);
+    }
+    return interpretation;
 }
 
 // *** unit functions *****************************************************************************
@@ -837,6 +860,7 @@ function EvaluateTokens(tokens)
     var result = null;
 
     // for all tokens in the equation...
+    nextp = 0
     for (var i = 0; i < tokens.length; i++) {
         token = tokens[i];
         // if the token is a function call...
@@ -873,7 +897,7 @@ function EvaluateTokens(tokens)
                 } else if (token == "cbrt") {
                     result = CleanAndPush(stack, result, "pow", Value("0.3333333333333333"));
                 } else {
-                    var interpretation = token + "{" + result.interpretation + "}";
+                    var interpretation = token + Parenthesize(result.interpretation, true);
                     // check that argument is dimensionless beyond PI and RADIAN...
                     for (j = 2; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
@@ -971,16 +995,6 @@ function EvaluateTokens(tokens)
     assert(! stack.length);
 
     return result;
-}
-
-// simplify an equation interpretation
-function Simplify(interpretation)
-{
-    // XXX -- alternate parens; remove redundant parens
-    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
-        interpretation = interpretation.slice(1, interpretation.length-1);
-    }
-    return interpretation.replace(/[{]/g, "(").replace(/[}]/g, ")");
 }
 
 // *** expression alternation *********************************************************************
@@ -1726,6 +1740,7 @@ function RunLine(line)
     }
 
     // tokenize the command line
+    nextp = 0;
     results = [];
     mismatches = [];
     errors = [];

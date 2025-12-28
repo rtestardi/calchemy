@@ -153,7 +153,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2025 Ken Burgess and Rich Testardi.
-v1.32</p>
+v1.33</p>
 </td>
 </tr></table>
 
@@ -1053,6 +1053,7 @@ const value_regexp_ch =       /[0-9.]/;
 const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
 const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+const value_regexp_all =     /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
 const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)][^^ ]/g;
 const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
@@ -1125,13 +1126,35 @@ function MatchParen(tokens, i)
     throw "unmatched parenthesis " + opens[stack[stack.length-1]];
 }
 
+var nextp = 0;
+
 // add parenthesis around an interpretation if they are not already there
-function Parenthesize(interpretation)
+function Parenthesize(interpretation, force = false)
 {
-    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
+    // if the interpretation is already parenthesized...
+    if (opens.indexOf(interpretation[0]) != -1 && MatchParen(interpretation, 0) == interpretation.length-1) {
         return interpretation;
     }
-    return "(" + interpretation + ")";
+
+    if (force) {
+        // back to () for functions
+        nextp = 0;
+    }
+
+    // alternate parens (), [], {}, around the interpretation
+    var pinterpretation = opens[nextp] + interpretation + closes[nextp];
+    nextp = (nextp + 1)%opens.length;
+    return pinterpretation;
+}
+
+// simplify an equation interpretation
+function Simplify(interpretation)
+{
+    // if the entire interpretation is parenthesized...
+    if (opens.indexOf(interpretation[0]) != -1 && MatchParen(interpretation, 0) == interpretation.length-1) {
+        interpretation = interpretation.slice(1, interpretation.length-1);
+    }
+    return interpretation;
 }
 
 // *** unit functions *****************************************************************************
@@ -1881,6 +1904,7 @@ function EvaluateTokens(tokens)
     var result = null;
 
     // for all tokens in the equation...
+    nextp = 0
     for (var i = 0; i < tokens.length; i++) {
         token = tokens[i];
         // if the token is a function call...
@@ -1917,7 +1941,7 @@ function EvaluateTokens(tokens)
                 } else if (token == "cbrt") {
                     result = CleanAndPush(stack, result, "pow", Value("0.3333333333333333"));
                 } else {
-                    var interpretation = token + "{" + result.interpretation + "}";
+                    var interpretation = token + Parenthesize(result.interpretation, true);
                     // check that argument is dimensionless beyond PI and RADIAN...
                     for (j = 2; j < result.exponents.length; j++) {
                         if (result.exponents[j]) {
@@ -2015,16 +2039,6 @@ function EvaluateTokens(tokens)
     assert(! stack.length);
 
     return result;
-}
-
-// simplify an equation interpretation
-function Simplify(interpretation)
-{
-    // XXX -- alternate parens; remove redundant parens
-    if (interpretation[0] == '(' && MatchParen(interpretation, 0) == interpretation.length-1) {
-        interpretation = interpretation.slice(1, interpretation.length-1);
-    }
-    return interpretation.replace(/[{]/g, "(").replace(/[}]/g, ")");
 }
 
 // *** expression alternation *********************************************************************
@@ -2770,6 +2784,7 @@ function RunLine(line)
     }
 
     // tokenize the command line
+    nextp = 0;
     results = [];
     mismatches = [];
     errors = [];
@@ -3875,12 +3890,13 @@ var tests =`
     1/(m per sec per sec) | [Acceleration^-1 or LENGTH^-1*TIME^2]
 
     # power precedence and interpretation
-    square meter^3 | > ((meter)^2)^3, [LENGTH^6]
+    square meter^3 | > [(meter)^2]^3, [LENGTH^6]
     2 square meter | > 2 (meter)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
     2 meter^2 | > 2 (meter)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
-    sqrt acre ^2 | > ((acre)^0.5)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
-    cbrt cup ^2 | > ((cup)^0.3333333333333333)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
-    cubic meter^2 | > ((meter)^3)^2, [LENGTH^6]
+    (2 meter)^2 | > (2 meter)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
+    sqrt acre ^2 | > [(acre)^0.5]^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
+    cbrt cup ^2 | > [(cup)^0.3333333333333333]^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
+    cubic meter^2 | > [(meter)^3]^2, [LENGTH^6]
 
     # functions
     3 3 | = 9
@@ -4060,7 +4076,7 @@ var tests =`
 
     # auto-inversion
     3 sec ? Hz | > (3 second) ^ -1 ? hertz, = 0.333333 Hz, Caution: Calculation auto-inverted left-hand-side.
-    3 mL/50 meter ? mpg | > (3 milli~liter / (50 meter)) ^ -1 ? mpg, = 39.2024 mpg, Caution: Calculation auto-inverted left-hand-side.
+    3 mL/50 meter ? mpg | > [3 milli~liter / (50 meter)] ^ -1 ? mpg, = 39.2024 mpg, Caution: Calculation auto-inverted left-hand-side.
     rpm ? minute/revolution | > (rpm_as_angular_velocity) ^ -1 ? minute / revolution_as_angle, > (rpm_as_frequency) ^ -1 ? minute / revolution_as_number, = 1 minute/revolution,`+
     `Caution: Calculation auto-inverted left-hand-side.
     rpm?|> rpm_as_angular_velocity ? [Angular_velocity], = 0.10472 radian/second, > rpm_as_frequency ? [Frequency], = 0.0166667 hertz
@@ -4069,12 +4085,12 @@ var tests =`
     1 foot^2 | > 1 (foot)^2, [Area or Fuel_efficiency^-1 or LENGTH^2]
     1/2*feet * 2 meters ? | > (1 / 2) * foot * 2 meter ? [Area], = 0.3048 meter^2
     1/sqrt(23mH * 10uF)? |>1/(23milli~henry*10micro~farad)^0.5?[Frequency],=2085.14hertz,>1/(23milli~henry*10micro~farad)^0.5?[Angular_velocity],=2085.14radian/second
-    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > (20000 Btu / hour) / ((80 percent * 14 mega~joule / day) / (meter)^2) ? (foot)^2, = 486.71 ft^2
+    20000 btu/hour; 80% * 14 megajoules/day/meter^2 ? ft^2 | > {20000 Btu / hour} / ([80 percent * 14 mega~joule / day] / (meter)^2) ? [foot]^2, = 486.71 ft^2
     --3 | > 0-(0-3), = 3
     cal/(gm deltaK) | > calorie/(gramm deltaK), [Specific_heat_m or LENGTH^2*TIME^-2*TEMP^-1]
-    1/cal/(gm deltaK) |> (1 / calorie) / (gramm deltaK), [MASS^-2*LENGTH^-2*TIME^2*TEMP^-1]
-    1/(cal/(gm deltaK)) | > 1 / (calorie/(gramm deltaK)), [Specific_heat_m^-1 or LENGTH^-2*TIME^2*TEMP]
-    (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > ((1 + 1) * (1 + 2))^-1, = 0.166667
+    1/cal/(gm deltaK) |> (1 / calorie) / [gramm deltaK], [MASS^-2*LENGTH^-2*TIME^2*TEMP^-1]
+    1/(cal/(gm deltaK)) | > 1 / [calorie/(gramm deltaK)], [Specific_heat_m^-1 or LENGTH^-2*TIME^2*TEMP]
+    (1+1);(1+2) | > (1 + 1) * (1 + 2), = 6, > (1 + 1) / (1 + 2), = 0.666667, > (1 + 1)^-1 * (1 + 2), = 1.5, > [(1 + 1) * (1 + 2)]^-1, = 0.166667
     foo=lb | > poundm, > poundf, defined
     foo=2;3 | > 2 * 3, > 2 / 3, > (2)^-1 * 3, > (2 * 3)^-1, defined
     foo=lb : MASS | > poundm, defined
@@ -4086,8 +4102,8 @@ var tests =`
     q=asn 1 | > asn(1), defined
     q=
 
-    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>(2pi(1meter/gravity)^0.5)^-1*1?`+
-    `[Frequency],>((2pi(1meter/gravity)^0.5)*1)^-1?[Frequency],=0.498403hertz
+    2pi sqrt(1meter/grav);1?|>2pi(1meter/gravity)^0.5*1?[Time],>2pi(1meter/gravity)^0.5/1?[Time],=2.00641second,>[2pi(1meter/gravity)^0.5]^-1*1?`+
+    `[Frequency],>{[2pi(1meter/gravity)^0.5]*1}^-1?[Frequency],=0.498403hertz
 
     # filters, parameters
     in:ftlb | incompatible units :ftlb
@@ -4104,7 +4120,7 @@ var tests =`
     2000 lbf * (10 * 12 feet) / (1 minute) ? horsepower |= 7.27273 horsepower
     2000 lbf * (10 * 12 feet) ? horsepower | Dimensional Mismatch [Frequency or Angular_velocity or Time^-1]
     2+3*5 | = 17
-    2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower | > 2000 poundf * 10 stories * (12 foot / stories) / (1 minute) ? horsepower, = 7.27273 horsepower
+    2000 lb; 10 stories; 12 feet/story; 1 minute ? horsepower | > 2000 poundf * 10 stories * (12 foot / stories) / [1 minute] ? horsepower, = 7.27273 horsepower
     sin(pi/2) | = 1
     atn(1) | = 0.785398
     sin(90 degrees) | = 1
