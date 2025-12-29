@@ -1782,6 +1782,9 @@ The precedence of implied multiplication is just above that of multiplication an
 <p>The ":" operator is a dimensional filter that limits evaluations of its left-hand-side to the dimension(s) of its right-hand-side.
 <p>The ";" operator is what we call "solve by dimensional analysis" which evaluates all combinations of the left-hand-side and right-hand-side
 in the numerator and denominator of the equation, discarding any dimensionally incorrect results.
+<p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
+<p>Parentheses (or brackets or braces) can be used to explicitly override the default precedences and associativities, and group operations.
+<p>When in doubt, it is always best to parenthesize!
 <p>Calchemy evaluates higher precedence operators before lower precedence operators.
 Left-associative operators of the same precedence are evaluated from left to right; right-associative operators of the same precedence are evaluated from right to left.
 The following table illustrates these rules:
@@ -1803,9 +1806,6 @@ The following table illustrates these rules:
 <tr><td>3 cal/(gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 <tr><td>3 cal per (gm deltaK)</td><td>(3 * cal)/(gm * deltaK)</td></tr>
 </table>
-<p>"+" and "-" can also be used as highest-precedence right-associative unary operators.
-<p>Parentheses (or brackets or braces) can be used to explicitly override the default precedences and associativities, and group operations.
-<p>When in doubt, it is always best to parenthesize!
 
 <h2 id='functions'>Functions</h2>
 <p>Equations may also contain the following high-precedence functions:
