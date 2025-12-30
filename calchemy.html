@@ -420,7 +420,7 @@ svedberg*=1E-13 second #Sedimentation Coefficient
 angstrom*=1E-10 meter
 fermi*=1E-15 meter
 *parsec*=3.0857E+16 meter
-au=1.49598E+11 meter
+au,AU=1.49598E+11 meter #astronomical unit
 mile_nautical,nmi=1852 meter
 inch*,in=2.54 centimeter
 mil*=(1/1000)inch
@@ -4167,7 +4167,7 @@ var tests =`
     TEST byname ft | === units by name ft ===,bdft,cuft,ft,fT,ftce,fTCE,ftesla,ftlb,ftoe,fTOE,fton_explosive,fton_metric,ftonf_metric,ftonm_metric,ftonne,`+
     `ftonnef,ftonnem,ftorr,ftTNT,sqft
     TEST byname kilobyte | === units by name kilobyte ===,kilobyte,kiloByte,kilobyte_per_second
-    TEST byname U | === units by name U ===,amu,au,btu,Btu,BTU,btu_mean,btu_thermochem,bu,chu,entropy_unit,uval,Uval,uvalue,Uvalue
+    TEST byname U | === units by name U ===,amu,au,AU,btu,Btu,BTU,btu_mean,btu_thermochem,bu,chu,entropy_unit,uval,Uval,uvalue,Uvalue
     TEST byname wc | === units by name wc ===,inwc,inWc,wc,Wc
     TEST bycategory Torque | === units in category Torque ===, ftlb, inlb, newton meter
     TEST bycategory Angle | === units in category Angle ===,arcmin,arcsec,cycle,cycle_as_angle,cyclea,deg,degree,grad,grade,rad,radian,rev,rev_as_angle,reva,revolution,`+
