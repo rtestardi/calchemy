@@ -5,7 +5,7 @@
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
 <title>Interactive Pendulum</title>
     <style>
-        body,select { font: 20px Arial; }
+        body,select,input { font: 20px Arial; }
         math { font-size: 1.5em; }
     </style>
 </head>
@@ -46,7 +46,7 @@
 </math>
 </p>
 
-<p>What mass is the source of gravity?
+<p>What mass is the source of your gravity?
 <select id="gravity" onchange="Update();">
 <option value="5.975e+24 kilogramm">Earth mass</option>
 <option value="7.36e+22 kilogramm">Moon mass</option>
@@ -70,8 +70,10 @@ What is the length of your pendulum?
 <option value="6 inch">6 inch</option>
 <option value="1 foot">1 foot</option>
 <option value="100 foot">100 foot</option>
+<option value="other">other</option>
 <option value="1 au">1 astronomical unit</option>
 </select>
+<input id="otherlength" onchange="Update();">
 </p>
 
 <p>
@@ -102,6 +104,26 @@ What unit would you like the period expressed in?
 
 function Update()
 {
+    document.getElementById("status").innerHTML = "";
+
+    var length;
+    if (document.getElementById("length").value == "other") {
+        document.getElementById("otherlength").disabled = false;
+        // parse input to see if valid length
+        length = document.getElementById("otherlength").value;
+        // XXX -- ; or ? is illegal
+        // XXX -- disable/enable input
+        var results = RunLine(length + " : [Length]");
+        if (! results.success) {
+            document.getElementById("status").style.color = "red";
+            document.getElementById("status").innerHTML = results.output;
+            return;
+        }
+    } else {
+        document.getElementById("otherlength").disabled = true;
+        length = document.getElementById("length").value;
+    }
+
     var html = "";
 
     // compute the acceleration to the mass: G M/r^2
@@ -116,7 +138,7 @@ function Update()
     }
 
     // compute the period of the pendulum: 2 pi sqrt(l/a)
-    var equation = "2 pi sqrt(" + document.getElementById("length").value + " / (" + accel + ")) ? " + document.getElementById("unit").value;
+    var equation = "2 pi sqrt(" + length + " / (" + accel + ")) ? " + document.getElementById("unit").value;
     var results = RunLine(equation);
     var period;
     html += "<hr><br><b>" + equation + "</b>";
@@ -137,11 +159,12 @@ function Body()
 {
     try {
         // load the database
+        loading = true;
         LoadDatabase(database);
-
-        document.getElementById("status").innerHTML = "database loaded";
+        loading = false;
 
         Update();
+        document.getElementById("status").innerHTML = "database loaded";
     } catch (error) {
         document.getElementById("status").innerHTML = error;
         return;
