@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+<title>Interact</title>
+    <style>
+        body,select { font: 20px Arial; }
+    </style>
+</head>
+
+<body onload='Body()'>
+
+<h1>Interact</h1>
+
+<p>
+<math>
+    <mi>a</mi>
+    <mo>=</mo>
+    <mfrac>
+    <mrow>
+    <mi>G</mi>
+    <mi>M</mi>
+    </mrow>
+    <msup>
+    <mi>r</mi>
+    <mn>2</mn>
+    </msup>
+    </mfrac>
+</math>
+</p>
+
+<p>
+<math>
+    <mi>T</mi>
+    <mo>=</mo>
+    <mn>2</mn>
+    <mi>pi</mi>
+    <msqrt>
+        <mfrac>
+            <mi>L</mi>
+            <mi>a</mi>
+        </mfrac>
+    </msqrt>
+</math>
+</p>
+
+<p>What is the source of gravity?
+<select id="gravity" onchange="Update();">
+<option value="5.975e+24 kilogramm">Earth mass</option>
+<option value="1.99e+30 kilogramm">Sun mass</option>
+</select>
+</p>
+
+<p>
+How far from the point mass are you?
+<select id="radius" onchange="Update();">
+<option value="6378000 meter">Earth surface</option>
+<option value="695000000 meter">Sun surface</option>
+<option value="1 au">1 au</option>
+</select>
+</p>
+
+<p>
+What is the length of your pendulim?
+<select id="length" onchange="Update();">
+<option value="6 inch">6 inch</option>
+<option value="1 foot">1 foot</option>
+<option value="100 foot">100 foot</option>
+<option value="1 au">1 au</option>
+</select>
+</p>
+
+<p>
+What unit would you like the period expressed in?
+<select id="unit" onchange="Update();">
+<option value="seconds">seconds</option>
+<option value="minutes">minutes</option>
+<option value="hours">hours</option>
+<option value="days">days</option>
+<option value="years">years</option>
+</select>
+</p>
+
+
+<p id='status'>loading database ...</p>
+<p id='results'></p>
+
+<script type="text/javascript" src="database_dev.js">
+// import the database
+// var database=...
+</script>
+
+<script type="text/javascript" src="engine_dev.js">
+// import the engine
+</script>
+
+<script>
+
+function Update()
+{
+    var html = "";
+
+    // compute the acceleration to the mass: G M/r^2
+    var equation = "G " + document.getElementById("gravity").value + " / (" + document.getElementById("radius").value + ")^2 ?";
+    var results = RunLine(equation);
+    var accel;
+    html += "<hr><br><b>" + equation + "</b>";
+    html += "<br><i>" + (results.success?"success":"failure") + "</i>";
+    for (var j = 0; j < results.output.length; j++) {
+        html += "<br>" + results.output[j];
+        accel = results.output[j].replace(/= /, "");
+    }
+
+    // compute the period of the pendulum: 2 pi sqrt(l/a)
+    var equation = "2 pi sqrt(" + document.getElementById("length").value + " / (" + accel + ")) ? " + document.getElementById("unit").value;
+    var results = RunLine(equation);
+    var period;
+    html += "<hr><br><b>" + equation + "</b>";
+    html += "<br><i>" + (results.success?"success":"failure") + "</i>";
+    for (var j = 0; j < results.output.length; j++) {
+        html += "<br>" + results.output[j];
+        period = results.output[j].replace(/= /, "");
+    }
+
+    html += "<hr><br><b> accel (a) is: " + accel + "</b>";
+    html += "<br><b> period (T) is: " + period + "</b>";
+
+    // display the demo results
+    document.getElementById("results").innerHTML = html;
+}
+
+function Body()
+{
+    try {
+        // load the database
+        LoadDatabase(database);
+
+        document.getElementById("status").innerHTML = "database loaded";
+
+        Update();
+    } catch (error) {
+        document.getElementById("status").innerHTML = error;
+        return;
+    }
+}
+
+</script>
+
+</body>
+
+</html>
