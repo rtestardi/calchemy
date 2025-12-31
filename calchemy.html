@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 
 <!-- Calchemy (tm); Math Magic; http://www.calchemy.com -->
@@ -153,7 +153,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2025 Ken Burgess and Rich Testardi.
-v1.34</p>
+v1.35</p>
 </td>
 </tr></table>
 
@@ -3113,11 +3113,13 @@ function SnoopAndDelete(tag)
 
 function LoadRuntimeDatabase(name, text)
 {
+    var start = new Date();
     try {
         var number = units.length;
         LoadDatabase(text);
         number = units.length - number;
-        Chunk(name, "loaded " + number + " units");
+        var ms = new Date() - start;
+        Chunk(name, "loaded " + number + " units in " + ms + " ms");
     } catch (error) {
         // append a deletable chunk with any errors
         Chunk(name, error);
@@ -3143,9 +3145,11 @@ function Body()
         var number = units.length;
 
         // load the units database
+        var start = new Date();
         loading = true;
         LoadDatabase(database);
         loading = false;
+        var ms = new Date() - start;
 
         // tests should pass now
         dirty = false;
@@ -3154,16 +3158,18 @@ function Body()
         ReplayAllKept(temp);
 
         number = units.length - number;
-        Chunk("database", "loaded " + number + " units");
+        Chunk("database", "loaded " + number + " units in " + ms + " ms");
 
         if (custom != null) {
             number = units.length;
 
             // load custom units
+            start = new Date();
             LoadDatabase(custom);
+            ms = new Date() - start;
 
             number = units.length - number;
-            Chunk("custom", "loaded " + number + " units");
+            Chunk("custom", "loaded " + number + " units in " + ms + " ms");
         }
 
         if (performance.navigation.type != performance.navigation.TYPE_RELOAD) {
