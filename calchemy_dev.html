@@ -441,6 +441,9 @@ function Body()
         LoadDatabase(database);
         loading = false;
 
+        // tests should pass now
+        dirty = false;
+
         // replay all kept results
         ReplayAllKept(temp);
 
@@ -1537,6 +1540,11 @@ function TestReal()
 
         var html = "";
 
+        var olddirty = dirty;
+        if (dirty) {
+            html += "<br>N.B. database is dirty with post-load modifications; some tests may be expected to fail";
+        }
+
         // for all tests...
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i].replace(/^ *[#].*/, "").trim();  // # for comment only at beginning of line
@@ -1628,6 +1636,7 @@ function TestReal()
         // replace the temporary deletable chunk in the results list with the actual test results
         Delete(firsttag);
         Chunk(null, "tests started ..." + html + "<br>... " + passed + " (" + Math.trunc(passed*100/tested) + "%) of " + tested + " tests passed in " + ms + " ms");
+        dirty = olddirty;
     } catch (error) {
         Chunk(null, error);
     } finally {

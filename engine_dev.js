@@ -32,6 +32,7 @@ var units = [];  // Unit
 var bases = [];  // Unit
 var all_categories = [];  // string
 var open_categories = [];  // string
+var dirty = false;  // once dirty with new definitions, tests may fail...
 var loading = false;  // while loading the units database, all ambiguities are turned off and primary names must be used
 var deriving = false;  // while deriving units, secondary names may also be used
 var defining = false;  // while defining, don't record mismatches
@@ -1456,6 +1457,9 @@ function ParseTokens(tokens, line)
                     stop--;
                 }
             }
+
+            // tests may legitimately fail now that the database is dirty
+            dirty = true;
 
             // gather categories and names...
             for (; i < tokens.length; i++) {
