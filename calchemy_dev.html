@@ -1043,6 +1043,7 @@ var equations =`
 
     # Orbit_mechanical
     G [Mass] [Mass] / [radius:Length]^2 ? [Force]  # force of attraction | = 6.67259e-11 [Force]
+    G [Mass] / [radius:Length]^2 ? [Acceleration]  # attraction acceleration | = 6.67259e-11 [Acceleration]
     sqrt(2 G [Mass] / [radius:Length]) ? [Speed]  # escape speed | = 0.0000115521 [Speed]
     G [Mass] [Mass] / (2 [radius:Length]) ? [Energy]  # orbital kinetic energy | = 3.33629e-11 [Energy]
     -G [Mass] [Mass] / [radius:Length] ? [Energy]  # orbital potential energy | = -6.67259e-11 [Energy]
