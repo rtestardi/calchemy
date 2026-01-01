@@ -48,6 +48,8 @@
 </math>
 </p>
 
+<p>For a surprise, try selecting "Sun mass", "1 astronomical unit", "1 astronomical unit", and "years", below...</p>
+
 <p>What mass is the source of your gravity?
 <select id="gravity" onchange="Update();">
 <option value="5.975e+24 kilogramm">Earth mass</option>
@@ -165,13 +167,25 @@ function Update()
 
     // display the demo results
     document.getElementById("results").innerHTML = html;
+
+    if (period == "1.00043  years") {
+        document.getElementById("surprise").hidden = false;
+        if (document.getElementById("how").checked) {
+            document.getElementById("possible").hidden = false;
+        } else {
+            document.getElementById("possible").hidden = true;
+        }
+    } else {
+        document.getElementById("surprise").hidden = true;
+        document.getElementById("possible").hidden = true;
+    }
 }
 
 function Body()
 {
-    try {
-        document.getElementById("status").style.color = "red";
+    document.getElementById("status").style.color = "red";
 
+    try {
         // load the database
         loading = true;
         LoadDatabase(database);
@@ -185,6 +199,103 @@ function Body()
 }
 
 </script>
+
+<hr>
+
+<div id="surprise">
+<input type="checkbox" id="how" onchange="Update();"> How is this possible?
+<div id="possible">
+<p>How did we get from Keppler's Third Law:
+<math>
+    <mi>T</mi>
+    <mo>=</mo>
+    <mn>2</mn>
+    <mo>&middot;</mo>
+    <mi>&pi;</mi>
+    <msqrt>
+        <mfrac>
+            <msup>
+            <mi>r</mi>
+            <mn>3</mn>
+            </msup>
+            <mrow>
+            <mi>G</mi>
+            <mo>&middot;</mo>
+            <mi>M</mi>
+            </mrow>
+        </mfrac>
+    </msqrt>
+</math>
+back to the period of a simple pendulum???</p>
+
+<p>We also know:
+<math>
+    <mi>F</mi>
+    <mo>=</mo>
+    <mfrac>
+        <mrow>
+        <mi>G</mi>
+        <mo>&middot;</mo>
+        <mi>M</mi>
+        <mo>&middot;</mo>
+        <mi>m</mi>
+        </mrow>
+        <msup>
+        <mi>r</mi>
+        <mn>2</mn>
+        </msup>
+    </mfrac>
+</math>
+where "M" is the mass of the Sun and "m" is the mass of the Earth.
+</p>
+
+<p>And we know:
+<math>
+    <mi>F</mi>
+    <mo>=</mo>
+    <mi>m</mi>
+    <mo>&middot;</mo>
+    <mi>a</mi>
+</math>
+</p>
+
+<p>So:
+<math>
+    <mi>a</mi>
+    <mo>=</mo>
+    <mfrac>
+    <mrow>
+    <mi>G</mi>
+    <mo>&middot;</mo>
+    <mi>M</mi>
+    </mrow>
+    <msup>
+    <mi>r</mi>
+    <mn>2</mn>
+    </msup>
+    </mfrac>
+</math>
+</p>
+
+<p>Giving us:
+<math>
+    <mi>T</mi>
+    <mo>=</mo>
+    <mn>2</mn>
+    <mo>&middot;</mo>
+    <mi>&pi;</mi>
+    <msqrt>
+        <mfrac>
+            <mi>r</mi>
+            <mi>a</mi>
+        </mfrac>
+    </msqrt>
+</math>
+</p>
+
+<p>Setting "r" to 1 au (the length of our Earth's "pendulum") and "a" to the acceleration caused by the Sun's gravity 1 au from the Sun takes care of the rest!!!</p>
+</div>
+</div>
 
 </body>
 
