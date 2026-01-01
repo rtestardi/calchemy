@@ -112,13 +112,14 @@ function Update()
         // parse input to see if valid length
         length = document.getElementById("otherlength").value;
         if (! length.match(/[:?]/)) {
-            var results = RunLine(length + " : [Length]");
+            var results = RunLine(length + ":[Length]");
             if (! results.success) {
                 document.getElementById("status").innerHTML = results.output;
                 return;
             }
         } else {
-            document.getElementById("status").innerHTML = ": or ? not allowed here";          
+            document.getElementById("status").innerHTML = ": or ? not allowed here";
+            return;
         }
     } else {
         document.getElementById("otherlength").disabled = true;
