@@ -87,6 +87,10 @@ What unit would you like the period expressed in?
 </select>
 </p>
 
+<p>
+<input type="checkbox" id="show" onchange="Update();"> Show your work!
+</p>
+
 
 <p id='status'>loading database ...</p>
 <p id='results'></p>
@@ -148,6 +152,10 @@ function Update()
     for (var j = 0; j < results.output.length; j++) {
         html += "<br>" + results.output[j];
         period = results.output[j].replace(/= /, "");
+    }
+
+    if (! document.getElementById("show").checked) {
+        html = "";
     }
 
     html += "<hr><br><b> acceleration (a) is: " + accel + "</b>";
