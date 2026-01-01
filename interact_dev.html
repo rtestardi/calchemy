@@ -170,14 +170,8 @@ function Update()
 
     if (period == "1.00043  years") {
         document.getElementById("surprise").hidden = false;
-        if (document.getElementById("how").checked) {
-            document.getElementById("possible").hidden = false;
-        } else {
-            document.getElementById("possible").hidden = true;
-        }
     } else {
         document.getElementById("surprise").hidden = true;
-        document.getElementById("possible").hidden = true;
     }
 }
 
@@ -203,9 +197,7 @@ function Body()
 <hr>
 
 <div id="surprise">
-<input type="checkbox" id="how" onchange="Update();"> How is this possible?
-<div id="possible">
-<p>How did we get from Keppler's Third Law:
+<p>Surprise!  How did we get from Keppler's Third Law:
 <math>
     <mi>T</mi>
     <mo>=</mo>
@@ -294,7 +286,6 @@ where "M" is the mass of the Sun and "m" is the mass of the Earth.
 </p>
 
 <p>Setting "r" to 1 au (the length of our Earth's "pendulum") and "a" to the acceleration caused by the Sun's gravity 1 au from the Sun takes care of the rest!!!</p>
-</div>
 </div>
 
 </body>
