@@ -114,12 +114,10 @@ function Update()
         if (! length.match(/[:?]/)) {
             var results = RunLine(length + " : [Length]");
             if (! results.success) {
-                document.getElementById("status").style.color = "red";
                 document.getElementById("status").innerHTML = results.output;
                 return;
             }
         } else {
-            document.getElementById("status").style.color = "red";
             document.getElementById("status").innerHTML = ": or ? not allowed here";          
         }
     } else {
@@ -161,13 +159,14 @@ function Update()
 function Body()
 {
     try {
+        document.getElementById("status").style.color = "red";
+
         // load the database
         loading = true;
         LoadDatabase(database);
         loading = false;
 
         Update();
-        document.getElementById("status").innerHTML = "database loaded";
     } catch (error) {
         document.getElementById("status").innerHTML = error;
         return;
