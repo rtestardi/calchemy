@@ -1254,12 +1254,20 @@ function AlternateTokens(tokens, n)
                 strings = result.Dimension(question != -1);
             }
 
-            // record the result as a mismatch
-            // XXX -- generate merged mismatches and interpretations
-            for (var k = 0; k < strings.length; k++) {
-                if (! mismatches.includes(strings[k])) {
-                    if (! defining) {
-                        mismatches.push(strings[k]);
+            if (strings.length && ! defining) {
+                // record the result as a mismatch
+                // group interpretations (unique) by mismatch (possibly not unique)
+                // XXX -- can we merge with result code
+                // append at the end by default
+                var at = mismatches.length;
+                for (var k = strings.length-1; k >= 0; k--) {
+                    var x = mismatches.indexOf(strings[k]);
+                    if (x != -1) {
+                        // line is already in list; append new lines following
+                        at = x;
+                    } else {
+                        // append line to the list
+                        mismatches.splice(at, 0, strings[k]);
                     }
                 }
             }
@@ -1715,6 +1723,19 @@ function Quality(interpretation)
     return 2;  // high
 }
 
+function SortMismatches(mismatches)
+{
+    // mismatches is an array of one or more lines of interpretation (>, unique) followed a line of (common) mismatch that applies to those interpretations
+    // we want the simplest mismatches first
+
+    // tests needed:
+    // 
+    // watts ; kWh/m^3 ; years ? lbs
+    // watts ; kWh/m^3 ; years ?
+    // watts ; kWh/m^3 ; years
+    return mismatches;
+}
+
 // run a command line and return the output as an array of strings and a success bool
 function RunLine(line)
 {
@@ -1781,7 +1802,8 @@ function RunLine(line)
                 interpretations[answers.length] = [Simplify(results[j].interpretation)];
                 answers.push(string);
             } else {
-                // sort interpretations by answer
+                // group interpretations (unique) by answer (possibly not unique)
+                // XXX -- can we merge with mismatch code
                 if (! interpretations[answer].includes(Simplify(results[j].interpretation))) {
                     interpretations[answer].push(Simplify(results[j].interpretation));
                 }
@@ -1822,10 +1844,10 @@ function RunLine(line)
             }
         }
 
-    // otherwise, if we defined a unit or got one or more dimensional mismatches (or SI results)...
+    // otherwise, if we defined a unit or got one or more dimensional mismatches...
     } else if (defines || mismatches.length) {
-        // use the mismatches (or SI results) as the results we will output
-        output = mismatches;
+        // use the sorted mismatches as the results we will output
+        output = SortMismatches(mismatches);
         if (defines) {
             output.push("defined");
         }
