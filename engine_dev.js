@@ -1075,7 +1075,7 @@ function LookupUnits(name, prefixable, search)
         } else {
             name2 = name;
         }
-        
+
         // for all units...
         for (var i = 0; i < units.length; i++) {
             unit = units[i];
@@ -1742,7 +1742,7 @@ function SortMismatches(mismatches, question)
     // XXX -- can we merge with results and mismatch sorting code?
 
     // tests needed:
-    // 
+    //
     // watts ; kWh/m^3 ; years ? lbs
     // watts ; kWh/m^3 ; years ?
     // watts ; kWh/m^3 ; years

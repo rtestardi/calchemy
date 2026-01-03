@@ -209,7 +209,7 @@ ___POP SI
 gravity,grav,g=9.80665 meter/second^2 #standard acceleration of Earth's gravity
 stef_boltz_const=5.67051E-08 watt/(meter^2 deltaK^4)
 rydberg_const=1.09737E+07/meter
-volumetric_gas_constant,V0,=22.4141 liter/mole 
+volumetric_gas_constant,V0,=22.4141 liter/mole
 molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
 ___POP Physical_constant
 ___VERIFY
