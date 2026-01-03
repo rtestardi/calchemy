@@ -176,11 +176,2759 @@ var custom = null;
 //     [<category|dimension>[, ...]:]<name>[*][, ...]  -- unit names (* = name is pluralizable)
 </script>
 
-<script type="text/javascript" src="database_dev.js">
+<script>
+var database =`
+CATEGORY SI
+CATEGORY Prefix
+CATEGORY Number
+CATEGORY Angle
+CATEGORY Frequency
+CATEGORY Angular_velocity
+CATEGORY Energy
+CATEGORY Torque
+CATEGORY Physical_constant
+CATEGORY Physical_property
+CATEGORY Water
+CATEGORY Ice
+CATEGORY Air
+CATEGORY Batteries
+CATEGORY Speed_sound
+CATEGORY Warn_angle
+CATEGORY Warn_temperature
+
+BASE PI #must be first
+BASE RADIAN #must be second
+BASE MASS
+BASE LENGTH
+BASE TIME
+BASE TEMP
+BASE STORAGE
+BASE MONEY
+BASE CURRENT
+BASE SUBSTANCE
+
+___PUSH Prefix,SI
+PREFIX yotta,Y=1E+24
+PREFIX zetta,Z=1E+21
+PREFIX exa,E=1E+18
+PREFIX peta,P=1E+15
+PREFIX tera,T=1E+12
+PREFIX giga,G=1E+09
+PREFIX mega,M=1E+06
+PREFIX kilo,k=1E+03
+PREFIX hecto,h=1E+02
+PREFIX deka,da=1E+01
+PREFIX deci,d=1E-01
+PREFIX centi,c=1E-02
+PREFIX milli,m=1E-03
+PREFIX micro,u=1E-06
+PREFIX nano,n=1E-09
+PREFIX pico,p=1E-12
+PREFIX femto,f=1E-15
+PREFIX atto,a=1E-18
+PREFIX zepto,z=1E-21
+PREFIX yocto,y=1E-24
+___POP SI
+PREFIX kibi,Ki=1024 #storage
+PREFIX mebi,Mi=1024^2 #storage
+PREFIX gibi,Gi=1024^3 #storage
+PREFIX tebi,Ti=1024^4 #storage
+PREFIX pebi,Pi=1024^5 #storage
+PREFIX exbi,Ei=1024^6 #storage
+PREFIX zebi,Zi=1024^7 #storage
+PREFIX yobi,Yi=1024^8 #storage
+___POP Prefix
+___VERIFY
+
+___PUSH Number
+pi=3.14159265358979323 PI
+pi_as_number,pin=3.14159265358979323
+e=2.71828182845904523
+___POP Number
+___VERIFY
+
+#Primary
+___PUSH SI
+*meter*,m,metre*=LENGTH
+*gramm,gm,g,gram*=MASS
+*second*,s,sec*=TIME
+deltaK,deltak=TEMP #interval (T-T0) Kelvin
+*ampere*,A,amp*=CURRENT
+*mole*,mol=SUBSTANCE
+*Angle,Warn_angle:radian*,rad=1 RADIAN
+*Frequency,Warn_angle:hertz,Hz=1/second
+___POP SI
+*bit*,b=STORAGE
+dollar*,$=MONEY
+___VERIFY
+
+#Secondary
+___PUSH SI
+*newton*,N=1 kilogramm meter/second^2
+*Energy:joule*,J=1 newton meter
+*watt*,W=1 joule/second
+*pascal*,Pa,=1 newton/square meter
+*coulomb*,C=ampere second
+*volt*,V=1 joule/coulomb
+*ohm*=1 volt/ampere
+*siemens,S=1 ampere/volt
+*farad*,F=1 coulomb/volt
+*henry*,H=1 second^2/farad
+*weber*,Wb=1 volt second
+*tesla*,T=1 weber/meter^2
+___POP SI
+*liter*,L,litre*,l=1 cubic decimeter #was 1.000028 before 1964
+*mho*=1 ampere/volt
+*maxwell*,Mx=1E-08 weber #CGS
+*gauss=0.0001 weber/meter^2 #CGS
+*oersted,Oe=79.57747 ampere/meter
+*Byte*,byte*,B,char*=8 bit #computer storage
+*gamma*=1E-09 weber/meter^2
+___VERIFY
+
+#Angle or Number
+___PUSH Warn_angle,Angle
+cycle_as_angle,cyclea,cycle*=2 pi_as_number radian
+revolution_as_angle,revolutiona,revolution*,rev_as_angle,reva,rev*=2 pi_as_number radian
+___POP Angle
+___PUSH Number
+cycle_as_number,cyclen,cycle*=1
+revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
+___POP Number,Warn_angle
+___VERIFY
+
+DERIVED Mass=kilogramm
+DERIVED Length=meter
+DERIVED Time=second
+DERIVED Temperature=deltaK
+DERIVED Storage=Byte
+DERIVED Network_bandwidth=megabit/second
+AMBIGUOUS Storage_bandwidth=mebibyte/second
+DERIVED Area=meter^2
+DERIVED Volume=liter
+DERIVED Speed=meter/second
+DERIVED Acceleration=meter/second^2
+DERIVED Force=newton
+DERIVED Energy=joule
+AMBIGUOUS Torque=newton meter
+DERIVED Power=watt
+DERIVED Pressure=pascal
+DERIVED Warn_angle:Frequency=hertz
+AMBIGUOUS Warn_angle:Angular_velocity=radian/second
+DERIVED Warn_angle:Angular_acceleration=radian/second^2
+DERIVED Density=kilogramm/liter
+DERIVED Flow=liter/second
+DERIVED Heat_latent_m=joule/kilogramm
+AMBIGUOUS Heat_latent_v=joule/liter
+DERIVED Specific_heat_m=joule/(kilogramm*deltaK)
+DERIVED Specific_heat_v=joule/(liter*deltaK)
+AMBIGUOUS Heat_vaporization_m=joule/kilogramm
+AMBIGUOUS Heat_vaporization_v=joule/liter
+AMBIGUOUS Heat_fusion_m=joule/kilogramm
+AMBIGUOUS Heat_fusion_v=joule/liter
+DERIVED Thermal_conductivity=watt/(meter*deltaK)
+DERIVED Viscosity=pascal*second #(dynamic)
+DERIVED Current=ampere
+DERIVED Charge=coulomb
+DERIVED Voltage=volt
+DERIVED Resistance=ohm
+DERIVED Capacitance=farad
+DERIVED Inductance=henry
+DERIVED Magnetic_flux=weber
+DERIVED Magnetic_flux_density=tesla
+DERIVED Substance=mole
+DERIVED Energy_flux=joule/meter^2
+DERIVED Molar_heat=joule/mole
+DERIVED Molar_heat_capacity=joule/(mole*deltaK)
+DERIVED Line_density=kilogramm/meter
+DERIVED Kinematic_viscosity=meter^2/second
+AMBIGUOUS Heat_combustion_m=joule/kilogramm
+AMBIGUOUS Heat_combustion_v=joule/liter
+DERIVED Fuel_efficiency=kilometer/liter
+DERIVED Momentum=kilogramm meter/second
+AMBIGUOUS Stiffness=newton/meter
+DERIVED Money=dollar
+
+___PUSH Number
+percent,%=1/100
+permille=1/1000
+permyriad=1/10000
+ppm*=1E-06 #parts per million
+ppb*=1E-09 #parts per billion
+ppt*=1E-12 #parts per trillion
+ppq*=1E-15 #parts per quadrillion
+dozen*=12
+gross=144
+karat*=1/24 #purity of gold (24 karat is pure)
+one=1 #multiplier (1) as used in the U.S.
+ten=10 #multiplier (10) as used in the U.S.
+hundred=100 #multiplier (100) as used in the U.S.
+thousand=1E3 #multiplier (1 000) as used in the U.S.
+million=1E+06 #multiplier (1 000 000) as used in the U.S.
+billion=1E+09 #multiplier (1 000 000 000) as used in the U.S.
+trillion=1E+12 #multiplier (1 000 000 000 000) as used in the U.S.
+quadrillion=1E+15 #multiplier (1E+15) as used in the U.S.
+quintillion=1E+18 #multiplier (1E+18) as used in the U.S.
+milliard=1E+09 #multiplier (1 000 000 000) as used in the U.K.
+billion_long=1E+12 #multiplier (1 000 000 000 000) as used in the U.K.
+trillion_long=1E+18 #multiplier (1E+18) as used in the U.K.
+quadrillion_long=1E+24 #multiplier (1E+24) as used in the U.K.
+quintillion_long=1E+30 #multiplier (1E+30) as used in the U.K.
+___POP Number
+___VERIFY
+
+___PUSH Physical_constant,SI
+dVcs=9192631770/second #transition freq of caesium 133
+speed_of_light,c,light,lightspeed=2.99792458E+08 meter/second #speed of light in vacuum
+plancks_const,h=6.626070E-34 joule second
+electron_charge*,qe=1.602176634E-19 ampere second
+boltzmann_const,k=1.380649E-23 joule/deltaK
+avogadros_num,Na=6.02214076E+23/mole
+___POP SI
+gravity,grav,g=9.80665 meter/second^2 #standard acceleration of Earth's gravity
+stef_boltz_const=5.67051E-08 watt/(meter^2 deltaK^4)
+rydberg_const=1.09737E+07/meter
+volumetric_gas_constant,V0,=22.4141 liter/mole 
+molecular_gas_constant,R,r=8.31451 joule/(mole deltaK)
+___POP Physical_constant
+___VERIFY
+
+___PUSH Angle
+degree*,deg*=(1/180) pi_as_number radian
+grade,grad=0.9 degree
+arcmin*=(1/60)degree
+arcsec*=(1/60)arcmin
+___POP Angle
+___VERIFY
+
+#Time
+minute*,min*=60 second
+hour*,hr*=60 minute
+day*=24 hour
+year*,yr*=365 day
+month*,mo*=(1/12)year
+week*,wk*=7 day
+decade*=10 year
+century*=100 year
+millennium*=1000 year
+aeon*=1E+09 year
+fortnight*=14 day
+svedberg*=1E-13 second #Sedimentation Coefficient
+
+#Length
+*micron*=1E-06 meter
+angstrom*=1E-10 meter
+fermi*=1E-15 meter
+*parsec*=3.0857E+16 meter
+au,AU=1.49598E+11 meter #astronomical unit
+mile_nautical,nmi=1852 meter
+inch*,in=2.54 centimeter
+mil*=(1/1000)inch
+foot,ft,feet=12 inch
+yard*,yd*=3 foot
+mile*,mi=5280 foot #(U.S. statute)
+link*=7.92 inch #Surveyor's
+chain*=100 link #Surveyor's
+pole*,perch*,rod*=5.5 yard
+fathom*=6 foot
+league*=3 mile
+furlong*=220 yard
+lightyear*,lyr*=1 speed_of_light*365.25 day
+lightsecond*=1 speed_of_light*second
+
+#Mass
+poundm,lbm,lb*,pound*=453.592 gramm
+ouncem,ozm,oz*,ounce*=(1/16) poundm
+slug*=14593.9 gramm
+grain*=(1/7000)poundm
+pennyweight,dwt=24 grain #troy
+hundredweight,cwt=100 poundm #avoirdupois
+carat*,ct=200 milligramm #mass of gems
+*amu,dalton=1.66053906660E-24 gramm #unified atomic mass unit
+tonm,ton*=2000 poundm
+tonm_long,ton_long=2240 poundm #imperial (U.K.)
+*tonnem,tonm_metric,tonne*,ton_metric=1E+06 gramm #metric ton
+
+#Force
+poundal*,pdl=1 foot poundm/second^2
+kip*=1000 poundm*gravity
+dyne*=1E-05 newton
+*pond*=1 gramm*gravity
+*gramf,gf,g,gram*=1 gramm*gravity
+poundf,lbf,lb*,pound*=1 poundm*gravity
+ouncef,ozf,oz*,ounce*=1 ouncem*gravity
+tonf,ton*=1 tonm*gravity
+tonf_long,ton_long=2240 poundm*gravity #imperial (U.K.)
+*tonnef*,tonf_metric,tonne*,ton_metric=1E+06 gramm*gravity #metric ton
+
+#Area
+are=100 square meter
+decare,daa,dunam,stremma=1000 square meter
+hectare*,ha=10000 square meter
+sqin=1 square inch
+sqft=1 square foot
+sqyd=1 square yard
+sqmi=1 square mile
+sqcm=0.01 meter * 0.01 meter
+sqmm=0.001 meter * 0.001 meter
+section*=1 sqmi #land measure
+acre*,ac=10 square chain #land measure
+
+#Volume
+cc*=1 cubic centimeter
+cuin=1 cubic inch
+cuft=1 cubic foot
+cuyd=1 cubic yard
+stere=1 cubic meter #volume of wood
+gallon*,gal*=231 cubic inch
+quart*,qt*=(1/4)gallon
+pint*,pt*=(1/8) gallon
+ouncefl,ozfl,ozv,flounce*,floz,oz*,ounce*=(1/128)gallon
+bushel*,bu=2150.42 cuin
+peck*=(1/4)bushel
+cord*=128 cuft #volume of wood
+board_feet,bd_foot,bd_feet,bdft=144 cuin #wood
+barrel_oil,bbl=42 gallon #crude oil
+cup*=(1/4)quart
+tablespoon*,tbsp=(1/2)ouncefl
+teaspoon*,tsp*=(1/6)ouncefl
+
+#Speed
+knot*,kt,kn=1 mile_nautical/hour
+ips=1 inch/second
+ipm=1 inch/minute
+fps=1 foot/second
+fpm=1 foot/minute
+mph=1 mile/hour
+kph=1 kilometer/hour
+kps=1 kilometer/second
+mach=340 meter/second
+
+#Acceleration
+galileo*=0.01 meter/second^2
+
+#Pressure
+___PUSH Pressure
+*torr=(101325/760)pascal
+*bar=100000 pascal
+metre_sea_water,msw=10 kilopascal
+mb=millibar #pressure in millibar
+atmosphere*,atm=101325 pascal #standard atmospheric pressure
+psi=1 poundf/square inch
+ksi=1000 poundf/square inch
+mmHg,mmhg=133.3224 pascal #pressure (barometric)
+cmHg,cmhg=mmHg * centimeter/millimeter
+inHg,inhg=mmHg * inch/millimeter
+Hg,hg=mmHg/millimeter #density of mercury for pressure calculations
+inWc,inwc,inH2O=248.84 pascal #inches water column at 60 degF
+Wc,wc,H2O=inWc/inch #density of water for pressure calculations
+barye*,barie*=0.1 pascal
+baryl=1 dyne/square centimeter
+pieze,pz=10000 dyne/square centimeter
+___POP Pressure
+___VERIFY
+
+#Energy
+___PUSH Energy
+*electronvolt*,eV=1.60218E-19 joule
+*calorie*,cal=4.184 joule
+*watthour*,Wh,wh=3600 joule #watt hour
+foodcal,cal_food,Cal,Calorie*=1 kilocalorie #food package label energy
+Btu*,BTU*,btu*=1055.06 joule #international table
+therm*=105.4804E+06 joule #US
+quad*=1.05505585262E+18 joule
+erg*=1E-07 joule #CGS
+*ton_explosive,tTNT=4.184E+09 joule #ton of TNT equivalent
+*BOE,boe=6.12E+09 joule #barrel of oil equivalent
+*TOE,toe=41.868E+09 joule #tonne of oil equivalent
+*TCE,tce=29.288E+09 joule #tonne of oil equivalent
+___POP Energy
+___VERIFY
+
+#Torque
+___PUSH Torque
+inlb*=1 inch poundf
+ftlb*=1 foot poundf
+___POP Torque
+___VERIFY
+
+#Power
+VA,va,var,VAR=1 watt #may be reactive power
+horsepower,hp,HP=550 foot poundf/second
+ton_refrig,ton_ac=200 Btu/minute #cooling equipment capacity
+
+#Flow
+cfs=1 cuft/second
+cfm=1 cuft/minute
+cfh=1 cuft/hour
+gps=1 gallon/second
+gpm=1 gallon/minute
+gph=1 gallon/hour
+gpd=1 gallon/day
+lps=1 liter/second
+lpm=1 liter/minute
+lph=1 liter/hour
+sverdrup*,Sv =1E6 cubic meter/second #oceanography
+
+#Temperature
+deltaR,deltar=(1/1.8)deltaK #interval (T-T0) Rankine
+deltaC,deltac=1 deltaK #interval (T-T0) Celsius
+deltaF,deltaf=(1/1.8)deltaK #interval (T-T0) Fahrenheit
+*degK,degk=1 deltaK #absolute Kelvin
+*degR,degr=1 deltaR #absolute Rankine
+___PUSH Warn_temperature
+*degC,degc=1 deltaC #absolute Celsius, with caution
+*degF,degf=1 deltaF #absolute Fahrenheit, with caution
+absC,absc=1 deltaC #absolute Celsius, with caution
+absF,absf=1 deltaF #absolute Fahrenheit, with caution
+___POP Warn_temperature
+___VERIFY
+
+#Angular_velocity or Frequency
+___PUSH Warn_angle,Angular_velocity
+rpm_as_angular_velocity,rpma*,rpm*=revolution_as_angle/minute
+rps_as_angular_velocity,rpsa*,rps*=revolution_as_angle/second
+cps_as_angular_velocity,cpsa*,cps*=cycle_as_angle/second
+cpd_as_angular_velocity,cpda*,cpd*=cycle_as_angle/day
+___POP Angular_velocity
+___PUSH Frequency
+rpm_as_frequency,rpmf*,rpm*=revolution_as_number/minute
+rps_as_frequency,rpsf*,rps*=revolution_as_number/second
+cps_as_frequency,cpsf*,cps*=cycle_as_number/second
+cpd_as_frequency,cpdf*,cpd*=cycle_as_number/day
+___POP Frequency,Warn_angle
+___VERIFY
+
+#Money
+cent*=0.01 dollar #U.S.
+
+mAh,mah=0.001 ampere hour
+mpg=1 mile/gallon
+rvalue,Rvalue,rval,Rval=1(sqft deltaF)/(Btu/hour) #thermal insulation
+uvalue,Uvalue,uval,Uval=1(Btu/hour)/(sqft deltaF) #inverse of Rvalue
+*bit_per_second,baud,bps=1 bit/second #DataComm
+*byte_per_second,Bps=1 Byte/second #Storage
+
+___PUSH Physical_constant
+grav_const,G=6.67259E-11 newton meter^2/(kilogramm)^2 #gravitational constant
+mass_electron,rm_e=9.10939E-31 kilogramm #rest mass electron
+mass_proton,rm_p=1.67262E-27 kilogramm #rest mass proton
+mass_neutron,rm_n=1.67493E-27 kilogramm #rest mass neutron
+
+permeability_vac,mu0=4 pi_as_number*1E-07 henry/meter
+permittivity_vac,e0=8.85419E-12 farad/meter
+___POP Physical_constant
+___VERIFY
+
+___PUSH Number
+bakers_dozen=13
+ream*=500 #paper
+proof=1/200 #alcoholic content
+___POP Number
+___VERIFY
+
+shake*=1E-08 second
+year_solar=3.15569E+07 second #mean solar
+cron*=3.156E+13 second
+
+mile_int=1609.34 meter
+rowland*=angstrom
+point*=3.5146E-04 meter #as used in printing
+pica*=12 point #as used in printing
+caliber=0.01 inch #gun bore diameter
+bolt*=40 yard #cloth measure
+
+dram*,drachm*=27.3438 grain #avoirdupois
+ounce_troy=480 grain
+pound_troy=5760 grain
+cwt_long=112 poundm #imperial
+stone*=14 poundm
+ton_assay=29.1667 gramm #refined from ore
+
+sthen*=1E+08 dyne
+
+circ_inch*=(pi_as_number/4)sqin #area 1 inch diam
+circ_mil*=pi_as_number*2.5E-07 sqin #area 1 mil diam
+barn*=1E-28 meter^2
+shed*=1E-24 barn
+outhouse*=1E-06 barn
+
+ton_ship=40 cuft #sea freight
+ton_reg=100 cuft #capacity of ships
+ton_disp=35 cuft #size of ships
+gill*=(1/32)gallon
+fluid_dram*,fldr=(1/1024)gallon
+minim*=(1/60)fluid_dram
+quart_dry=(1/32)bushel
+pint_dry=(1/64)bushel
+barrel_dry=7056 cuin #U.S. fruit, veggies etc.
+gal_imp=277.42 cuin #U.K.
+quart_imp=(1/4)gal_imp #U.K.
+pint_imp=(1/8)gal_imp #U.K.
+floz_imp=(1/160)gal_imp #U.K.
+gill_imp=5 floz_imp #U.K.
+bushel_imp=2219.36 cuin #U.K.
+peck_imp=(1/4)bushel_imp #U.K.
+
+benz=1 meter/second
+leo*=10 meter/second^2
+
+Energy:therm_eec=1.05506E+08 joule #European Economic Community
+Energy:chu*=1.8 Btu #centigrade heat unit
+Energy:thermie*=4.1868E+06 joule #U.K.
+Energy:rydberg*=13.6054 electronvolt
+
+frigorie*=50 Btu/minute #cooling equipment (Europe)
+
+poise=0.1 pascal second #CGS
+reyn*=1 (poundf/sqin)second
+stokes=0.0001 meter^2/second
+
+*Frequency:curie*,Ci,ci=3.7E+10/second #of radioactivity
+*SI,Frequency:becquerel*,Bq=1/second #of radioactivity
+*SI:katal,kat=mole/second
+
+denier=1 gramm/(9000 meter) #textiles
+drex=1E-04 gramm/meter #textiles
+tex=1E-03 gramm/meter #textiles
+poumar=1 poundm/(1E+06 yard) #textiles
+
+langley*=41840 joule/meter^2
+
+gib*=1 calorie/mole
+
+clausius=1 joule/(mole deltaK)
+entropy_unit=1 calorie/(mole deltaK)
+
+rhe*=10/(pascal second) #inverse dynamic viscosity
+dioptre*,diopter*=1/meter
+kayser*=100/meter
+
+year_sidereal=3.15582E+07 second
+day_sidereal=8.61641E+04 second
+hr_sidereal=(1/24)day_sidereal
+min_sidereal=(1/60)hr_sidereal
+sec_sidereal=(1/60)min_sidereal
+lunour*=3543.67 second #1/30 of the time between new moons (30 lunour = 1 synodic month)
+lune*=24 lunour
+blink*=0.864 second
+
+league_naut=3 mile_nautical
+chain_naut=4.572 meter
+cable_length=120 fathom
+link_eng=12 inch #Ramden's
+chain_eng=100 link_eng #Ramden's
+hank*=840 yard #cloth
+finger*=(7/8) inch
+hand*=4 inch
+pace=0.762 meter #military
+span=9 inch
+barleycorn*=(1/3)inch
+cubit*=21.8 inch #biblical, range 17 to 22 inch
+
+cental*=100 poundm #U.K.
+quintal_imp=45.3592 kilogramm #U.K.
+quintal*=100 kilogramm
+dram_apoth=60 grain
+ounce_apoth=480 grain
+pound_apoth=5760 grain
+scruple*=20 grain
+brieze=1 gramm
+hyl=9.80665 gramm
+
+township*=36 section
+rood*=40 pole^2 #U.K.
+hide*=4.04686E+05 meter^2
+
+hogshead*=63 gallon
+butt_beer=0.490978 meter^3
+butt_wine=0.954412 meter^3
+bucket*=0.0181844 meter^3
+bodge*=2.27305E-03 meter^3
+chaldron*=1.26861 meter^3
+coomb*,comb*=4 bushel
+perche*=0.700841 meter^3 #masonry
+puncheon*=0.327319 meter^3
+raummeter*,festmeter*=1 meter^3
+trug*=0.024246 meter^3
+sack*=3 bushel #many other defs
+amagat*=0.022414 meter^3
+anker*=0.0378735 meter^3
+aum*=0.136383 meter^3
+jar*=0.113652 meter^3
+kanne*=1E-03 meter^3
+noggin*=1.42065E-04 meter^3
+pipe*=0.477206 meter^3
+pottle*=2.27304E-03 meter^3
+
+Energy:cal_mean=4.19002 joule
+Energy:cal_thermochem=4.184 joule
+Energy:btu_mean=1055.87 joule
+Energy:btu_thermochem=1054.35 joule
+Energy:duty*=1.35582 joule
+
+horsepower_metric,hp_metric,PS=75 kilogramf meter/second
+horsepower_boiler,hp_boiler=9809.50 watt #bigger that hp
+horsepower_electric,hp_electric=746.0 watt
+horsepower_water,hp_water=746.043 watt
+manpower=(1/10)horsepower
+
+admiralty_knot*=6080 foot/hour
+kine*=0.01 meter/second
+celo*=0.3048 meter/second^2
+pli*=17.8580 kilogramm/meter
+
+
+# PHYSPROP.UNI
+
+___PUSH Water
+d_sea_water=1.025 gramm/cc
+d_water=1 gramm/cc #@ 4 degC
+Thermal_conductivity:tc_water=0.6 watt/(meter deltaK) #@ 20 degC
+Viscosity:visc_water=0.001 pascal second #dynamic @ 20 degC
+Speed_sound:ss_water=1497 meter/second #@ 20 degC
+Specific_heat_m:shm_water,sh_water=1 calorie/(gramm deltaK) #mean
+Specific_heat_v:shv_water,sh_water=shm_water*d_water
+Heat_fusion_m:hfm_water,hf_water=144 Btu/poundm
+Heat_fusion_v:hfv_water,hf_water=hfm_water*d_water
+Heat_vaporization_m:hvm_water,hv_water=956 Btu/poundm
+Heat_vaporization_v:hvv_water,hv_water=hvm_water*d_water
+___POP Water
+___VERIFY
+
+___PUSH Ice
+d_ice=0.92 gramm/cc
+Specific_heat_m:shm_ice,sh_ice=0.47 Btu/(poundm deltaF)
+Specific_heat_v:shv_ice,sh_ice=shm_ice*d_ice #by volume
+Thermal_conductivity:tc_ice=2.18 watt/(meter deltaC)
+___POP Ice
+___VERIFY
+
+___PUSH Air
+d_air=0.0012928 gramm/cc #@ 1 atm, 0degC
+Thermal_conductivity:tc_air=0.0242 watt/(meter deltaK) #@ 0 degC
+Viscosity:visc_air=1.78E-05 pascal second #dynamic @ 20 degC
+Speed_sound:ss_air=1128.86 foot/second #@ 20 degC, 50% RH
+Specific_heat_m:shm_air,sh_air=0.24 calorie/(gramm deltaK) #@ 0 degC
+Specific_heat_v:shv_air,sh_air=shm_air*d_air #@ 1 atm, 0 degC
+___POP Air
+___VERIFY
+
+___PUSH Physical_property
+
+Speed_sound:ss_steel=5920 meter/second
+
+d_aluminum=2.702 gramm/cc
+d_copper=8.92 gramm/cc
+d_gold=19.3 gramm/cc
+d_iron=7.86 gramm/cc
+d_lead=11.34 gramm/cc
+d_silver=10.5 gramm/cc
+d_brick=2.0 gramm/cc #hard
+d_concrete=2.3 gramm/cc #with stone, sand
+d_clay=1.8 gramm/cc #damp, plastic
+d_glass=2.6 gramm/cc
+d_sand=100 poundm/foot^3
+d_granite=175 poundm/foot^3
+d_diamond=3.3 gramm/cc
+d_wood=0.55 gramm/cc #solid (pine)
+d_mercury=13.5951 gramm/cc
+d_gasoline=0.67 gramm/cc #liquid
+d_kerosene=0.819 gramm/cc #liquid
+d_propane_gas=0.00183 gramm/cc #gas
+d_propane_liq=0.5 gramm/cc #liquid
+d_oil=0.875 gramm/cc #liquid
+d_coal=0.7 gramm/cc #bulk
+d_methanol=0.810 gramm/cc #liquid
+d_ethanol=0.791 gramm/cc #liquid
+
+___PUSH Specific_heat_m
+shm_aluminum,sh_aluminum=0.215 calorie/(gramm deltaC)
+shm_copper,sh_copper=0.092 calorie/(gramm deltaC)
+shm_gold,sh_gold=0.03 calorie/(gramm deltaC)
+shm_iron,sh_iron=0.108 calorie/(gramm deltaC)
+shm_lead,sh_lead=0.03 calorie/(gramm deltaC)
+shm_silver,sh_silver=0.235 joule/(gramm deltaC)
+shm_brick,sh_brick=0.22 Btu/(poundm deltaF)
+shm_concrete,sh_concrete=0.156 Btu/(poundm deltaF)
+shm_clay,sh_clay=0.92 joule/(gramm deltaC)
+shm_glass,sh_glass=0.199 Btu/(poundm deltaF)
+shm_sand,sh_sand=0.195 Btu/(poundm deltaF)
+shm_granite,sh_granite=0.79 joule/(gramm deltaC)
+shm_diamond,sh_diamond=0.63 joule/(gramm deltaC)
+shm_wood,sh_wood=0.65 Btu/(poundm deltaF)
+shm_mercury,sh_mercury=0.140 joule/(gramm deltaC)
+shm_gasoline,sh_gasoline=0.53 Btu/(poundm deltaF)
+shm_kerosene,sh_kerosene=0.48 Btu/(poundm deltaF)
+___POP Specific_heat_m
+
+___PUSH Specific_heat_v
+shv_aluminum,sh_aluminum=shm_aluminum*d_aluminum
+shv_copper,sh_copper=shm_copper*d_copper
+shv_gold,sh_gold=shm_gold*d_gold
+shv_iron,sh_iron=shm_iron*d_iron
+shv_lead,sh_lead=shm_lead*d_lead
+shv_silver,sh_silver=shm_silver*d_silver
+shv_brick,sh_brick=shm_brick*d_brick
+shv_concrete,sh_concrete=shm_concrete*d_concrete
+shv_clay,sh_clay=shm_clay*d_clay
+shv_glass,sh_glass=shm_glass*d_glass
+shv_sand,sh_sand=shm_sand*d_sand
+shv_granite,sh_granite=shm_granite*d_granite
+shv_diamond,sh_diamond=shm_diamond*d_diamond
+shv_wood,sh_wood=shm_wood*d_wood
+shv_mercury,sh_mercury=shm_mercury*d_mercury
+shv_gasoline,sh_gasoline=shm_gasoline*d_gasoline
+shv_kerosene,sh_kerosene=shm_kerosene*d_kerosene
+___POP Specific_heat_v
+
+___PUSH Heat_vaporization_m
+hvm_gasoline,hv_gasoline=116 Btu/poundm
+hvm_kerosene,hv_kerosene=86 Btu/poundm
+hvm_ethanol,hv_ethanol=367 Btu/poundm
+hvm_methanol,hv_methanol=482 Btu/poundm
+___POP Heat_vaporization_m
+
+___PUSH Heat_vaporization_v
+hvv_gasoline,hv_gasoline=hvm_gasoline*d_gasoline
+hvv_kerosene,hv_kerosene=hvm_kerosene*d_kerosene
+hvv_ethanol,hv_ethanol=hvm_ethanol*d_ethanol
+hvv_methanol,hv_methanol=hvm_methanol*d_methanol
+___POP Heat_vaporization_v
+
+___PUSH Heat_fusion_m
+hfm_aluminum,hf_aluminum=171 Btu/poundm
+hfm_copper,hf_copper=88.2 Btu/poundm
+hfm_gold,hf_gold=28.7 Btu/poundm
+hfm_iron,hf_iron=117 Btu/poundm
+hfm_lead,hf_lead=10 Btu/poundm
+hfm_silver,hf_silver=105 joule/gramm
+hfm_diamond,hf_diamond=5300 joule/gramm
+hfm_mercury,hf_mercury,=5.0 Btu/poundm
+___POP Heat_fusion_m
+
+___PUSH Heat_fusion_v
+hfv_aluminum,hf_aluminum=hfm_aluminum*d_aluminum
+hfv_copper,hf_copper=hfm_copper*d_copper
+hfv_gold,hf_gold=hfm_gold*d_gold
+hfv_iron,hf_iron=hfm_iron*d_iron
+hfv_lead,hf_lead=hfm_lead*d_lead
+hfv_silver,hf_silver=hfm_silver*d_silver
+hfv_diamond,hf_diamond=hfm_diamond*d_diamond
+hfv_mercury,hf_mercury=hfm_mercury*d_mercury
+___POP Heat_fusion_v
+
+___PUSH Thermal_conductivity
+tc_aluminum=238 watt/(meter deltaC)
+tc_copper=397 watt/(meter deltaC)
+tc_gold=318 watt/(meter deltaC)
+tc_iron=79.5 watt/(meter deltaC)
+tc_lead=34.7 watt/(meter deltaC)
+tc_silver=428 watt/(meter deltaC)
+tc_brick=0.58 watt/(meter deltaC)
+tc_concrete=1 watt/(meter deltaC) #stone, sand
+tc_glass=0.72 watt/(meter deltaC) #plate
+tc_wood=0.11 watt/(meter deltaC) #across grain (pine)
+tc_sand=0.33 watt/(meter deltaC) #dry
+tc_gravel=0.38 watt/(meter deltaC) #dry
+tc_diamond=554 watt/(meter deltaC)
+tc_mercury=8.34 watt/(meter deltaC)
+tc_glasswool=0.042 watt/(meter deltaC)
+tc_styrofoam=0.036 watt/(meter deltaC)
+tc_earth=1 watt/(meter deltaC) #40% water
+___POP Thermal_conductivity
+
+sun_power=3.92E+26 watt #total
+solar_const=1340 watt/meter^2 #at Earths surface
+
+___PUSH Heat_combustion_m
+hcm_gasoline,hc_gasoline=20750 Btu/poundm
+hcm_kerosene,hc_kerosene=19810 Btu/poundm
+hcm_propane_liq,hc_propane_liq=21249 Btu/poundm
+hcm_oil,hc_oil=18500 Btu/poundm #crude oil
+hcm_coal,hc_coal=13000 Btu/poundm
+hcm_methanol,hc_methanol=9600 Btu/poundm
+hcm_ethanol,hc_ethanol=12800 Btu/poundm
+hcm_wood,hc_wood=8750 Btu/poundm #most kinds (dry)
+___POP Heat_combustion_m
+
+___PUSH Heat_combustion_v
+hcv_gasoline,hc_gasoline=d_gasoline*hcm_gasoline
+hcv_kerosene,hc_kerosene=d_kerosene*hcm_kerosene
+hcv_propane_liq,hc_propane_liq=d_propane_liq*hcm_propane_liq
+hcv_propane_gas,hc_propane_gas=d_propane_gas*hcm_propane_liq
+hcv_oil,hc_oil=d_oil*hcm_oil #crude oil
+hcv_coal,hc_coal=d_coal*hcm_coal
+hcv_methanol,hc_methanol=d_methanol*hcm_methanol
+hcv_ethanol,hc_ethanol=d_ethanol*hcm_ethanol
+hcv_wood,hc_wood=d_wood*hcm_wood #pine
+hcv_natural_gas=1000 Btu/cubic foot
+___POP Heat_combustion_v
+
+
+___PUSH Batteries
+# energy capacity of batteries
+
+e_carb_aaa=2268 joule
+e_carb_aa=5832 joule
+e_carb_c=15120 joule
+e_carb_d=38880 joule
+e_carb_n=2376 joule
+e_carb_9v=14580 joule
+
+e_alk_aaa=5062 joule
+e_alk_aa=11556 joule
+e_alk_c=32400 joule
+e_alk_d=72900 joule
+e_alk_g=477900 joule
+e_alk_n=4374 joule
+e_alk_9v=19245 joule
+
+e_nicd_aaa=777 joule
+e_nicd_aa=2160 joule
+e_nicd_subc=5184 joule
+e_nicd_c=5184 joule
+e_nicd_d=17280 joule
+e_nicd_n=648 joule
+e_nicd_9v=2419 joule
+
+e_nimh_aaa=3456 joule
+e_nimh_aa=8640 joule
+e_nimh_c=21600 joule
+e_nimh_d=43200 joule
+e_nimh_9v=7560 joule
+
+e_liion_14500=10656 joule
+e_liion_18650=45288 joule
+e_liion_21700=66600 joule
+e_liion_26650=73260 joule
+
+# voltage of batteries by chemistry
+v_carb_bat=1.5 volt
+v_alk_bat=1.5 volt
+v_nicd_bat=1.2 volt
+v_nimh_bat=1.2 volt
+v_liion_bat=3.7 volt
+
+# energy density by volume of batteries by chemistry
+edv_carb_bat=549214 joule/liter
+edv_alk_bat=1300000 joule/liter
+edv_nicd_bat=504000 joule/liter
+edv_nimh_bat=1460000 joule/liter
+edv_liion_bat=2630000 joule/liter
+edv_leadacid_bat=560000 joule/liter
+
+# energy density by mass of batteries by chemistry
+edm_carb_bat=130000 joule/kilogramm
+edm_alk_bat=480000 joule/kilogramm
+edm_nicd_bat=270000  joule/kilogramm
+edm_nimh_bat=410000 joule/kilogramm
+edm_liion_bat=875000 joule/kilogramm
+edm_leadacid_bat=170000 joule/kilogramm
+
+___POP Batteries
+
+___POP Physical_property
+___VERIFY
+
+
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST 1|= 1
+TEST e_nicd_9v? | = 2419 joule, = 2419 newton meter
+`;
     // var database=...
 </script>
 
-<script type="text/javascript" src="engine_dev.js">
+<script>
+// Calchemy (tm); Math Magic; http://www.calchemy.com
+// Copyright (c) 1988-2023 Ken Burgess and Rich Testardi.
+
+// This is the calchemy engine; it loads the database one line at a time and then runs user command lines one at a time, returning their output.
+
+// regular expressions for string identification
+// XXX -- token can use typeof for value; something for function call; anything for operator?
+const value_regexp_ch =       /[0-9.]/;
+const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
+const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+const value_regexp_all =     /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
+const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)][^^ ]/g;
+const unit_regexp_ch =        /[_A-Za-z$%]/;
+const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
+const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const xunit_regexp_head =   /^[:_A-Za-z$%][_A-Za-z0-9$%:]*/;
+const xunit_regexp_tail =    /[:_A-Za-z$%][_A-Za-z0-9$%:]*$/;
+const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
+const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^ ]/g;
+const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
+const opens = "([{";
+const closes = ")]}";
+const semicolon_alternates = "@&#!";  // prefix alternate = ~
+const functions = { "square":1, "cubic":1, "sqrt":1, "cbrt":1, "sin":1, "cos":1, "tan":1, "asn":1, "acs":1, "atn":1, "ln":1, "log":1, "exp":1, "per":1 };
+
+// this is our units database
+var nextbaseunit = 0;
+var freebaseunit = 0;
+var units = [];  // Unit
+var bases = [];  // Unit
+var all_categories = [];  // string
+var open_categories = [];  // string
+var dirty = false;  // once dirty with new definitions, tests may fail...
+var loading = false;  // while loading the units database, all ambiguities are turned off and primary names must be used
+var deriving = false;  // while deriving units, secondary names may also be used
+var defining = false;  // while defining, don't record mismatches
+var evaluating = false;  // while evaluating units, free units may be used
+var testing = false;  // while testing, don't prompt for equation values
+var storagebase;  // may be undefined
+var database_tests = "";
+
+var invert_warn = false;  // auto-invert left-hand-side
+
+var offset_warn = false;  // degC, absC, degF, absF
+var offset_warned = false;
+var cycle_warn = false;  // category Angle
+var cycle_warned = false;
+
+// these are the results from a command line
+var results;  // Unit
+var mismatches;  // string
+var errors;  // string
+var defines;  // boolean
+var undefines;  // boolean
+
+function assert(bool)
+{
+    if (! bool) {
+        throw "assertion failed";
+    }
+}
+
+// return the index of the matching parenthesis in an array of tokens
+function MatchParen(tokens, i)
+{
+    var stack = [];
+    var k = opens.indexOf(tokens[i]);
+    assert(k != -1);
+    stack.push(k);
+    for (var j = i+1; j < tokens.length; j++) {
+        k = opens.indexOf(tokens[j]);
+        if (k != -1) {
+            stack.push(k);
+        } else if (tokens[j] == closes[stack[stack.length-1]]) {
+            stack.pop();
+            if (! stack.length) {
+                return j;
+            }
+        }
+    }
+    throw "unmatched parenthesis " + opens[stack[stack.length-1]];
+}
+
+var nextp = 0;
+
+// add parenthesis around an interpretation if they are not already there
+function Parenthesize(interpretation, force = false)
+{
+    // if the interpretation is already parenthesized...
+    if (opens.indexOf(interpretation[0]) != -1 && MatchParen(interpretation, 0) == interpretation.length-1) {
+        return interpretation;
+    }
+
+    if (force) {
+        // back to () for functions
+        nextp = 0;
+    }
+
+    // alternate parens (), [], {}, around the interpretation
+    var pinterpretation = opens[nextp] + interpretation + closes[nextp];
+    nextp = (nextp + 1)%opens.length;
+    return pinterpretation;
+}
+
+// simplify an equation interpretation
+function Simplify(interpretation)
+{
+    // if the entire interpretation is parenthesized...
+    if (opens.indexOf(interpretation[0]) != -1 && MatchParen(interpretation, 0) == interpretation.length-1) {
+        interpretation = interpretation.slice(1, interpretation.length-1);
+    }
+    return interpretation;
+}
+
+// *** unit functions *****************************************************************************
+
+class Unit {
+    // return an empty or initialized unit
+    constructor(names, pluralizables, coefficient, exponents, type, prefixable, categories, definition)
+    {
+        this.names = (names == undefined) ? [] : names.slice(0);  // array of unit names
+        this.pluralizables = (pluralizables == undefined) ? [] : pluralizables.slice(0);  // array of booleans
+        this.coefficient = (coefficient == undefined) ? NaN : coefficient;  // floating point
+        this.exponents = (exponents == undefined) ? [] : exponents;  // array of integers
+        this.type = (type == undefined) ? null : type;  // null || "BASE" || "DERIVED" || "PREFIX" || "VALUE"
+        this.prefixable = (prefixable == undefined) ? false : prefixable;  // boolean
+        this.categories = (categories == undefined) ? [] : categories;  // array of unit category names
+        this.definition = (definition == undefined) ? "" : definition;  // string
+        this.interpretation = (names == undefined) ? "" : names[0];  // string
+        this.dimension = "";  // string, only for SI results
+    }
+
+    // pi analysis; check if orders of PI and RADIAN are within limits
+    PiAnalysis()
+    {
+        // if exponents are beyond PI and RADIAN...
+        if (this.exponents.length > 1) {
+            if (this.exponents[0] && this.exponents[1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // test if scalar zero
+    Zero()
+    {
+        if (this.coefficient) {
+            return false;
+        }
+        for (var i = 0; i < this.exponents.length; i++) {
+            if (this.exponents[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // test if dimensions are compatible
+    Compatible(unit, invert)
+    {
+        if (! unit) {
+            return true;
+        }
+        // dynamically expand exponents arrays as needed
+        var maxbaseunits = Math.max(this.exponents.length, unit.exponents.length);
+        for (var i = this.exponents.length; i < maxbaseunits; i++) {
+            this.exponents[i] = 0;
+        }
+        for (i = unit.exponents.length; i < maxbaseunits; i++) {
+            unit.exponents[i] = 0;
+        }
+
+        // for all exponents beyond PI and RADIAN...
+        for (i = 2; i < this.exponents.length; i++) {
+            // if the exponent does not match...
+            if (this.exponents[i] != (invert?-1:1)*unit.exponents[i]) {
+                // units are incompatible
+                return false;
+            }
+        }
+
+        // units are compatible
+        return true;
+    }
+
+    // test if units are equal (so we can undefine specifically)
+    Equal(unit)
+    {
+        return this.Compatible(unit, false) && this.coefficient == unit.coefficient;
+    }
+
+    // test if unit is ambiguous with others (so we don't define one ambiguously unintentionally)
+    Ambiguous()
+    {
+        for (var i = 0; i < units.length; i++) {
+            if (units[i].type == "DERIVED") {
+                if (this.Compatible(units[i], false)) {
+                    return units[i];
+                }
+            }
+        }
+        return null;
+    }
+
+    // perform an operation on a unit and return the resulting result
+    Operate(op, rhs, derivedok)
+    {
+        var unit = new Unit();
+
+        // dynamically expand exponents arrays as needed
+        var maxbaseunits = Math.max(this.exponents.length, rhs.exponents.length);
+        for (var i = this.exponents.length; i < maxbaseunits; i++) {
+            this.exponents[i] = 0;
+        }
+        for (i = rhs.exponents.length; i < maxbaseunits; i++) {
+            rhs.exponents[i] = 0;
+        }
+
+        if (! testing && derivedok != true) {
+            // XXX -- can we get rid of this code path difference for testing???
+            if (this.type == "DERIVED") {
+                throw "specify value for " + this.names[0];
+            }
+            if (op != ':' && op != "pow" && op != '^' && rhs.type == "DERIVED") {
+                throw "specify value for " + rhs.names[0];
+            }
+        }
+
+        var offset = 0;
+        if (this.type == "VALUE" && op == ' ') {
+            if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
+                offset = 273.15;
+                offset_warn = true;
+            } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
+                offset = 459.67;
+                offset_warn = true;
+            }
+        } else if (op == '?') {
+            if (rhs.names[0] == "absC" || rhs.names[0] == "degC") {
+                offset = 273.15;
+                offset_warn = true;
+            } else if (rhs.names[0] == "absF" || rhs.names[0] == "degF") {
+                offset = 459.67;
+                offset_warn = true;
+            }
+        }
+
+        var invert = false;
+        if (op == '?' && ! this.Compatible(rhs, false) && this.Compatible(rhs, true)) {
+            // auto-invert left-hand-side
+            invert = true;
+        }
+
+        // if we are not loading the database...
+        if (! loading) {
+            var display = null;
+            var dividing = false;
+            var multiplying = false;
+            var adding = false;
+            switch (op) {
+                case '~':
+                    display = "~";
+                    multiplying = true;
+                    break;
+                case '>':
+                    display = '+';
+                    adding = true;
+                    break;
+                case '<':
+                    display = '-';
+                    adding = true;
+                    break;
+                case "pow":
+                case '^':
+                    display = '^';
+                    break;
+                case ' ':
+                    display = op;
+                    multiplying = true;
+                    break;
+                case '*':
+                    display = ' ' + op + ' ';
+                    multiplying = true;
+                    break;
+                case "per":
+                case '/':
+                    display = ' ' + op + ' ';
+                    dividing = true;
+                    break;
+                case '+':
+                case '-':
+                    display = ' ' + op + ' ';
+                    adding = true;
+                    break;
+                case ':':
+                    break;
+                case '@':
+                    display = " * ";
+                    multiplying = true;
+                    break;
+                case '&':
+                    display = " / ";
+                    dividing = true;
+                    break;
+            }
+
+            // format interpretations to display with results
+            if ((this.multiplying == true || rhs.multiplying == true) && (multiplying || dividing)) {
+                if (this.dividing) {
+                    // add the deferred parenthesis for the lhs now, if it differs from the current operation
+                    this.interpretation = Parenthesize(this.interpretation);
+                }
+                if ((rhs.multiplying && ! multiplying) || rhs.dividing) {
+                    // add the deferred parenthesis for the rhs now, if it differs from the current operation
+                    rhs.interpretation = Parenthesize(rhs.interpretation);
+                }
+                // continue multiplication or a single division without parenthesis; we'll add them later
+                assert(display != null);
+                unit.interpretation = this.interpretation + display + rhs.interpretation;
+            } else {
+                var interpretation;
+                if (op == '?') {
+                    if (invert) {
+                        // auto-invert left-hand-side
+                        interpretation = Parenthesize(this.interpretation) + " ^ -1";
+                    } else {
+                        interpretation = this.interpretation;
+                    }
+                    // no need for deferred parenthesis at the outermost operation
+                    if (offset) {
+                        unit.interpretation = "(" + interpretation + " ? " + rhs.interpretation.replace(/(abs|deg)/, "delta") + ") - " + offset;
+                    } else {
+                        unit.interpretation = interpretation + " ? " + rhs.interpretation;
+                    }
+                    dividing = true;
+                } else if (op == ':') {
+                    // dimensional filter
+                    unit.interpretation = this.interpretation;
+                } else {
+                    if (offset) {
+                        interpretation = "(" + this.interpretation + " + " + offset + ")";
+                    } else {
+                        interpretation = this.interpretation;
+                    }
+                    if (this.multiplying || this.dividing || op == "pow" || op == '^') {
+                        // add the deferred or required parenthesis for the lhs now
+                        interpretation = Parenthesize(interpretation);
+                    }
+                    if (rhs.multiplying || rhs.dividing) {
+                        // add the deferred parenthesis for the rhs now
+                        rhs.interpretation = Parenthesize(rhs.interpretation);
+                    }
+                    if (display != null) {
+                        // normal infix operations
+                        if (offset) {
+                            unit.interpretation = interpretation + display + rhs.interpretation.replace(/(abs|deg)/, "delta");
+                        } else {
+                            unit.interpretation = interpretation + display + rhs.interpretation;
+                        }
+                        if (adding) {
+                            // add required parenthesis now
+                            unit.interpretation = Parenthesize(unit.interpretation);
+                        }
+                    } else if (op == '#') {
+                        // solve by dimensional analysis: r/l
+                        unit.interpretation = Parenthesize(interpretation) + "^-1 * " + rhs.interpretation;
+                    } else if (op == '!') {
+                        // solve by dimensional analysis: 1/(lr)
+                        unit.interpretation = Parenthesize(interpretation + " * " + rhs.interpretation) + "^-1";
+                    } else {
+                        assert(0);
+                    }
+                }
+            }
+
+            // remove degenerate parenthesis
+            var orig;
+            do {
+                orig = unit.interpretation;
+                unit.interpretation = unit.interpretation.replace(unit_regexp_cap, "$1").replace(value_regexp_cap, "$1");
+            } while (orig != unit.interpretation);
+
+            // propagate the need for deferred parenthesis
+            assert(! (multiplying && dividing));
+            unit.multiplying = multiplying;
+            unit.dividing = dividing;
+        }
+
+        switch (op) {
+            case "pow":
+            case '^':
+                // raise coefficient to dimensionless power; multiply exponents by power
+                unit.coefficient = Math.pow(this.coefficient, rhs.coefficient);
+                for (i = 0; i < maxbaseunits; i++) {
+                    if (rhs.exponents[i]) {
+                        throw "non-dimensionless exponent";
+                    }
+                    unit.exponents[i] = (this.exponents[i] * rhs.coefficient).toPrecision(4) * 1;  // N.B. * 1 returns to float
+                    // check for non-integral exponents beyond PI and RADIAN
+                    if (i > 1 && unit.exponents[i] != Math.round(unit.exponents[i])) {
+                        throw "non-integral exponent";
+                    }
+                }
+                break;
+
+            case '~':  // prefix
+            case ' ':  // implicit
+            case '*':
+            case '@':  // solve by dimensional analysis: l*r
+                // multiply coefficients; add exponents
+                // if this is an offset temperature being entered, instantly convert from offset temperature to absolute temperature
+                unit.coefficient = (this.coefficient + offset) * rhs.coefficient;
+                for (i = 0; i < maxbaseunits; i++) {
+                    unit.exponents[i] = this.exponents[i] + rhs.exponents[i];
+                }
+                break;
+
+            case "per":  // unit division
+            case '/':
+            case '&':  // solve by dimensional analysis: l/r
+            case '?':
+                // divide coefficients; subtract exponents
+                // if this is an offset temperature being computed, instantly convert from absolute temperature back to offset temperature
+                if (invert) {
+                    unit.coefficient = (1 / this.coefficient / rhs.coefficient) - offset;
+                } else {
+                    unit.coefficient = (this.coefficient / rhs.coefficient) - offset;
+                }
+                for (i = 0; i < maxbaseunits; i++) {
+                    if (invert) {
+                        unit.exponents[i] = - this.exponents[i] - rhs.exponents[i];
+                    } else {
+                        unit.exponents[i] = this.exponents[i] - rhs.exponents[i];
+                    }
+                }
+                break;
+
+            case '#':  // solve by dimensional analysis: r/l
+                // divide coefficients; subtract exponents
+                unit.coefficient = rhs.coefficient / this.coefficient;
+                for (i = 0; i < maxbaseunits; i++) {
+                    unit.exponents[i] = rhs.exponents[i] - this.exponents[i];
+                }
+                break;
+
+            case '!':  // solve by dimensional analysis: 1/(lr)
+                // divide coefficients; subtract exponents
+                unit.coefficient = 1 / (this.coefficient * rhs.coefficient);
+                for (i = 0; i < maxbaseunits; i++) {
+                    unit.exponents[i] = - this.exponents[i] - rhs.exponents[i];
+                }
+                break;
+
+            case '>':  // unary
+            case '+':
+                // add coefficients for compatible exponents
+                if (! this.Zero() && ! this.Compatible(rhs, false)) {
+                    throw "addition of dissimilar units";
+                }
+                unit.coefficient = this.coefficient + rhs.coefficient;
+                unit.exponents = rhs.exponents;
+                if (op == '>') {
+                    unit.type = rhs.type;  // preserve for unary
+                }
+                break;
+
+            case '<':  // unary
+            case '-':
+                // subtract coefficients for compatible exponents
+                if (! this.Zero() && ! this.Compatible(rhs, false)) {
+                    throw "subtraction of dissimilar units";
+                }
+                unit.coefficient = this.coefficient - rhs.coefficient;
+                unit.exponents = rhs.exponents;
+                if (op == '<') {
+                    unit.type = rhs.type;  // preserve for unary
+                }
+                break;
+
+            case ':':
+                // filter out different dimensions
+                if (! this.Compatible(rhs, false)) {
+                    if (this.type == "BASE") {
+                        throw "specify value for " + this.names[0];  //OK
+                    } else {
+                        throw "incompatible units :" + rhs.interpretation;  //OK
+                    }
+                }
+                unit.coefficient = this.coefficient;
+                unit.exponents = this.exponents;
+                break;
+
+            default:
+                throw "unknown operator " + op;
+                //break;
+        }
+
+        return unit;
+    }
+
+    // format a unit as a dimension string
+    Dimension(question)
+    {
+        var strings = [];
+
+        // look for single dimension matches, possibly inverted
+        var i;
+        var j;
+        var cont;
+        var string = (question?"Dimensional Mismatch ":"") + "[";
+
+        // for uninverted and then inverted...
+        cont = false;
+        for (var invert = 0; invert < 2; invert++) {
+            // report ^-1 if the number of inversions is odd
+            var xor = Boolean(question)!=Boolean(invert);
+            // for all units...
+            for (i = 0; i < units.length; i++) {
+                // if this unit is a dimension...
+                if (units[i].type == "DERIVED") {
+                    // if this unit is a compatible dimension...
+                    if (this.Compatible(units[i], xor)) {
+                        // format its name
+                        if (cont) {
+                            // "or" if more than one
+                            string += " or ";
+                        }
+                        string += units[i].names[0] + (invert?"^-1":"");
+                        cont = true;
+                     }
+                }
+            }
+        }
+
+        // count the number of non-0 dimensions
+        j = 0;
+        for (i = 2; i < nextbaseunit; i++) {
+            if (this.exponents[i]) {
+                j += Math.abs(this.exponents[i]);
+            }
+        }
+
+        // if we don't have a matching derived dimension or there is more than one non-0 dimension...
+        if (! cont || j > 1) {
+            // also match individual base dimensions and powers
+            if (cont) {
+                // "or" if more than one
+                string += " or ";
+            }
+            // for each base unit beyond PI and RADIAN...
+            cont = false;
+            for (i = 2; i < nextbaseunit; i++) {
+                // if the exponent is non-0...
+                var remaining = this.exponents[i]*(question?-1:1);
+                if (remaining) {
+                    // format its name
+                    if (cont) {
+                        // multiply if more than one
+                        string += "*";
+                    }
+                    string += bases[i].names[0] + (remaining!=1?"^"+remaining:"");
+                    cont = true;
+                }
+            }
+        }
+
+        string += "]";
+
+        // return the individual base dimensions and powers
+        strings.push("> " + Simplify(this.interpretation));
+        strings.push(string);
+        return strings;
+    }
+
+    // format a unit as an SI result string
+    SI()
+    {
+        // look for a single dimension match, possibly inverted
+        var i;
+        var denom;
+        var result;
+        var results = [];
+
+        // for uninverted and then inverted...
+        for (var invert = 0; invert < 2; invert++) {
+            // for all units...
+            for (i = 0; i < units.length; i++) {
+                // if this unit is a derived unit...
+                if (units[i].type == "DERIVED") {
+                    // if this unit is a compatible derived unit...
+                    if (this.Compatible(units[i], invert)) {
+                        // calculate the SI result in terms of the derived unit
+                        denom = units[i].Operate('^', Value(invert?-1:1), true);
+                        denom.interpretation = "[" + units[i].names[0] + "]" + (invert?"^-1":"");
+                        result = this.Operate('?', denom, true);
+                        result.dimension = (invert?"(":"") + units[i].definition.replace(/.*= */, "").replace(/ *[#].*/, "").trim() + (invert?")^-1":"");
+                        if (result.PiAnalysis()) {
+                            // we have a winner
+                            results.push(result);
+                            if (units[i].categories.includes("Warn_angle")) {
+                                cycle_warn = true;
+                            }
+                        }
+                    }
+                }
+            }
+            // if we found a result...
+            if (results.length) {
+                // N.B. if we match an uninverted dimension, skip the inverted ones
+                // return it
+                return results;
+            }
+        }
+
+        // otherwise, we have to match individual base dimensions and powers
+
+        denom = null;
+        var string =  "";
+        // for each exponent beyond PI and RADIAN...
+        for (i = 2; i < this.exponents.length; i++) {
+            // if the exponent is non-0...
+            if (this.exponents[i]) {
+                // find the derived unit for the exponent
+                var exponent = this.exponents[i];
+                for (var ii = 0; ii < units.length; ii++) {
+                    if (units[ii].type == "DERIVED" && bases[i].Compatible(units[ii], false)) {
+                        // and divide the overall result by the derived unit
+                        var term;
+                        if (exponent == 1) {
+                            term = units[ii];
+                        } else {
+                            term = units[ii].Operate('^', Value(this.exponents[i]), true);
+                        }
+                        if (! denom) {
+                            denom = term;
+                        } else {
+                            // multiply if more than one term
+                            denom = denom.Operate('*', term, true);
+                            string += "*";
+                        }
+                        // format the derived unit name
+                        string += units[ii].definition.replace(/.*= */, "") + (exponent!=1?"^"+exponent:"");
+                        break;
+                    }
+                }
+                // if we did not find a derived unit...
+                if (ii == units.length) {
+                    throw "missing DERIVED unit for " + bases[i].names[0];
+                }
+            }
+        }
+
+        // return the overall coefficient and individual base dimensions and powers
+        if (! denom) {
+            denom = Value(1).Operate('^', Value(1), true);
+        }
+        denom.interpretation = "";
+        result = this.Operate('?', denom, true);
+        result.dimension = string;
+        results.push(result);
+        return results;
+    }
+}
+
+// define a new base unit in the units database
+function DefineBaseUnit(names, pluralizable)
+{
+    // pick a new exponent
+    var unit = new Unit(names, [pluralizable], 1, [], "BASE", false, [], "");
+    for (var i = 0; i < nextbaseunit; i++) {
+        unit.exponents[i] = 0;
+    }
+    // set just this exponent to 1
+    unit.exponents[nextbaseunit] = 1;
+    bases[nextbaseunit] = unit;
+    nextbaseunit++;
+    // make the unit (mostly) immutable
+    Object.freeze(unit);
+    units.push(unit);
+    // return the unit
+    return unit;
+}
+
+// return a primary unit from the units database
+// N.B. caller must throw!
+function LookupUnit(name)
+{
+    // if this is a precomputed unit to make loading faster
+    if (name[0] == 'x' && name.match(/^xx[0-9]/)) {
+        // no need to search, just return the unit
+        return units[name.replace(/^xx/, "")];
+    }
+    // otherwise, for all units...
+    for (var i = 0; i < units.length; i++) {
+        var unit = units[i];
+        // for all appropriate unit names...
+        for (var j = 0; j < unit.names.length; j++) {
+            // if the name matches...
+            if (name == unit.names[j]) {
+                // return the unit
+                return unit;
+            }
+            if (loading && ! deriving) {
+                // be quick
+                break;
+            }
+            if (unit.type == "PREFIX") {
+                break;
+            }
+        }
+    }
+    // unit not found
+    return null;
+}
+
+// return a prefix and a primary unit from the units database
+function LookupPrefixedUnit(name)
+{
+    // for all unit names...
+    for (var ii = 0; ii < units.length; ii++) {
+        // if this is a prefix...
+        if (units[ii].type == "PREFIX") {
+            var storage = units[ii].names[0].slice(2) == "bi";  // storage prefix
+            // for all prefix names...
+            for (var jj = 0; jj < units[ii].names.length; jj++) {
+                var prefix = units[ii].names[jj];
+                // if the specified name matches the prefix...
+                if (name[0] == prefix[0] && name.indexOf(prefix) == 0 && name.length > prefix.length) {
+                    // prefix match
+                    var remain = name.slice(prefix.length);
+                    // for all unit names...
+                    for (var i = 0; i < units.length; i++) {
+                        // if this unit is prefixable...
+                        if (units[i].prefixable) {
+                            if (storage && (units[i].exponents.length < storagebase || units[i].exponents[storagebase] == 0)) {
+                                // not storage
+                                continue;
+                            }
+                            // for all unit names...
+                            for (var j = 0; j < units[i].names.length; j++) {
+                                // if the remainder of the specified name matches the unit...
+                                if (remain == units[i].names[j]) {
+                                    // return the prefix and unit
+                                    return [units[ii], units[i]];
+                                }
+                                if (loading && ! deriving) {
+                                    // be quick
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (loading && ! deriving) {
+                    // be quick
+                    break;
+                }
+            }
+        }
+    }
+    // prefix and unit not found
+    throw "undefined unit " + name;
+}
+
+// *** expression evaluation **********************************************************************
+
+// return a literal value as a unit
+function Value(token)
+{
+    var unit = new Unit([token]);
+    unit.coefficient = Number(token);
+    if (isNaN(unit.coefficient)) {
+        throw "bad value " + token;  //OK
+    }
+    unit.type = "VALUE";
+    return unit;
+}
+
+// operator precedences
+var prec = {
+    '~':    3,  // left-to-right associativity  (prefix multiplication)
+    '>':    2,  // right-to-left associativity  (unary +)
+    '<':    2,  // right-to-left associativity  (unary -)
+    "pow":  1,  // left-to-right associativity  (square, cube, sqrt, cbrt)
+    '^':    1,  // right-to-left associativity
+    ' ':    0,  // left-to-right associativity  (implied multiplication)
+    "per": -1,  // left-to-right associativity  (unit division)
+    '*':   -1,  // left-to-right associativity
+    '/':   -1,  // left-to-right associativity
+    '+':   -2,  // left-to-right associativity
+    '-':   -2,  // left-to-right associativity
+    ':':   -3,  // left-to-right associativity  (dimensional filter)
+    '@':   -4,  // left-to-right associativity  (solve by dimensional analysis: l*r)
+    '&':   -4,  // left-to-right associativity  (solve by dimensional analysis: l/r)
+    '#':   -4,  // left-to-right associativity  (solve by dimensional analysis: r/l)
+    '!':   -4,  // left-to-right associativity  (solve by dimensional analysis: 1/(lr))
+    '?':   -5,  // left-to-right associativity
+    "zz":  -7,
+};
+
+// operator associativities
+var right = "<>^";
+
+// clean low precedence operators off the stack and push a new operator on the stack if needed and set the next result
+function CleanAndPush(stack, result, op, next)
+{
+    assert(prec.hasOwnProperty(op));
+
+    // handle stacked operator precedence and associativity; clean stack as needed
+    if (result != null || op == 'zz') {
+        while (stack.length) {
+            // get the top operation on the stack
+            var stacked = stack[stack.length-1];
+            // if the operator has right-to-left associativity, pop if the operator precedence is greater-than the current precedence;
+            // otherwise, pop if the operator precedence is greater-than-or-equal-to the current precedence
+            var pop = (right.indexOf(stacked.op) != -1) ? (stacked.prec > prec[op]) : (stacked.prec >= prec[op]);
+
+            if (! pop) {
+                // we're done popping
+                break;
+            }
+            // pop and clean
+            stacked = stack.pop();
+            if (result != null) {
+                // perform the stacked operation
+                result = stacked.result.Operate(stacked.op, result, false);
+            } else {
+                // SI result requested thru '?' with no rhs; no operation
+                assert(stacked.op == '?');
+                result = stacked.result;
+            }
+        }
+    }
+
+    // if we are still evaluating (and not finalizing the stack)...
+    if (op != "zz") {
+        // if there is a previous result...
+        if (result != null) {
+            // push the previous result and a new operator on the stack
+            stack.push({ result: result, op: op, prec: prec[op] });
+        }
+
+        // and set the current result
+        result = next;
+    }
+
+    // return the current result
+    return result;
+}
+
+// evaluate a single expression in an array of tokens and return a single result
+function EvaluateTokens(tokens)
+{
+    var j;
+    var subtokens;
+    var stack = [];
+    var token = null;
+    var result = null;
+
+    // for all tokens in the equation...
+    nextp = 0
+    for (var i = 0; i < tokens.length; i++) {
+        token = tokens[i];
+        // if the token is a function call...
+        if (functions.hasOwnProperty(token)) {
+            if (token == "per") {
+                // unit division
+                result = CleanAndPush(stack, result, token, null);
+            } else {
+                var unit;
+                if (tokens.length > i+1 && opens.indexOf(tokens[i+1]) != -1) {
+                    // power, trig, log, etc. followed by parenthetical expression
+                    j = MatchParen(tokens, i+1);
+                    subtokens = tokens.slice(i+2, j);
+                    unit = EvaluateTokens(subtokens);
+                    i = j;
+                } else if (tokens.length > i+3 && tokens[i+2] == '~') {
+                    // power, trig, log, etc. followed by prefixed unit
+                    unit = EvaluateTokens([tokens[i+1], '~', tokens[i+3]]);
+                    i = i+3;
+                } else if (tokens.length > i+1) {
+                    // power, trig, log, etc. followed by unit or number
+                    unit = EvaluateTokens([tokens[i+1]]);
+                    i = i+1;
+                } else {
+                    throw "missing argument " + tokens[i];
+                }
+                result = CleanAndPush(stack, result, ' ', unit);
+                if (token == "square") {
+                    result = CleanAndPush(stack, result, "pow", Value("2"));
+                } else if (token == "cubic") {
+                    result = CleanAndPush(stack, result, "pow", Value("3"));
+                } else if (token == "sqrt") {
+                    result = CleanAndPush(stack, result, "pow", Value("0.5"));
+                } else if (token == "cbrt") {
+                    result = CleanAndPush(stack, result, "pow", Value("0.3333333333333333"));
+                } else {
+                    var interpretation = token + Parenthesize(result.interpretation, true);
+                    // check that argument is dimensionless beyond PI and RADIAN...
+                    for (j = 2; j < result.exponents.length; j++) {
+                        if (result.exponents[j]) {
+                            throw "non-dimensionless argument";  //OK
+                        }
+                    }
+                    if (token == "sin") {
+                        result = Value(Math.sin(result.coefficient));
+                    } else if (token == "cos") {
+                        result = Value(Math.cos(result.coefficient));
+                    } else if (token == "tan") {
+                        result = Value(Math.tan(result.coefficient));
+                    } else if (token == "asn") {
+                        // range -1..1
+                        result = Value(Math.asin(result.coefficient));
+                    } else if (token == "acs") {
+                        // range -1..1
+                        result = Value(Math.acos(result.coefficient));
+                    } else if (token == "atn") {
+                        result = Value(Math.atan(result.coefficient));
+                    } else if (token == "ln") {
+                        result = Value(Math.log(result.coefficient));
+                    } else if (token == "log") {
+                        result = Value(Math.log(result.coefficient)/Math.log(10));
+                    } else if (token == "exp") {
+                        result = Value(Math.exp(result.coefficient));
+                    } else {
+                        throw "bad function " + token;
+                    }
+                    result.interpretation = interpretation;
+                }
+            }
+
+        // otherwise, if the token opens a parenthetical expression...
+        } else if (opens.indexOf(token) != -1) {
+            // parenthetical expression
+            j = MatchParen(tokens, i);
+            subtokens = tokens.slice(i+1, j);
+            result = CleanAndPush(stack, result, ' ', EvaluateTokens(subtokens));
+            i = j;
+
+        // otherwise, if the token is a numeric value...
+        } else if (token[0].match(value_regexp_ch)) {
+            // value
+            result = CleanAndPush(stack, result, ' ', Value(token));
+
+        // otherwise, if the token is a symbolic unit value...
+        } else if (token[0].match(unit_regexp_ch)) {
+            // look for an unprefixed unit
+            var next = LookupUnit(token);
+            var op = ' ';
+            // if not found...
+            if (! next) {
+                // look for a prefixed unit
+                var prefixunit = LookupPrefixedUnit(token);
+                next = prefixunit[0];
+                op = '~';
+                result = CleanAndPush(stack, result, op, next);
+                next = prefixunit[1];
+            }
+            if (next.categories.includes("Warn_angle")) {
+                cycle_warn = true;
+            }
+            result = CleanAndPush(stack, result, op, next);
+
+        // otherwise, if the token is an arithmetic operator...
+        } else if (prec.hasOwnProperty(token)) {
+            // operator
+            if (result == null) {
+                if (token == '+') {
+                    // unary +
+                    result = Value("0");
+                    token = '>';
+                } else if (token == '-') {
+                    // unary -
+                    result = Value("0");
+                    token = '<';
+                } else {
+                    throw "expected a value before " + token;
+                }
+            }
+            result = CleanAndPush(stack, result, token, null);
+
+        } else {
+            throw "bad token " + token;
+        }
+    }
+
+    if (result == null && token != '?') {
+        throw "missing expression";
+    }
+
+    // finalize the stack, popping all remaining operations
+    result = CleanAndPush(stack, result, "zz", null);
+    assert(! stack.length);
+
+    return result;
+}
+
+// *** expression alternation *********************************************************************
+
+// expand a free unit to singular form(s)
+function Singulars(name)
+{
+    var names = [name];
+    if (name.match(/..s$/)) {
+        if (name.match(/.ves$/)) {
+            names.push(name.replace(/ves$/, "f"));
+            names.push(name.replace(/ves$/, "fe"));
+        } else if (name.match(/.ies$/)) {
+            names.push(name.replace(/ies$/, "y"));
+        } else if (name.match(/.(s|sh|ch|x|z)es$/)) {
+            names.push(name.replace(/es$/, ""));
+        } else {
+            names.push(name.replace(/s$/, ""));
+        }
+    }
+    return names;
+}
+
+// compare a possibly prefix or plural unit to a singular unit name from the database
+function MatchPrefixPlural(name, i, j, search, searchremain)
+{
+    var singular = units[i].names[j];
+    if (name == singular || (search && singular.toLowerCase().match("^" + name + (searchremain ? "" : "|_" + name + "|" + name + "$|" + name + "_")))) {
+        return true;
+    }
+    if (units[i].pluralizables == null || ! units[i].pluralizables[j] || name[name.length-1] != 's' || search) {
+        return false;
+    }
+    if (singular.match(/.f$/)) {
+        if (name.replace(/ves$/, "f") == singular) {
+            return true;
+        }
+    }
+    if (singular.match(/.fe$/)) {
+        if (name.replace(/ves$/, "fe") == singular) {
+            return true;
+        }
+    }
+    if (singular.match(/.y$/)) {
+        if (name.replace(/ies$/, "y") == singular) {
+            return true;
+        }
+    }
+    if (singular.match(/(s|sh|ch|x|z)$/)) {
+        if (name.replace(/es$/, "") == singular) {
+            return true;
+        }
+    }
+    if (name.replace(/s$/, "") == singular) {
+        return true;
+    }
+    return false;
+}
+
+// return all the primary and secondary units that match a name
+// XXX -- figure out how to factor this with the other Lookup functions!
+function LookupUnits(name, prefixable, search)
+{
+    var j;
+    var unit;
+    var more = [];
+
+    // if this is a precomputed unit to make loading faster
+    if (name[0] == 'x' && name.match(/^xx[0-9]/)) {
+        // no need to search, just return the unit
+        more.push(name);
+    } else {
+        // check for a unit
+        var name2;
+        if (search) {
+            name2 = name.toLowerCase();
+        } else {
+            name2 = name;
+        }
+        
+        // for all units...
+        for (var i = 0; i < units.length; i++) {
+            unit = units[i];
+            // if we are not looking only for prefixable units or the unit actually is prefixable...
+            if (! prefixable || unit.prefixable) {
+                // for all appropriate unit names...
+                for (j = 0; j < unit.names.length; j++) {
+                    // if the unit name matches, by prefix or by plural...
+                    if ((name2[0] == unit.names[j][0] || search) && MatchPrefixPlural(name2, i, j, search, false)) {
+                        // record a matching unit
+                        if (search) {
+                            more.push(unit.names[j]);
+                        } else {
+                            // use a precomputed unit to make subsequent searching faster
+                            more.push("xx"+i);
+                        }
+                    }
+                    if (unit.type == "PREFIX") {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // check for a prefix and a unit
+
+        // for all unit names...
+        for (var ii = 0; ii < units.length; ii++) {
+            unit = units[ii];
+            // if this is a prefix...
+            if (unit.type == "PREFIX") {
+                var storage = unit.names[0].slice(2) == "bi";  // storage prefix
+                // for all prefix names...
+                for (var jj = 0; jj < unit.names.length; jj++) {
+                    var prefix = unit.names[jj];
+                    // if the specified name matches the prefix...
+                    if (name[0] == prefix[0] && name.indexOf(prefix) == 0 && name.length > prefix.length) {
+                        // prefix match
+                        var remain = name2.slice(prefix.length);
+                        // for all unit names...
+                        for (i = 0; i < units.length; i++) {
+                            var unit2 = units[i];
+                            // if this unit is prefixable...
+                            if (unit2.prefixable) {
+                                if (storage && (unit2.exponents.length < storagebase || unit2.exponents[storagebase] == 0)) {
+                                    // not storage
+                                    continue;
+                                }
+                                // for all unit names...
+                                for (j = 0; j < unit2.names.length; j++) {
+                                    // if the remainder of the specified name matches the unit, by prefix or by plural...
+                                    if ((remain[0] == unit2.names[j][0] || search) && MatchPrefixPlural(remain, i, j, search, true)) {
+                                        // record a matching prefix and unit
+                                        if (search) {
+                                            more.push(unit.names[jj]+unit2.names[j]);
+                                        } else {
+                                            // use a precomputed unit to make subsequent searching faster
+                                            more.push("xx"+ii + '~' + "xx"+i);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // if we found one or more interpretations of the unit...
+    if (more.length) {
+        return more;
+    }
+
+    if (! evaluating) {
+        throw "undefined unit " + name;
+    }
+
+    // define a free unit to use for the remainder of the expression
+    unit = DefineBaseUnit(Singulars(name), true);
+    return [unit.names[0]];
+}
+
+// call EvaluateTokens() for each possible alternation of tokens at or beyond n
+function AlternateTokens(tokens, n)
+{
+    // for each token past where our callers have already alternated...
+    var j;
+    var subtokens;
+    for (var i = n; i < tokens.length; i++) {
+        // if we are alternating...
+        if (tokens[i] == ';') {
+            // solve by dimensional analysis alternation
+            subtokens = tokens.slice(0);
+            // for each alternate operator of ';'...
+            for (j = 0; j < semicolon_alternates.length; j++) {
+                subtokens[i] = semicolon_alternates[j];
+                // recurse for remaining tokens
+                AlternateTokens(subtokens, i+1);
+            }
+            return;
+        } else if (tokens[i][0].match(unit_regexp_ch) && ! functions.hasOwnProperty(tokens[i])) {
+            // ambiguous unit names alternation
+            var spliced = false;
+            subtokens = tokens.slice(0);
+            var prefixable = i && tokens[i-1] == '~';
+            // look up all interpretations of the unit
+            var ambiguous = LookupUnits(tokens[i], prefixable, false);
+            // for each interpretation of the unit...
+            for (j = 0; j < ambiguous.length; j++) {
+                // if this is a prefixed unit...
+                if (ambiguous[j].match('~')) {
+                    // split the unit into prefix and unit
+                    var prefixunit = ambiguous[j].split('~');
+                    if (! spliced) {
+                        // grow the subtokens array once as needed
+                        subtokens.splice(i, 0, prefixunit[0], '~');
+                        spliced = true;
+                    } else {
+                        subtokens[i] = prefixunit[0];
+                    }
+                    subtokens[i+2] = prefixunit[1];
+                } else {
+                    subtokens[i] = ambiguous[j];
+                }
+                // recurse for remaining tokens
+                AlternateTokens(subtokens, i+1);
+            }
+            return;
+        }
+    }
+
+    try {
+        // evaluate a single expression in an array of tokens and return a single result
+        var result = EvaluateTokens(tokens);
+
+        // check if the evaluation resulted in a dimensionless exponent beyond PI and RADIAN
+        if (evaluating) {
+            for (j = result.exponents.length-1; j >= 2; j--) {
+                if (result.exponents[j]) {
+                    break;
+                }
+            }
+        } else {
+            j = -1;
+        }
+        // if the evaluation resulted in a dimensionless exponent...
+        if (j <= 1) {
+            if (! result.PiAnalysis()) {
+                throw "unexpected exponents of pi and radian; use pi_as_number or pin to escape";  //OK
+            }
+
+            // dimensionless results are top priority
+            results.push(result);
+
+        // otherwise, if the evaluation resulted in a mismatch of non-free units...
+        } else if (j < freebaseunit) {
+            // second priority are mismatches or SI or dimension calculations
+
+            var strings = [];
+            var question = tokens.indexOf('?');
+
+            // if "expression ? unit" was entered...
+            if (question != -1 && tokens.length > question+1) {
+                // the user requested a unit and we mismatched; show what was missing as "1/dimension"
+                strings = result.Dimension(question != -1);
+
+            // otherwise, if "expression ?" was entered...
+            } else if (question != -1) {
+                // the user requested an SI result; show the SI result as "coefficient dimension"
+                results = results.concat(result.SI());
+
+            // "expression" was entered...
+            } else {
+                // the user requested a dimension; show what was evaluated as "dimension"
+                strings = result.Dimension(question != -1);
+            }
+
+            if (strings.length && ! defining) {
+                // record the result as a mismatch
+                // group interpretations (unique) by mismatch (possibly not unique)
+                // XXX -- can we merge with result code?
+                // append at the end by default
+                var at = mismatches.length;
+                for (var k = strings.length-1; k >= 0; k--) {
+                    var x = mismatches.indexOf(strings[k]);
+                    if (x != -1) {
+                        // line is already in list; append new lines following
+                        at = x;
+                    } else {
+                        // append line to the list
+                        mismatches.splice(at, 0, strings[k]);
+                    }
+                }
+            }
+
+        // third priority are errors
+        } else {
+            // the evaluation resulted in a mismatch of a free unit
+            if (! errors.includes("uncanceled free unit " + bases[j].names[0])) {
+                errors.push("uncanceled free unit " + bases[j].names[0]);
+            }
+        }
+    } catch (error) {
+        if (! errors.includes(error)) {
+            errors.push(error);
+        }
+    }
+}
+
+// *** command line *******************************************************************************
+
+// tokenize a command line
+function TokenizeLine(input)
+{
+    var test = input.match(/^TEST/);
+    if (! test) {
+        // remove comments except for TEST lines
+        input = input.replace(/[#|].*/, "").trim();
+    }
+
+    var token;
+    var tokens = [];
+    var equal = false;
+    var question = false;
+    // for all letters in the command line...
+    for (var i = 0; i < input.length; i++) {
+        var ch = input[i];
+
+        // if the letter is the start of a numeric value...
+        if (ch.match(value_regexp_ch)) {
+            // value
+            token = input.slice(i).match(value_regexp_head)[0];
+            i += token.length-1;
+
+        // otherwise, if the letter is the start of a symbolic unit (or function call name)...
+        } else if (ch.match(unit_regexp_ch)) {
+            // unit
+            token = input.slice(i).match(unit_regexp_head)[0];
+            i += token.length-1;
+
+        // otherwise, if the letter is an arithmetic operator...
+        } else if (ch.match(operator_regexp_ch)) {
+            // operator
+            token = ch;
+            if (ch == '=') {
+                if (equal && ! test) {
+                    throw "= may only occur once";
+                }
+                equal = true;
+            }
+            if (ch == '?') {
+                if (question) {
+                    throw "? may only occur once";
+                }
+                question = true;
+            }
+        } else if (ch == ' ') {
+            continue;
+        } else {
+            throw "token error " + ch;
+        }
+        tokens.push(token);
+    }
+
+    return tokens;
+}
+
+// parse and run a command line
+function ParseTokens(tokens, line)
+{
+    var i;
+    var j;
+    var k;
+    var unit;
+    if (tokens.length) {
+        // if we are defining a base unit...
+        if (tokens[0] == "BASE") {
+            if (tokens.length != 2) {
+                throw "missing unit";
+            }
+            DefineBaseUnit([tokens[1]], false);
+
+        // otherwise, if we are defining a category...
+        } else if (tokens[0] == "CATEGORY") {
+            if (tokens.length != 2) {
+                throw "missing category";
+            }
+            if (all_categories.includes(tokens[1])) {
+                throw "duplicate category";
+            }
+            all_categories.push(tokens[1]);
+
+        // otherwise, if we are pushing a category...
+        } else if (tokens[0] == "___PUSH") {
+            for (i = 1; i < tokens.length; i++) {
+                if (tokens[i] != ',') {
+                    if (! all_categories.includes(tokens[i]) && ! LookupUnit(tokens[i])) {
+                        throw "undefined category " + tokens[i];
+                    }
+                    if (open_categories.includes(tokens[i])) {
+                        throw "category already pushed " + tokens[i];
+                    }
+                    open_categories.push(tokens[i]);
+                }
+            }
+
+        // otherwise, if we are popping a category...
+        } else if (tokens[0] == "___POP") {
+            for (i = 1; i < tokens.length; i++) {
+                if (tokens[i] != ',') {
+                    if ((j = open_categories.indexOf(tokens[i])) == -1) {
+                        throw "category not pushed " + tokens[i];
+                    }
+                    open_categories.splice(j, 1);
+                }
+            }
+
+        // otherwise, if we are verifying no categories are pushed...
+        } else if (tokens[0] == "___VERIFY") {
+            if (open_categories.length) {
+                throw "categories pushed: " + open_categories.toString();
+            }
+
+        // otherwise, if we are running test code...
+        } else if (tokens[0] == "TEST") {
+            if (tokens[1] == "categories") {
+                document.getElementById("equation").value = "";
+                Units();
+            } else if (tokens[1] == "byname") {
+                document.getElementById("equation").value = tokens[2];
+                Units();
+            } else if (tokens[1] == "bycategory") {
+                // XXX -- how to test this thru UI hyperlink?
+                ShowUnitsByCategory(tokens[2], false);
+            } else if (tokens[1] == "bydimension") {
+                // XXX -- how to test this thru UI hyperlink?
+                ShowUnitsByCategory(tokens[2], true);
+            } else if (tokens[1] == "details") {
+                document.getElementById("equation").value = tokens[2];
+                Details();
+            } else if (tokens[1] == "throw") {
+                throw "unknown test throw";
+            } else {
+                // remember this entire database test for later
+                database_tests += line.replace(/^TEST */, "") + '\n';
+            }
+
+        // otherwise, if we are defining or undefining a unit...
+        } else if ((k = tokens.indexOf('=')) != -1) {
+            var type = null;
+            var remainder;
+            var unambiguous = false;
+            if (tokens[0] == "AMBIGUOUS") {
+                type = "DERIVED";
+                remainder = line.replace(/^AMBIGUOUS/, "").trim();
+                i = 1;
+            } else if (tokens[0] == "DERIVED") {
+                type = tokens[0];
+                remainder = line.replace(/^DERIVED/, "").trim();
+                i = 1;
+                unambiguous = true;
+            } else if (tokens[0] == "PREFIX") {
+                type = tokens[0];
+                remainder = line.replace(/^PREFIX/, "").trim();
+                i = 1;
+            } else {
+                remainder = line.replace(/^ *[*]/, "").replace(/[+][=]/, '=').trim();
+                i = 0;
+            }
+            var prefixable = tokens[i][0] == '*';
+            var names = [];
+            var pluralizables = [];
+            var categories = open_categories.slice(0);
+
+            var add = false;
+            var remove = false;
+            var stop = k;
+            if (! loading) {
+                // if we are adding a definition or undefinition...
+                if (k > 0 && tokens[k-1] == '+') {
+                    add = true;
+                    stop--;
+                // otherwise, if we are removing a definition or undefinition...
+                } else if (k > 0 && tokens[k-1] == '-') {
+                    remove = true;
+                    stop--;
+                }
+            }
+
+            // tests may legitimately fail now that the database is dirty
+            dirty = true;
+
+            // gather categories and names...
+            for (; i < tokens.length; i++) {
+                if (i == stop) {
+                    // end of names
+                    break;
+                } else if (tokens[i] == ':') {
+                    // end of categories
+                    for (j = 0; j < names.length; j++) {
+                        if (categories.includes(names[j])) {
+                            throw "category already pushed " + names[j];
+                        }
+                        if (! all_categories.includes(names[j]) && ! LookupUnit(names[j])) {
+                            throw "undefined category " + names[j];
+                        }
+                        categories.push(names[j]);
+                    }
+                    names = [];
+                    pluralizables = [];
+                    continue;
+                } else if (tokens[i] == ',') {
+                    // next name or category
+                    continue;
+                } else if (tokens[i] == '*') {
+                    // name is pluralizable
+                    if (names.length) {
+                        pluralizables[names.length-1] = true;
+                    }
+                } else if (tokens[i][0].match(unit_regexp_ch)) {
+                    // record the name
+                    names.push(tokens[i]);
+                    pluralizables.push(false);
+                } else {
+                    throw "unexpected " + tokens[i];
+                }
+            }
+            if (! i) {
+                throw "missing name";
+            }
+            var subtokens = tokens.slice(k+1);
+
+            // form the definition, including open and explicit categories
+            var definition = prefixable?"*":"";
+            if (type) {
+                definition += type + " ";
+            }
+            if (categories.length) {
+                definition += categories.join(",");
+                definition += ":";
+            }
+            definition += remainder.replace(/[^:]*:/, "").trim();  // N.B. excludes prefixable and categories
+
+            if (! loading && ! add && ! remove) {
+                // for all units...
+                // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
+                for (i = units.length-1; i >= 0; i--) {
+                    // if the unit is not a base/derived/ambiguous/prefix unit...
+                    if (units[i].type == null) {
+                        // for all unit names...
+                        for (j = units[i].names.length-1; j >= 0; j--) {
+                            // for all names being undefined...
+                            for (k = 0; k < names.length; k++) {
+                                // if the unit name matches...
+                                if (units[i].names[j] == names[k]) {
+                                    // delete the unit name!
+                                    units[i].names.splice(j, 1);
+                                    units[i].pluralizables.splice(j, 1);
+                                }
+                            }
+                            // if we deleted all names from a unit...
+                            if (units[i].names.length == 0) {
+                                // delete the unit itself!
+                                units.splice(i, 1);
+                            }
+                        }
+                    }
+                }
+                undefines = true;
+            }
+
+            // if we have an expression...
+            if (k+1 < tokens.length) {
+                undefines = false;
+                // if we are loading the database...
+                if (loading) {
+                    deriving = (type == "DERIVED");
+                    try {
+                        // evaluate a single interpretation to be quick
+                        results.push(EvaluateTokens(subtokens));
+                        if (deriving) {
+                            // XXX -- how can we test this after load?
+                            var ambiguous = results[0].Ambiguous();
+                            if (unambiguous && ambiguous) {
+                                throw "ambiguous derived unit " + names[0] + " with " + ambiguous.names[0];
+                            } else if (! unambiguous && ! ambiguous) {
+                                throw "unambiguous ambiguous unit " + names[0];
+                            }
+                        }
+                    } catch (error) {
+                        if (! errors.includes(error)) {
+                            errors.push(error);
+                        }
+                    } finally {
+                        deriving = false;
+                    }
+                } else {
+                    defining = true;
+                    try {
+                        // evaluate all interpretations to be thorough
+                        AlternateTokens(subtokens, 0);
+                    } finally {
+                        defining = false;
+                    }
+                }
+
+                // for all results...
+                for (var r = 0; r < results.length; r++) {
+                    if (remove) {
+                        // undefine an existing unit
+                        // N.B. when undefining, we iterate from end to start so we can delete unit or name array elements and not affect subsequent indexes
+                        for (i = units.length-1; i >= 0; i--) {
+                            // if the unit is not a base/derived/ambiguous/prefix unit...
+                            if (units[i].type == null) {
+                                // for all unit names...
+                                for (j = units[i].names.length-1; j >= 0; j--) {
+                                    // for all names being undefined...
+                                    for (k = 0; k < names.length; k++) {
+                                        // if the unit name matches and the definition matches...
+                                        if (units[i].names[j] == names[k] && units[i].Equal(results[r])) {
+                                            // delete the unit name!
+                                            units[i].names.splice(j, 1);
+                                            units[i].pluralizables.splice(j, 1);
+                                        }
+                                    }
+                                    // if we deleted all names from a unit...
+                                    if (units[i].names.length == 0) {
+                                        // delete the unit itself!
+                                        units.splice(i, 1);
+                                    }
+                                }
+                            }
+                        }
+                        undefines = true;
+                    } else {
+                        // define a new unit!
+                        unit = new Unit(names, pluralizables, results[r].coefficient, results[r].exponents, type, prefixable, categories, definition);
+                        // if we are not loading the database...
+                        if (! loading) {
+                            if (! mismatches.includes("> " + Simplify(results[r].interpretation))) {
+                                // record the interpretation of the definition
+                                mismatches.push("> " + Simplify(results[r].interpretation));
+                            }
+                        }
+                        Object.freeze(unit);
+                        units.push(unit);
+                        defines = true;
+                    }
+                }
+                if (defines || undefines) {
+                    results = [];
+                }
+            }
+
+        } else {
+            // we are evaluating an expression with free units
+            evaluating = true;
+            freebaseunit = nextbaseunit;
+            var length = units.length;
+
+            try {
+                // evaluate all interpretations to be thorough
+                AlternateTokens(tokens, 0);
+            } finally {
+                // discard free units
+                nextbaseunit = freebaseunit;
+                while (units.length > length) {
+                    units.pop();
+                }
+                evaluating = false;
+            }
+        }
+    }
+}
+
+// load the units database
+function LoadDatabase(database)
+{
+    open_categories = [];
+
+    // split the database into lines
+    var lines = database.split(/[\r\n]+/);
+
+    // for each line of the database...
+    for (var i = 0; i < lines.length; i++) {
+        // tokenize, parse, and run the command line
+        //console.log(lines[i]);
+        results = [];
+        mismatches = [];
+        errors = [];
+        defines = false;
+        undefines = false;
+        try {
+            ParseTokens(TokenizeLine(lines[i]), lines[i]);
+        } catch (error) {
+            throw "exception: " + lines[i] + " : " + error;
+        }
+
+        if (results.length) {
+            throw "unexpected result: " + lines[i] + " : " + (results[0].coefficient.toPrecision(6) * 1);  // N.B. * 1 removes trailing 0's from toPrecision();
+        }
+        if (mismatches.length) {
+            for (var j = mismatches.length-1; j >= 0; j--) {
+                if (mismatches[j].match(/^[>] /)) {
+                    mismatches.splice(j, 1);
+                }
+            }
+            if (mismatches.length) {
+                throw "unexpected mismatch: " + lines[i] + " : " + mismatches.toString();
+            }
+        }
+        if (errors.length) {
+            throw "unexpected error: " + lines[i] + " : " + errors.toString();
+        }
+    }
+
+    // identify our "special" base units
+    for (i = 0; i < bases.length; i++) {
+        if (bases[i].names[0] == "STORAGE") {
+            // we only allow binary prefixes on storage units
+            storagebase = i;
+        }
+    }
+
+    if (open_categories.length) {
+        throw "categories not popped: " + open_categories.toString();
+    }
+}
+
+// low quality results contain mix of angles and numbers or auto-inversion; high quality results do not contain solve by dimensional analysis ^-1
+function Quality(interpretation)
+{
+    if (interpretation.match(/_as_number/) || interpretation.match(/(_as_f|[[]F)requency/)) {
+        if (interpretation.match(/_as_angle/) || interpretation.match(/(_as_a|[[]A)ngular_velocity/)) {
+            return 0.0;  // low
+        }
+    }
+    if (interpretation.match(/ [^] [-]1 [?]/)) {
+        return 0.1;  // low
+    }
+    if (interpretation.match(/[^][-]1/)) {
+        return 1;  // medium
+    }
+    return 2;  // high
+}
+
+function Offs(string)
+{
+    var n = 0;
+    var m = string.indexOf(" or ");
+    for (var i = 0; i < (m == -1 ? string.length : m); i++) {
+        if (string[i] == "*" || string[i] == "/" || string[i] == "^") {
+            n++;
+        }
+    }
+    return n;
+}
+
+function SortMismatches(mismatches, question)
+{
+    // mismatches is an array of one or more lines of interpretation (>, unique) followed a line of (common) mismatch that applies to those interpretations, repeated
+    // we want the simplest mismatches (and its lines of interpretations) first
+    // XXX -- can we merge with results and mismatch sorting code?
+
+    // tests needed:
+    // 
+    // watts ; kWh/m^3 ; years ? lbs
+    // watts ; kWh/m^3 ; years ?
+    // watts ; kWh/m^3 ; years
+
+    if (question != -1) {
+        mismatches = mismatches.filter((string) => ! string.match(/^>/)).sort((a, b) => Offs(a) - Offs(b));
+        for(var i = 1; i < mismatches.length; i++) {
+            mismatches[i] = mismatches[i].replace(/Dimensional Mismatch/, "or");
+        }
+    }
+    return mismatches;
+}
+
+// run a command line and return the output as an array of strings and a success bool
+function RunLine(line)
+{
+    var output = [];
+    var success = true;
+
+    // capture the result dimension
+    var dimension = "";
+    var ncline = line.replace(/[#].*/, "");
+    var question = ncline.indexOf('?');
+    if (question != -1) {
+        // normal requests get dimension from command line, up to the first unmatched close parenthesis
+        dimension = ncline.slice(question+1);
+        var i;
+        var n = 0;
+        for (i = 0; i < dimension.length; i++) {
+            if (opens.indexOf(dimension[i]) != -1) {
+                n++;
+            } else if (closes.indexOf(dimension[i]) != -1) {
+                if (! n) {
+                    break;
+                }
+                n--;
+            }
+        }
+        dimension = " " + dimension.slice(0, i);
+    }
+
+    // tokenize the command line
+    nextp = 0;
+    results = [];
+    mismatches = [];
+    errors = [];
+    defines = false;
+    undefines = false;
+    invert_warn = false;
+    var tokens = TokenizeLine(line);
+
+    // identify SI requests
+    var si = false;
+    if (tokens.length > 0 && tokens[tokens.length-1] == '?') {
+        si = true;
+    }
+
+    // parse and run the command line
+    ParseTokens(tokens, line);
+
+    // if we got one or more valid (dimensionally consistent, and hence now dimensionless) results...
+    if (results.length) {
+        var j;
+        var k;
+        var answers = [];
+        var interpretations = [];
+
+        // format the results we will output, appending the captured dimension we parsed from the command line
+        for (j = 0; j < results.length; j++) {
+            if (si) {
+                // SI requests get dimension from result
+                dimension = " " + results[j].dimension;
+            }
+            var string = "= " + (results[j].coefficient.toPrecision(6) * 1) + dimension;  // N.B. * 1 removes trailing 0's from toPrecision()
+            var answer = answers.indexOf(string);
+            if (answer == -1) {
+                interpretations[answers.length] = [Simplify(results[j].interpretation)];
+                answers.push(string);
+            } else {
+                // group interpretations (unique) by answer (possibly not unique)
+                // XXX -- can we merge with mismatch code?
+                if (! interpretations[answer].includes(Simplify(results[j].interpretation))) {
+                    interpretations[answer].push(Simplify(results[j].interpretation));
+                }
+            }
+        }
+
+        var current;
+        var minimum = 0;
+        for (j = 0; j < answers.length; j++) {
+            for (k = 0; k < interpretations[j].length; k++) {
+                if ((current = Quality(interpretations[j][k])) > minimum) {
+                    // we won't print low quality results at all if there are any non-low quality results
+                    minimum = Math.min(current, 1);
+                }
+            }
+        }
+
+        // generate merged answers and interpretations
+        for (j = 0; j < answers.length; j++) {
+            var best = 0;
+            for (k = 0; k < interpretations[j].length; k++) {
+                if ((current = Quality(interpretations[j][k])) > best) {
+                    // we only print the best quality interpretations for a given result
+                    best = current;
+                }
+            }
+            if (best >= minimum) {
+                for (k = 0; k < interpretations[j].length; k++) {
+                    if (Quality(interpretations[j][k]) == best) {
+                        if (interpretations[j][k].match(/ [^] [-]1 [?]/)) {
+                            // we auto-inverted left-hand-side
+                            invert_warn = true;
+                        }
+                        output.push("> " + interpretations[j][k]);
+                    }
+                }
+                output.push(answers[j]);
+            }
+        }
+
+    // otherwise, if we defined a unit or got one or more dimensional mismatches...
+    } else if (defines || mismatches.length) {
+        // use the sorted mismatches as the results we will output
+        output = SortMismatches(mismatches, question);
+        if (defines) {
+            output.push("defined");
+        }
+
+    // otherwise, if we undefined units...
+    } else if (undefines) {
+        output = ["undefined"];
+
+    // otherwise, if we caught one or more exceptions as errors...
+    } else if (errors.length) {
+        output = errors;
+        success = false;
+    }
+
+    // return an array of strings and a success bool
+    return { output:output, success:success };
+}
 </script>
 
 <script type="text/javascript" src="custom.js">
