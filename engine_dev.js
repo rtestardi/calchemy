@@ -1257,7 +1257,7 @@ function AlternateTokens(tokens, n)
             if (strings.length && ! defining) {
                 // record the result as a mismatch
                 // group interpretations (unique) by mismatch (possibly not unique)
-                // XXX -- can we merge with result code
+                // XXX -- can we merge with result code?
                 // append at the end by default
                 var at = mismatches.length;
                 for (var k = strings.length-1; k >= 0; k--) {
@@ -1723,16 +1723,36 @@ function Quality(interpretation)
     return 2;  // high
 }
 
-function SortMismatches(mismatches)
+function Offs(string)
 {
-    // mismatches is an array of one or more lines of interpretation (>, unique) followed a line of (common) mismatch that applies to those interpretations
-    // we want the simplest mismatches first
+    var n = 0;
+    var m = string.indexOf(" or ");
+    for (var i = 0; i < (m == -1 ? string.length : m); i++) {
+        if (string[i] == "*" || string[i] == "/" || string[i] == "^") {
+            n++;
+        }
+    }
+    return n;
+}
+
+function SortMismatches(mismatches, question)
+{
+    // mismatches is an array of one or more lines of interpretation (>, unique) followed a line of (common) mismatch that applies to those interpretations, repeated
+    // we want the simplest mismatches (and its lines of interpretations) first
+    // XXX -- can we merge with results and mismatch sorting code?
 
     // tests needed:
     // 
     // watts ; kWh/m^3 ; years ? lbs
     // watts ; kWh/m^3 ; years ?
     // watts ; kWh/m^3 ; years
+
+    if (question != -1) {
+        mismatches = mismatches.filter((string) => ! string.match(/^>/)).sort((a, b) => Offs(a) - Offs(b));
+        for(var i = 1; i < mismatches.length; i++) {
+            mismatches[i] = mismatches[i].replace(/Dimensional Mismatch/, "or");
+        }
+    }
     return mismatches;
 }
 
@@ -1803,7 +1823,7 @@ function RunLine(line)
                 answers.push(string);
             } else {
                 // group interpretations (unique) by answer (possibly not unique)
-                // XXX -- can we merge with mismatch code
+                // XXX -- can we merge with mismatch code?
                 if (! interpretations[answer].includes(Simplify(results[j].interpretation))) {
                     interpretations[answer].push(Simplify(results[j].interpretation));
                 }
@@ -1847,7 +1867,7 @@ function RunLine(line)
     // otherwise, if we defined a unit or got one or more dimensional mismatches...
     } else if (defines || mismatches.length) {
         // use the sorted mismatches as the results we will output
-        output = SortMismatches(mismatches);
+        output = SortMismatches(mismatches, question);
         if (defines) {
             output.push("defined");
         }
