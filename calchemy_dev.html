@@ -52,8 +52,8 @@ body,html { margin: 0px; }
 <p id='results'></p>
 <input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' type='search'/>
 <br>
-<!--
-<table id=keys class='table1' hidden=true><tr>
+<!-- -->
+<table id="allkeys" class='table1' hidden="true"><tr>
 <td>
     <button type='button' class='key' onclick="Hyperlink(' ', false);">&nbsp;</button>
     <button type='button' class='key' onclick="Hyperlink('0', false);">0</button>
@@ -85,18 +85,18 @@ body,html { margin: 0px; }
     <button type='button' class='key' onclick="Hyperlink('?', false);">?</button>
 </td>
 </tr></table>
--->
+<!-- -->
 <table class='table1'><tr>
 <td>
     <button type='button' onclick="Enter();" id='enter'>Enter</button>
-    <button type='button' onclick="Clear();">Clear</button>
+    <button type='button' onclick="Clear();" id="clear">Clear</button>
     <button type='button' onclick="Units();">Find Units</button>
     <button type='button' onclick="Details();">Unit Details</button>
     <button type='button' onclick="Equations();">Equations</button>
-    <!-- <button type='button' onclick="document.getElementById('keys').hidden = !document.getElementById('keys').hidden;">Keys</button> -->
+    <button type='button' onclick="document.getElementById('allkeys').hidden = !document.getElementById('allkeys').hidden;" id="keys" hidden="true">Keys</button> <!-- -->
 </td>
 <td style='text-align: right'>
-    <button type='button' onclick="window.scrollTo(0, 0);">Top</button>
+    <button type='button' id='nearbottom' onclick="window.scrollTo(0, 0);">Top</button>
 </td>
 </tr></table>
 <table class='table2' id='bottom'><tr>
@@ -153,12 +153,13 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2025 Ken Burgess and Rich Testardi.
-v1.37</p>
+v1.38</p>
 </td>
 </tr></table>
 
 <script>
 'use strict';
+var ken = false;
 var custom = null;
 // XXX -- for IE, replace template strings with concatenation, replace .includes with .indexOf != -1, class likely has to be removed, too
 
@@ -192,7 +193,7 @@ var custom = null;
 // *** html elements ******************************************************************************
 
 // persist new results, scroll the page to the equation line, and set equation focus
-function Scroll(noscroll)
+function Scroll(noscroll = false)
 {
     if (testing) {
         return;
@@ -208,7 +209,7 @@ function Scroll(noscroll)
     // if we're scrolling...
     if (noscroll != true) {
         // scroll the equation line into view and set the focus
-        document.getElementById("bottom").scrollIntoView();
+        document.getElementById(ken?"nearbottom":"bottom").scrollIntoView(false);
         document.getElementById("equation").focus();
         // if needed, scroll us all the way left
         // N.B. some browsers hide our margin otherwise and it looks bad
@@ -428,6 +429,10 @@ function LoadRuntimeDatabase(name, text)
 function Body()
 {
     try {
+        if (ken) {
+            document.getElementById("clear").hidden = true;
+            document.getElementById("keys").hidden = false;
+        }
         // capture our query string
         var url = document.URL;
 
