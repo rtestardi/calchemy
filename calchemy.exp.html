@@ -52,40 +52,6 @@ body,html { margin: 0px; }
 <p id='results'></p>
 <input id='equation' name='equation' placeholder='enter expression ? unit' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' type='search'/>
 <br>
-<!-- -->
-<table id="allkeys" class='table1' hidden="true"><tr>
-<td>
-    <button type='button' class='key' onclick="Hyperlink(' ', false);">&nbsp;</button>
-    <button type='button' class='key' onclick="Hyperlink('0', false);">0</button>
-    <button type='button' class='key' onclick="Hyperlink('1', false);">1</button>
-    <button type='button' class='key' onclick="Hyperlink('2', false);">2</button>
-    <button type='button' class='key' onclick="Hyperlink('3', false);">3</button>
-    <button type='button' class='key' onclick="Hyperlink('4', false);">4</button>
-    <button type='button' class='key' onclick="Hyperlink('5', false);">5</button>
-    <button type='button' class='key' onclick="Hyperlink('6', false);">6</button>
-    <button type='button' class='key' onclick="Hyperlink('7', false);">7</button>
-    <button type='button' class='key' onclick="Hyperlink('8', false);">8</button>
-    <button type='button' class='key' onclick="Hyperlink('9', false);">9</button>
-    <button type='button' class='key' onclick="Hyperlink('.', false);">.</button>
-</td>
-</tr><tr>
-<td>
-    <button type='button' class='key' onclick="Hyperlink('+', false);">+</button>
-    <button type='button' class='key' onclick="Hyperlink('-', false);">-</button>
-    <button type='button' class='key' onclick="Hyperlink('*', false);">*</button>
-    <button type='button' class='key' onclick="Hyperlink('/', false);">/</button>
-    <button type='button' class='key' onclick="Hyperlink('^', false);">^</button>
-    <button type='button' class='key' onclick="Hyperlink(';', false);">;</button>
-    <button type='button' class='key' onclick="Hyperlink(':', false);">:</button>
-    <button type='button' class='key' onclick="Hyperlink('(', false);">(</button>
-    <button type='button' class='key' onclick="Hyperlink(')', false);">)</button>
-    <button type='button' class='key' onclick="Hyperlink('$', false);">$</button>
-    <button type='button' class='key' onclick="Hyperlink('%', false);">%</button>
-    <button type='button' class='key' onclick="Hyperlink('_', false);">_</button>
-    <button type='button' class='key' onclick="Hyperlink('?', false);">?</button>
-</td>
-</tr></table>
-<!-- -->
 <table class='table1'><tr>
 <td>
     <button type='button' onclick="Enter();" id='enter'>Enter</button>
@@ -93,10 +59,9 @@ body,html { margin: 0px; }
     <button type='button' onclick="Units();">Find Units</button>
     <button type='button' onclick="Details();">Unit Details</button>
     <button type='button' onclick="Equations();">Equations</button>
-    <button type='button' onclick="document.getElementById('allkeys').hidden = !document.getElementById('allkeys').hidden;" id="keys" hidden="true">Keys</button> <!-- -->
 </td>
 <td style='text-align: right'>
-    <button type='button' id='nearbottom' onclick="window.scrollTo(0, 0);">Top</button>
+    <button type='button' onclick="window.scrollTo(0, 0);">Top</button>
 </td>
 </tr></table>
 <table class='table2' id='bottom'><tr>
@@ -152,14 +117,13 @@ TizRp1vRZxotHiwvrjGFbdhAYd0TcY9M44YQ5hb+kmc+/uOM9hMlztFEXuTCwpBzs8s8JcgaAFcf869A
 nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
-<p id='copyright'>Copyright &copy; 1988-2025 Ken Burgess and Rich Testardi.
-v1.38</p>
+<p id='copyright'>Copyright &copy; 1988-2026 Ken Burgess and Rich Testardi.
+v1.39</p>
 </td>
 </tr></table>
 
 <script>
 'use strict';
-var ken = true;
 var custom = null;
 // XXX -- for IE, replace template strings with concatenation, replace .includes with .indexOf != -1, class likely has to be removed, too
 
@@ -2957,7 +2921,7 @@ function Scroll(noscroll = false)
     // if we're scrolling...
     if (noscroll != true) {
         // scroll the equation line into view and set the focus
-        document.getElementById(ken?"nearbottom":"bottom").scrollIntoView(false);
+        document.getElementById("bottom").scrollIntoView(false);
         document.getElementById("equation").focus();
         // if needed, scroll us all the way left
         // N.B. some browsers hide our margin otherwise and it looks bad
@@ -3177,10 +3141,6 @@ function LoadRuntimeDatabase(name, text)
 function Body()
 {
     try {
-        if (ken) {
-            document.getElementById("clear").hidden = true;
-            document.getElementById("keys").hidden = false;
-        }
         // capture our query string
         var url = document.URL;
 
