@@ -9,6 +9,7 @@
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
 <title>Calchemy&trade; -- Math Magic</title>
 <style>
+body,select,input { background: #ededed }
 a { text-decoration: none; }
 #results { line-height: 1.4; }
 #equation { width: 96%; font-size:120%; }
@@ -27,6 +28,7 @@ table,tr,td { margin: 0px; padding: 0px; }
 hr { height: 2px; }
 body,html { margin: 0px; }
 #columns { column-width: 300px; column-count: 8; }
+.dark { filter: invert(1); background: #121212; img { filter: invert(1); } }
 </style>
 </head>
 
@@ -41,6 +43,7 @@ body,html { margin: 0px; }
     <button type='button' onclick="Copy();">Copy All</button>
     <button type='button' onclick="Paste();">Paste</button>
     <button type='button' onclick="Load();">Load</button>
+    <button type="button" id="bw" onclick="document.querySelector('body').classList.toggle('dark');">BW</button>
     <button type='button' onclick="Help();">Help</button>
 </td>
 <td style='text-align: right'>
@@ -118,7 +121,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2026 Ken Burgess and Rich Testardi.
-v1.39</p>
+v1.40</p>
 </td>
 </tr></table>
 
