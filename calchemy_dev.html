@@ -897,7 +897,8 @@ function Details()
 // the user clicked the Copy button; copy the history and equation to the clipboard
 function Copy()
 {
-    var text = document.getElementById("results").innerText.replace(/[ \t][ \t]*/g, " ").replace(/ Delete$/gm, "") + "\n\n" + document.getElementById("equation").value;
+    var text = document.getElementById("results").innerText.replace(/[ \t][ \t]*/g, " ").replace(/ DeleteKeep$/gm, "").replace(/ Unkeep$/gm, "") + "\n\n" +
+            document.getElementById("equation").value;
     navigator.clipboard.writeText(text);
     Scroll();
 }
