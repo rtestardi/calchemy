@@ -561,9 +561,6 @@ mm_Sulfur_dioxide = 64.06 gramm/mole
 mm_water_vapor,mm_steam,mm_H2O = 18.02 gramm/mole
 mm_hydrochloric_acid = 36.47 gramm/mole
 
-Da = amu
-
-
 ___POP elements
 
 TEST 1|= 1
