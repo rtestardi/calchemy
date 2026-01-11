@@ -16,6 +16,7 @@ ___PUSH flexcase
 *hz=1Hz
 *va=1VA
 *ev=1eV
+*da=1Da
 
 ___POP flexcase
 
