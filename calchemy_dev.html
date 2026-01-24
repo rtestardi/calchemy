@@ -140,7 +140,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2026 Ken Burgess and Rich Testardi.
-v1.48</p>
+v1.49</p>
 </td>
 </tr></table>
 
@@ -1160,10 +1160,16 @@ var tests =`
     |
     .3 | = 0.3
     0.3 | = 0.3
+    0..3 | bad value 0..3
+    ,5,,4.3 | = 54.3
+    , | bad value ,
+    . | bad value .
     3e-1 | = 0.3
-    3e-1 | = 0.3
+    03e-01 | = 0.3
     300 | = 300
     3e2 | = 300
+    -3e-2 | > 0-3e-2, = -0.03
+    +3e-2 | > 0+3e-2, = 0.03
     $ ? $ | = 1 $
     % | = 0.01
     .444444444444 | = 0.444444
@@ -1527,7 +1533,7 @@ var tests =`
     ww:q=1 | undefined category ww
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
     1/sqrt(23 mi:li) | incompatible units :li
-    1/sqrt(23 mi,li) | bad token ,
+    1/sqrt(23 mi,li) | bad value ,
     foot+0 | addition of dissimilar units
     foot-0 | subtraction of dissimilar units
 `;
@@ -1685,6 +1691,7 @@ var help =`
 </ul></li>
 <li><a href=#syntax>Equation Syntax</a>
 <ul>
+    <li><a href=#numbers>Numbers</a></li>
     <li><a href=#operators>Operators</a></li>
     <li><a href=#functions>Functions</a></li>
 </ul></li>
@@ -1789,6 +1796,13 @@ This, again, allows you to enter equations in a more natural format.
 <p><b>equation1 &amp; equation2 ...</b>
 <p>You can also enter equations directly from the calchemy.html URL, by using <b><i>URL encoding</i></b> after the query '?', like:
 <p>.../calchemy.html?<b><i>urlequation</i></b>
+
+<h2 id='numbers'>Numbers</h2>
+<p>Numbers are entered and displayed as defined in <a href=https://tc39.es/ecma262/#prod-StrDecimalLiteral target='_blank'>ECMAScript</a>,
+    with an optional single "." character as the decimal point.
+Calchemy allows "," characters to be used for arbitrary digit grouping within numbers, and silently ignores these characters.
+A base 10 exponent can be attached to a number with "e" or "E" followed by the positive or negative base 10 exponent.
+Numerical limits are as defined in 64-bit IEEE-754.
 
 <h2 id='operators'>Operators</h2>
 <p>Equations may contain the following binary operators (listed in decreasing order of precedence):

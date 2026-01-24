@@ -5,24 +5,30 @@
 
 // regular expressions for string identification
 // XXX -- token can use typeof for value; something for function call; anything for operator?
-const value_regexp_ch =       /[0-9.]/;
-const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-const value_regexp_all =     /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)][^^ ]/g;
+const value_regexp_ch =       /[0-9.,]/;
+const value_regexp =          /[0-9.,]+([eE][-+]?[0-9]+)?/;
+const value_regexp_head =    /^[0-9.,]+([eE][-+]?[0-9]+)?/;
+const value_regexp_tail =     /[0-9.,]+([eE][-+]?[0-9]+)?$/;
+const value_regexp_all =     /^[0-9.,]+([eE][-+]?[0-9]+)?$/;
+const value_regexp_cap =  /[(]([0-9.,]+([eE][-+]?[0-9]+)?)[)][^^ ]/g;
+
 const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const xunit_regexp_head =   /^[:_A-Za-z$%][_A-Za-z0-9$%:]*/;
-const xunit_regexp_tail =    /[:_A-Za-z$%][_A-Za-z0-9$%:]*$/;
 const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^ ]/g;
+
+const xunit_regexp_head =   /^[:_A-Za-z$%][_A-Za-z0-9$%:]*/;
+const xunit_regexp_tail =    /[:_A-Za-z$%][_A-Za-z0-9$%:]*$/;
+
 const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
+
 const opens = "([{";
 const closes = ")]}";
+
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
+
 const functions = { "square":1, "cubic":1, "sqrt":1, "cbrt":1, "sin":1, "cos":1, "tan":1, "asn":1, "acs":1, "atn":1, "ln":1, "log":1, "exp":1, "per":1 };
 
 // this is our units database
@@ -771,7 +777,11 @@ function LookupPrefixedUnit(name)
 function Value(token)
 {
     var unit = new Unit([token]);
-    unit.coefficient = Number(token);
+    var string = token.toString().replace(/,/g, "")
+    if (string == "") {
+        throw "bad value " + token;  //OK
+    }
+    unit.coefficient = Number(string);
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;  //OK
     }
@@ -1297,8 +1307,21 @@ function TokenizeLine(input)
         input = input.replace(/[#|].*/, "").trim();
     }
 
+    // accept numbers only after '=', unless there is no '=' or there is only '=' after '|'
+    var numberok = false;
+    var b = input.indexOf('|');
+    var e = input.indexOf('=');
+    if (e == -1) {
+        // no '='; accept numbers now
+        numberok = true;
+    } else if (b != -1 && e > b) {
+        // '=' afrer '|'; accept numbers now
+        numberok = true;
+    }
+
     var token;
     var tokens = [];
+    var bar = false;
     var equal = false;
     var question = false;
     // for all letters in the command line...
@@ -1306,7 +1329,7 @@ function TokenizeLine(input)
         var ch = input[i];
 
         // if the letter is the start of a numeric value...
-        if (ch.match(value_regexp_ch)) {
+        if (numberok && ch.match(value_regexp_ch)) {
             // value
             token = input.slice(i).match(value_regexp_head)[0];
             i += token.length-1;
@@ -1321,13 +1344,20 @@ function TokenizeLine(input)
         } else if (ch.match(operator_regexp_ch)) {
             // operator
             token = ch;
-            if (ch == '=') {
+            if (ch == '|') {
+                bar = true;
+            } else if (ch == '=') {
                 if (equal && ! test) {
                     throw "= may only occur once";
                 }
                 equal = true;
-            }
-            if (ch == '?') {
+
+                // if we are before bar ('|')...
+                if (! bar) {
+                    // accept numbers after '=' now
+                    numberok = true;
+                }
+            } else if (ch == '?') {
                 if (question) {
                     throw "? may only occur once";
                 }

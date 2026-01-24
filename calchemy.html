@@ -140,7 +140,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2026 Ken Burgess and Rich Testardi.
-v1.48</p>
+v1.49</p>
 </td>
 </tr></table>
 
@@ -1036,24 +1036,30 @@ TEST e_nicd_9v? | = 2419 joule, = 2419 newton meter
 
 // regular expressions for string identification
 // XXX -- token can use typeof for value; something for function call; anything for operator?
-const value_regexp_ch =       /[0-9.]/;
-const value_regexp =          /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_head =    /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?/;
-const value_regexp_tail =     /[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-const value_regexp_all =     /^[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/;
-const value_regexp_cap =  /[(]([0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?)[)][^^ ]/g;
+const value_regexp_ch =       /[0-9.,]/;
+const value_regexp =          /[0-9.,]+([eE][-+]?[0-9]+)?/;
+const value_regexp_head =    /^[0-9.,]+([eE][-+]?[0-9]+)?/;
+const value_regexp_tail =     /[0-9.,]+([eE][-+]?[0-9]+)?$/;
+const value_regexp_all =     /^[0-9.,]+([eE][-+]?[0-9]+)?$/;
+const value_regexp_cap =  /[(]([0-9.,]+([eE][-+]?[0-9]+)?)[)][^^ ]/g;
+
 const unit_regexp_ch =        /[_A-Za-z$%]/;
 const unit_regexp =           /[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_head =     /^[_A-Za-z$%][_A-Za-z0-9$%]*/;
 const unit_regexp_tail =      /[_A-Za-z$%][_A-Za-z0-9$%]*$/;
-const xunit_regexp_head =   /^[:_A-Za-z$%][_A-Za-z0-9$%:]*/;
-const xunit_regexp_tail =    /[:_A-Za-z$%][_A-Za-z0-9$%:]*$/;
 const unit_regexp_all =      /^[_A-Za-z$%][_A-Za-z0-9$%]*$/;
 const unit_regexp_cap =   /[(]([_A-Za-z$%][_A-Za-z0-9$%]*)[)][^^ ]/g;
+
+const xunit_regexp_head =   /^[:_A-Za-z$%][_A-Za-z0-9$%:]*/;
+const xunit_regexp_tail =    /[:_A-Za-z$%][_A-Za-z0-9$%:]*$/;
+
 const operator_regexp_ch =    /[-+*/^;?()\[\]{},:=~|]/;
+
 const opens = "([{";
 const closes = ")]}";
+
 const semicolon_alternates = "@&#!";  // prefix alternate = ~
+
 const functions = { "square":1, "cubic":1, "sqrt":1, "cbrt":1, "sin":1, "cos":1, "tan":1, "asn":1, "acs":1, "atn":1, "ln":1, "log":1, "exp":1, "per":1 };
 
 // this is our units database
@@ -1802,7 +1808,11 @@ function LookupPrefixedUnit(name)
 function Value(token)
 {
     var unit = new Unit([token]);
-    unit.coefficient = Number(token);
+    var string = token.toString().replace(/,/g, "")
+    if (string == "") {
+        throw "bad value " + token;  //OK
+    }
+    unit.coefficient = Number(string);
     if (isNaN(unit.coefficient)) {
         throw "bad value " + token;  //OK
     }
@@ -2328,8 +2338,21 @@ function TokenizeLine(input)
         input = input.replace(/[#|].*/, "").trim();
     }
 
+    // accept numbers only after '=', unless there is no '=' or there is only '=' after '|'
+    var numberok = false;
+    var b = input.indexOf('|');
+    var e = input.indexOf('=');
+    if (e == -1) {
+        // no '='; accept numbers now
+        numberok = true;
+    } else if (b != -1 && e > b) {
+        // '=' afrer '|'; accept numbers now
+        numberok = true;
+    }
+
     var token;
     var tokens = [];
+    var bar = false;
     var equal = false;
     var question = false;
     // for all letters in the command line...
@@ -2337,7 +2360,7 @@ function TokenizeLine(input)
         var ch = input[i];
 
         // if the letter is the start of a numeric value...
-        if (ch.match(value_regexp_ch)) {
+        if (numberok && ch.match(value_regexp_ch)) {
             // value
             token = input.slice(i).match(value_regexp_head)[0];
             i += token.length-1;
@@ -2352,13 +2375,20 @@ function TokenizeLine(input)
         } else if (ch.match(operator_regexp_ch)) {
             // operator
             token = ch;
-            if (ch == '=') {
+            if (ch == '|') {
+                bar = true;
+            } else if (ch == '=') {
                 if (equal && ! test) {
                     throw "= may only occur once";
                 }
                 equal = true;
-            }
-            if (ch == '?') {
+
+                // if we are before bar ('|')...
+                if (! bar) {
+                    // accept numbers after '=' now
+                    numberok = true;
+                }
+            } else if (ch == '?') {
                 if (question) {
                     throw "? may only occur once";
                 }
@@ -3908,10 +3938,16 @@ var tests =`
     |
     .3 | = 0.3
     0.3 | = 0.3
+    0..3 | bad value 0..3
+    ,5,,4.3 | = 54.3
+    , | bad value ,
+    . | bad value .
     3e-1 | = 0.3
-    3e-1 | = 0.3
+    03e-01 | = 0.3
     300 | = 300
     3e2 | = 300
+    -3e-2 | > 0-3e-2, = -0.03
+    +3e-2 | > 0+3e-2, = 0.03
     $ ? $ | = 1 $
     % | = 0.01
     .444444444444 | = 0.444444
@@ -4275,7 +4311,7 @@ var tests =`
     ww:q=1 | undefined category ww
     asn(2000 lb; 65 hp - 12 hp; 55 mph) ? degrees | = 10.4095 degrees
     1/sqrt(23 mi:li) | incompatible units :li
-    1/sqrt(23 mi,li) | bad token ,
+    1/sqrt(23 mi,li) | bad value ,
     foot+0 | addition of dissimilar units
     foot-0 | subtraction of dissimilar units
 `;
@@ -4433,6 +4469,7 @@ var help =`
 </ul></li>
 <li><a href=#syntax>Equation Syntax</a>
 <ul>
+    <li><a href=#numbers>Numbers</a></li>
     <li><a href=#operators>Operators</a></li>
     <li><a href=#functions>Functions</a></li>
 </ul></li>
@@ -4537,6 +4574,13 @@ This, again, allows you to enter equations in a more natural format.
 <p><b>equation1 &amp; equation2 ...</b>
 <p>You can also enter equations directly from the calchemy.html URL, by using <b><i>URL encoding</i></b> after the query '?', like:
 <p>.../calchemy.html?<b><i>urlequation</i></b>
+
+<h2 id='numbers'>Numbers</h2>
+<p>Numbers are entered and displayed as defined in <a href=https://tc39.es/ecma262/#prod-StrDecimalLiteral target='_blank'>ECMAScript</a>,
+    with an optional single "." character as the decimal point.
+Calchemy allows "," characters to be used for arbitrary digit grouping within numbers, and silently ignores these characters.
+A base 10 exponent can be attached to a number with "e" or "E" followed by the positive or negative base 10 exponent.
+Numerical limits are as defined in 64-bit IEEE-754.
 
 <h2 id='operators'>Operators</h2>
 <p>Equations may contain the following binary operators (listed in decreasing order of precedence):
