@@ -140,7 +140,7 @@ nudOFQEMlDRK7TLw9kx4rueEDlTw1RHDEIRbp1U23ftMAFTokJ4QAQEAOw=='/></a>
 </td>
 <td>
 <p id='copyright'>Copyright &copy; 1988-2026 Ken Burgess and Rich Testardi.
-v1.49</p>
+v1.50</p>
 </td>
 </tr></table>
 
@@ -230,7 +230,7 @@ ___VERIFY
 ___PUSH Number
 pi=3.14159265358979323 PI
 pi_as_number,pin=3.14159265358979323
-e=2.71828182845904523
+euler_number,e=2.71828182845904523
 ___POP Number
 ___VERIFY
 
@@ -284,6 +284,7 @@ revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 ___POP Number,Warn_angle
 ___VERIFY
 
+DERIVED Dimensionless=1
 DERIVED Mass=kilogramm
 DERIVED Length=meter
 DERIVED Time=second
@@ -1557,7 +1558,7 @@ class Unit {
             // for all units...
             for (i = 0; i < units.length; i++) {
                 // if this unit is a dimension...
-                if (units[i].type == "DERIVED") {
+                if (units[i].type == "DERIVED" && units[i].names[0] != "Dimensionless") {
                     // if this unit is a compatible dimension...
                     if (this.Compatible(units[i], xor)) {
                         // format its name
@@ -4636,7 +4637,7 @@ The following table illustrates these rules:
 <tr><td>cbrt(x)</td><td>cube root of x</td></tr>
 <tr><td>log(x)</td><td>log base 10 of x</td></tr>
 <tr><td>exp(x)</td><td>e to the x</td></tr>
-<tr><td>ln(x)</td><td>natural log of x</td></tr>
+<tr><td>ln(x)</td><td>natural log (base e) of x</td></tr>
 <tr><td>sin(x)</td><td>sine of x (radians)</td></tr>
 <tr><td>cos(x)</td><td>cosine of x (radians)</td></tr>
 <tr><td>tan(x)</td><td>tangent of x (radians)</td></tr>

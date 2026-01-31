@@ -64,7 +64,7 @@ ___VERIFY
 ___PUSH Number
 pi=3.14159265358979323 PI
 pi_as_number,pin=3.14159265358979323
-e=2.71828182845904523
+euler_number,e=2.71828182845904523
 ___POP Number
 ___VERIFY
 
@@ -118,6 +118,7 @@ revolution_as_number,revolutionn,revolution*,rev_as_number,revn,rev*=1
 ___POP Number,Warn_angle
 ___VERIFY
 
+DERIVED Dimensionless=1
 DERIVED Mass=kilogramm
 DERIVED Length=meter
 DERIVED Time=second
